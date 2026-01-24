@@ -1,1 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yellow Pharmacy Inventory</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Yellow Pharmacy Brand Colors */
+        :root {
+            --pharmacy-yellow: #FFD700;
+            --pharmacy-dark-yellow: #FFC107;
+            --pharmacy-blue: #0056A6;
+            --pharmacy-light-blue: #E3F2FD;
+        }
+        
+        /* Custom Styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .pharmacy-navbar {
+            background: linear-gradient(135deg, var(--pharmacy-blue) 0%, #003366 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .pharmacy-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--pharmacy-yellow);
+        }
+        
+        .pharmacy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        }
+        
+        .btn-pharmacy {
+            background: linear-gradient(135deg, var(--pharmacy-yellow) 0%, var(--pharmacy-dark-yellow) 100%);
+            color: #000;
+            font-weight: 600;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-pharmacy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--pharmacy-blue);
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .branch-badge {
+            background: var(--pharmacy-blue);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+        
+        .login-card {
+            border-top: 5px solid var(--pharmacy-yellow);
+        }
+        
+        .form-control:focus {
+            border-color: var(--pharmacy-yellow);
+            box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        }
+        
+        /* Sidebar for dashboard */
+        .sidebar {
+            background: white;
+            min-height: calc(100vh - 73px);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 250px;
+            left: -250px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .sidebar.show {
+            left: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: var(--pharmacy-light-blue);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            padding: 0;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--pharmacy-light-blue);
+            border-left: 4px solid var(--pharmacy-yellow);
+            color: var(--pharmacy-blue);
+        }
+        
+        .sidebar-menu i {
+            width: 24px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar.show + .main-content {
+            margin-left: 250px;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 20px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Animation for alerts */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg pharmacy-navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-clinic-medical me-2"></i>Yellow Pharmacy
+            </a>
+            <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link" id="currentBranch">Not logged in</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h5 class="mb-0">
+                <i class="fas fa-user-circle me-2"></i>
+                <span id="sidebarUser">User</span>
+            </h5>
+            <small class="text-muted" id="sidebarBranch">Select Branch</small>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="#" onclick="showSection('inventory')"><i class="fas fa-pills"></i> Inventory</a></li>
+            <li><a href="#" onclick="showSection('requisitions')"><i class="fas fa-clipboard-list"></i> Requisitions</a></li>
+            <li><a href="#" onclick="showSection('transfers')"><i class="fas fa-truck-moving"></i> Transfers</a></li>
+            <li><a href="#" onclick="showSection('reports')"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Login Screen (Default) -->
+        <div id="loginScreen" class="fade-in">
+            <div class="login-container">
+                <div class="card login-card shadow">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="rounded-circle bg-warning d-inline-flex p-3 mb-3">
+                                <i class="fas fa-clinic-medical fa-2x text-dark"></i>
+                            </div>
+                            <h3 class="card-title">Pharmacy Login</h3>
+                            <p class="text-muted">Access the inventory management system</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" placeholder="admin@yellowpharmacy.com" value="admin@yellowpharmacy.com">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" placeholder="Enter password" value="Panado500mg!">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Select Branch</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-hospital"></i></span>
+                                <select class="form-select" id="branch">
+                                    <option value="MNK">🏥 Mankayane (Central Branch)</option>
+                                    <option value="NHO">🏥 Nhlangano Branch</option>
+                                    <option value="LSK">🏥 Lushikishikini Branch</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-pharmacy w-100 py-3 mb-3" onclick="login()">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
+                        </button>
+                        
+                        <div class="text-center">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Contact: Sithabile Nkambule (Mankayane)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard (Hidden until login) -->
+        <div id="dashboardSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <!-- Welcome Header -->
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">Welcome, <span id="userName">Admin</span>!</h2>
+                        <p class="text-muted">You are logged into <span id="branchName" class="branch-badge"></span> branch</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-pharmacy" onclick="createRequisition()">
+                            <i class="fas fa-plus-circle me-2"></i>New Requisition
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card pharmacy-card stat-card">
+                            <i class="fas fa-pills stat-icon"></i>
+                            <div class="stat-number text-primary" id="totalItems">50+</div>
+                            <div class="stat-label">Total Items</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card pharmacy-card stat-card">
+                            <i class="fas fa-hospital stat-icon"></i>
+                            <div class="stat-number text-success">3</div>
+                            <div class="stat-label">Active Branches</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card pharmacy-card stat-card">
+                            <i class="fas fa-clipboard-list stat-icon"></i>
+                            <div class="stat-number text-warning" id="pendingRequisitions">0</div>
+                            <div class="stat-label">Pending Requisitions</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card pharmacy-card stat-card">
+                            <i class="fas fa-exclamation-triangle stat-icon"></i>
+                            <div class="stat-number text-danger" id="lowStockItems">12</div>
+                            <div class="stat-label">Low Stock Items</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                                </h5>
+                                <div class="row g-2">
+                                    <div class="col-md-3 col-sm-6">
+                                        <button class="btn btn-outline-primary w-100 py-3" onclick="showSection('inventory')">
+                                            <i class="fas fa-boxes me-2"></i>View Inventory
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <button class="btn btn-outline-success w-100 py-3" onclick="createRequisition()">
+                                            <i class="fas fa-file-medical me-2"></i>New Requisition
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <button class="btn btn-outline-info w-100 py-3" onclick="showSection('transfers')">
+                                            <i class="fas fa-truck me-2"></i>Create Transfer
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-6">
+                                        <button class="btn btn-outline-secondary w-100 py-3" onclick="showSection('reports')">
+                                            <i class="fas fa-chart-pie me-2"></i>View Reports
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-history me-2"></i>Recent Activity
+                                </h5>
+                                <div class="list-group list-group-flush" id="recentActivity">
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <small class="text-muted"><i class="fas fa-sign-in-alt me-1"></i>Login</small>
+                                            <small class="text-muted">Just now</small>
+                                        </div>
+                                        <p class="mb-1">You logged into Mankayane branch</p>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <small class="text-muted"><i class="fas fa-pills me-1"></i>Inventory Update</small>
+                                            <small class="text-muted">Yesterday</small>
+                                        </div>
+                                        <p class="mb-1">System updated with new medication stock</p>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <small class="text-muted"><i class="fas fa-clipboard-check me-1"></i>Requisition</small>
+                                            <small class="text-muted">2 days ago</small>
+                                        </div>
+                                        <p class="mb-1">Nhlangano submitted requisition for 15 items</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Branch Contacts -->
+                    <div class="col-md-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-address-book me-2"></i>Branch Contacts
+                                </h5>
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <strong>Mankayane (Central)</strong><br>
+                                        <small>Sithabile Nkambule</small>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <strong>Nhlangano</strong><br>
+                                        <small>Philangenkosi Simelane</small>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <strong>Lushikishikini</strong><br>
+                                        <small>Nelisiwe Simelane</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other Sections (Initially Hidden) -->
+        <div id="inventorySection" class="d-none">
+            <h2>Inventory Management</h2>
+            <p>This is where all medications will be listed.</p>
+        </div>
+        
+        <div id="requisitionsSection" class="d-none">
+            <h2>Requisitions</h2>
+            <p>Create and manage branch requisitions.</p>
+        </div>
+        
+        <div id="transfersSection" class="d-none">
+            <h2>Transfers</h2>
+            <p>Manage branch transfers.</p>
+        </div>
+        
+        <div id="reportsSection" class="d-none">
+            <h2>Reports</h2>
+            <p>Generate inventory reports.</p>
+        </div>
+        
+        <div id="settingsSection" class="d-none">
+            <h2>Settings</h2>
+            <p>System settings and configuration.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // Login function
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const branch = document.getElementById('branch').value;
+            
+            const branchNames = {
+                'MNK': 'Mankayane',
+                'NHO': 'Nhlangano', 
+                'LSK': 'Lushikishikini'
+            };
+            
+            const branchFullNames = {
+                'MNK': 'Mankayane (Central Branch)',
+                'NHO': 'Nhlangano Branch',
+                'LSK': 'Lushikishikini Branch'
+            };
+            
+            // Validate input
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            // Hide login, show dashboard
+            document.getElementById('loginScreen').classList.add('d-none');
+            document.getElementById('dashboardSection').classList.remove('d-none');
+            
+            // Update user information
+            const userName = email.split('@')[0].replace('.', ' ');
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('branchName').textContent = branchFullNames[branch];
+            
+            // Update sidebar
+            document.getElementById('sidebarUser').textContent = userName;
+            document.getElementById('sidebarBranch').textContent = branchNames[branch];
+            document.getElementById('currentBranch').innerHTML = `<i class="fas fa-hospital me-1"></i>${branchNames[branch]}`;
+            
+            // Show sidebar for desktop
+            if (window.innerWidth > 768) {
+                document.getElementById('sidebar').classList.add('show');
+                document.getElementById('mainContent').style.marginLeft = '250px';
+            }
+            
+            // Save to localStorage (works offline)
+            localStorage.setItem('pharmacy_user', email);
+            localStorage.setItem('pharmacy_user_name', userName);
+            localStorage.setItem('pharmacy_branch', branch);
+            localStorage.setItem('pharmacy_branch_name', branchNames[branch]);
+            localStorage.setItem('pharmacy_logged_in', 'true');
+            
+            // Add login activity
+            addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('pharmacy_logged_in');
+                document.getElementById('dashboardSection').classList.add('d-none');
+                document.getElementById('loginScreen').classList.remove('d-none');
+                
+                // Hide sidebar
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('mainContent').style.marginLeft = '0';
+                
+                // Clear form
+                document.getElementById('password').value = '';
+                
+                // Update navbar
+                document.getElementById('currentBranch').textContent = 'Not logged in';
+            }
+        }
+        
+        // Show different sections
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = ['dashboardSection', 'inventorySection', 'requisitionsSection', 
+                            'transfersSection', 'reportsSection', 'settingsSection'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('d-none');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId + 'Section').classList.remove('d-none');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Set active based on section
+            let activeLink = '';
+            switch(sectionId) {
+                case 'dashboard': activeLink = '.sidebar-menu a:nth-child(1)'; break;
+                case 'inventory': activeLink = '.sidebar-menu a:nth-child(2)'; break;
+                case 'requisitions': activeLink = '.sidebar-menu a:nth-child(3)'; break;
+                case 'transfers': activeLink = '.sidebar-menu a:nth-child(4)'; break;
+                case 'reports': activeLink = '.sidebar-menu a:nth-child(5)'; break;
+                case 'settings': activeLink = '.sidebar-menu a:nth-child(6)'; break;
+            }
+            
+            if (activeLink) {
+                document.querySelector(activeLink).classList.add('active');
+            }
+        }
+        
+        // Create requisition
+        function createRequisition() {
+            showSection('requisitions');
+            alert('Requisition form loaded. You can now:\n\n1. Select items from inventory\n2. Enter quantities needed\n3. Submit to Mankayane for processing');
+            addActivity('Started new requisition', 'requisition');
+        }
+        
+        // Add activity to recent activities
+        function addActivity(description, type) {
+            const activityList = document.getElementById('recentActivity');
+            const icons = {
+                'login': 'fas fa-sign-in-alt',
+                'requisition': 'fas fa-clipboard-list',
+                'inventory': 'fas fa-pills',
+                'transfer': 'fas fa-truck'
+            };
+            
+            const icon = icons[type] || 'fas fa-info-circle';
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'list-group-item';
+            activityItem.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
+                    <small class="text-muted">${timeString}</small>
+                </div>
+                <p class="mb-1">${description}</p>
+            `;
+            
+            // Add to top of list
+            activityList.insertBefore(activityItem, activityList.firstChild);
+            
+            // Limit to 5 items
+            if (activityList.children.length > 5) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+            if (window.innerWidth <= 768) {
+                if (document.getElementById('sidebar').classList.contains('show')) {
+                    document.getElementById('mainContent').style.marginLeft = '0';
+                } else {
+                    document.getElementById('mainContent').style.marginLeft = '0';
+                }
+            } else {
+                if (document.getElementById('sidebar').classList.contains('show')) {
+                    document.getElementById('mainContent').style.marginLeft = '250px';
+                } else {
+                    document.getElementById('mainContent').style.marginLeft = '0';
+                }
+            }
+        });
+        
+        // Check if already logged in
+        function checkLoginStatus() {
+            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
+                // Auto-login
+                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
+                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
+                login();
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            
+            // Make login work with Enter key
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
