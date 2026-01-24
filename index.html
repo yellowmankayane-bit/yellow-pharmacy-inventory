@@ -32,35 +32,41 @@
             background: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 10px 0;
+            border-bottom: 3px solid var(--pharmacy-yellow);
         }
         
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
         
         .pharmacy-logo {
-            height: 50px;
+            height: 70px;
             width: auto;
+            max-width: 200px;
+            object-fit: contain;
         }
         
         .logo-text {
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
         
         .logo-text .main {
             color: var(--pharmacy-blue);
-            font-weight: 700;
-            font-size: 1.4rem;
-            line-height: 1.2;
+            font-weight: 800;
+            font-size: 1.8rem;
+            line-height: 1.1;
+            margin-bottom: 3px;
         }
         
         .logo-text .tagline {
             color: var(--pharmacy-dark);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
+            font-style: italic;
         }
         
         .pharmacy-navbar {
@@ -261,12 +267,22 @@
         
         /* Mobile adjustments */
         @media (max-width: 768px) {
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
             .pharmacy-logo {
-                height: 40px;
+                height: 50px;
             }
             
             .logo-text .main {
-                font-size: 1.1rem;
+                font-size: 1.3rem;
+            }
+            
+            .logo-text .tagline {
+                font-size: 0.8rem;
             }
             
             .main-content {
@@ -329,12 +345,10 @@
     <div class="pharmacy-header">
         <div class="container">
             <div class="logo-container">
-                <!-- Logo will be loaded here -->
-                <div id="logoPlaceholder" class="pharmacy-logo-placeholder">
-                    <div class="logo-text">
-                        <div class="main">The yellow PHARMACY</div>
-                        <div class="tagline">FoodLab Pharmaceutical & Healthcare Services</div>
-                    </div>
+                <img src="Logo_Image-removebg-preview (1).png" alt="Yellow Pharmacy" class="pharmacy-logo">
+                <div class="logo-text">
+                    <div class="main">The yellow PHARMACY</div>
+                    <div class="tagline">FoodLab Pharmaceutical & Healthcare Services</div>
                 </div>
             </div>
         </div>
