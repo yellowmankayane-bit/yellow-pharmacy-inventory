@@ -419,7 +419,10 @@
                             <label class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="Enter password" value="Panado500mg!">
+                                <input type="password" class="form-control" id="password" placeholder="Enter branch-specific password">
+                            </div>
+                            <div class="form-text">
+                                <small>Each branch has a unique medication-based password</small>
                             </div>
                         </div>
                         
@@ -445,7 +448,7 @@
                         <div class="text-center">
                             <small class="text-muted">
                                 <i class="fas fa-shield-alt me-1"></i>
-                                Your data is stored securely
+                                Branch-specific security enabled
                             </small>
                         </div>
                     </div>
@@ -565,15 +568,18 @@
                                 <div class="list-group list-group-flush">
                                     <div class="list-group-item">
                                         <strong>Mankayane (Central)</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Sithabile Nkambule</small>
+                                        <small><i class="fas fa-user me-1"></i>Sithabile Nkambule</small><br>
+                                        <small><i class="fas fa-key me-1"></i>Password: Panado500mg!</small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Nhlangano</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small>
+                                        <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
+                                        <small><i class="fas fa-key me-1"></i>Password: Omeprazole40mg!</small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Lushikishikini</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small>
+                                        <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
+                                        <small><i class="fas fa-key me-1"></i>Password: Flustat250mg!</small>
                                     </div>
                                 </div>
                             </div>
@@ -982,7 +988,7 @@
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0/min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -1012,7 +1018,7 @@
             });
         });
         
-        // Login function
+        // Login function with branch-specific passwords
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -1030,9 +1036,44 @@
                 'LSK': 'Lushikishikini'
             };
             
+            // Branch-specific pharmacy-themed passwords
+            const branchPasswords = {
+                'MNK': 'Panado500mg!',        // Mankayane - Paracetamol
+                'NHO': 'Omeprazole40mg!',     // Nhlangano - Omeprazole 40mg
+                'LSK': 'Flustat250mg!'        // Lushikishikini - Flustat 250mg
+            };
+            
+            // Branch password hints (shown in error messages)
+            const passwordHints = {
+                'MNK': 'Panado500mg! (Paracetamol 500mg)',
+                'NHO': 'Omeprazole40mg! (Omeprazole 40mg)',
+                'LSK': 'Flustat250mg! (Flustat 250mg)'
+            };
+            
             // Validate
             if (!email || !password) {
                 alert('Please enter both email and password');
+                return;
+            }
+            
+            // Check password for selected branch
+            if (password !== branchPasswords[branch]) {
+                // Show helpful error with password hints
+                let hintMessage = `Incorrect password for ${branchNames[branch]} branch.\n\n`;
+                hintMessage += `Correct password format: MedicationName + Strength + !\n\n`;
+                hintMessage += `Branch passwords:\n`;
+                hintMessage += `• Mankayane (Central): ${passwordHints['MNK']}\n`;
+                hintMessage += `• Nhlangano: ${passwordHints['NHO']}\n`;
+                hintMessage += `• Lushikishikini: ${passwordHints['LSK']}\n\n`;
+                hintMessage += `Tip: Use the medication name exactly as shown (case sensitive).`;
+                
+                alert(hintMessage);
+                return;
+            }
+            
+            // Check email format
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Please enter a valid email address (e.g., user@yellowpharmacy.com)');
                 return;
             }
             
@@ -1074,6 +1115,15 @@
             
             // Add activity
             addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
+            
+            // Show welcome message with medication-themed greeting
+            const medicationGreetings = {
+                'MNK': 'Panado 500mg (Pain Relief)',
+                'NHO': 'Omeprazole 40mg (Acid Reducer)',
+                'LSK': 'Flustat 250mg (Antifungal)'
+            };
+            
+            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nSecurity: ${medicationGreetings[branch]}\n\nYou have successfully logged in.`);
         }
         
         // Load inventory from localStorage
@@ -1109,6 +1159,32 @@
                         stockLSK: 30,
                         minStock: 30,
                         notes: 'Broad spectrum antibiotic'
+                    },
+                    {
+                        id: 3,
+                        name: 'Omeprazole 40mg',
+                        generic: 'Omeprazole',
+                        category: 'Antihypertensives',
+                        strength: '40mg',
+                        form: 'Capsules',
+                        stockMNK: 75,
+                        stockNHO: 35,
+                        stockLSK: 25,
+                        minStock: 20,
+                        notes: 'Acid reducer - Nhlangano branch password'
+                    },
+                    {
+                        id: 4,
+                        name: 'Flustat 250mg',
+                        generic: 'Fluconazole',
+                        category: 'Antifungal',
+                        strength: '250mg',
+                        form: 'Tablets',
+                        stockMNK: 60,
+                        stockNHO: 25,
+                        stockLSK: 40,
+                        minStock: 15,
+                        notes: 'Antifungal - Lushikishikini branch password'
                     }
                 ];
                 saveInventory();
