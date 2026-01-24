@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- DataTables for professional tables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <style>
         /* Yellow Pharmacy Brand Colors */
         :root {
@@ -15,6 +17,7 @@
             --pharmacy-dark-yellow: #FFC107;
             --pharmacy-blue: #0056A6;
             --pharmacy-light-blue: #E3F2FD;
+            --pharmacy-dark: #333333;
         }
         
         /* Custom Styles */
@@ -24,28 +27,57 @@
             min-height: 100vh;
         }
         
-        .pharmacy-navbar {
-            background: linear-gradient(135deg, var(--pharmacy-blue) 0%, #003366 100%);
+        /* Pharmacy Header with Logo */
+        .pharmacy-header {
+            background: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
         }
         
-        .navbar-brand {
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .pharmacy-logo {
+            height: 50px;
+            width: auto;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-text .main {
+            color: var(--pharmacy-blue);
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+            line-height: 1.2;
+        }
+        
+        .logo-text .tagline {
+            color: var(--pharmacy-dark);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .pharmacy-navbar {
+            background: linear-gradient(135deg, var(--pharmacy-blue) 0%, #003366 100%);
         }
         
         .pharmacy-card {
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
             margin-bottom: 20px;
-            border-left: 5px solid var(--pharmacy-yellow);
+            border-top: 4px solid var(--pharmacy-yellow);
         }
         
         .pharmacy-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
         }
         
         .btn-pharmacy {
@@ -53,8 +85,8 @@
             color: #000;
             font-weight: 600;
             border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 6px;
             transition: all 0.3s ease;
         }
         
@@ -63,64 +95,77 @@
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
         }
         
+        .btn-outline-pharmacy {
+            border: 2px solid var(--pharmacy-yellow);
+            color: var(--pharmacy-blue);
+            font-weight: 600;
+        }
+        
+        .btn-outline-pharmacy:hover {
+            background: var(--pharmacy-yellow);
+            color: #000;
+        }
+        
         .stat-card {
             text-align: center;
             padding: 20px;
         }
         
         .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 10px;
             color: var(--pharmacy-blue);
         }
         
         .stat-number {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
         
         .stat-label {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         .branch-badge {
             background: var(--pharmacy-blue);
             color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
         
-        .login-container {
-            max-width: 450px;
-            margin: 0 auto;
-            padding-top: 60px;
+        /* DataTables customization */
+        .dataTables_wrapper {
+            padding: 0;
         }
         
-        .login-card {
-            border-top: 5px solid var(--pharmacy-yellow);
+        table.dataTable {
+            border-collapse: collapse !important;
+            margin-top: 0 !important;
         }
         
-        .form-control:focus {
-            border-color: var(--pharmacy-yellow);
-            box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        .dataTables_filter input {
+            border: 1px solid #ddd !important;
+            border-radius: 4px !important;
+            padding: 5px 10px !important;
         }
         
-        /* Sidebar for dashboard */
+        /* Sidebar */
         .sidebar {
             background: white;
-            min-height: calc(100vh - 73px);
+            min-height: calc(100vh - 140px);
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
             position: fixed;
             width: 250px;
             left: -250px;
             transition: left 0.3s ease;
             z-index: 1000;
+            overflow-y: auto;
         }
         
         .sidebar.show {
@@ -145,7 +190,7 @@
         
         .sidebar-menu a {
             display: block;
-            padding: 15px 20px;
+            padding: 12px 20px;
             color: #333;
             text-decoration: none;
             border-left: 4px solid transparent;
@@ -159,7 +204,7 @@
         }
         
         .sidebar-menu i {
-            width: 24px;
+            width: 20px;
             margin-right: 10px;
             text-align: center;
         }
@@ -173,10 +218,72 @@
             margin-left: 250px;
         }
         
-        /* Mobile responsiveness */
+        /* Form styles */
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--pharmacy-blue);
+            margin-bottom: 8px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--pharmacy-yellow);
+            box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        }
+        
+        /* Status badges */
+        .badge-pending {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .badge-approved {
+            background: #198754;
+            color: white;
+        }
+        
+        .badge-rejected {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-delivered {
+            background: #0dcaf0;
+            color: #000;
+        }
+        
+        /* Mobile adjustments */
         @media (max-width: 768px) {
-            .login-container {
-                padding: 20px;
+            .pharmacy-logo {
+                height: 40px;
+            }
+            
+            .logo-text .main {
+                font-size: 1.1rem;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .sidebar.show + .main-content {
+                margin-left: 0;
             }
             
             .stat-card {
@@ -184,35 +291,67 @@
             }
             
             .stat-number {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
         }
         
-        /* Animation for alerts */
+        /* Animation */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .fade-in {
             animation: fadeIn 0.5s ease;
         }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--pharmacy-yellow);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--pharmacy-dark-yellow);
+        }
     </style>
 </head>
 <body>
+    <!-- Pharmacy Header with Logo -->
+    <div class="pharmacy-header">
+        <div class="container">
+            <div class="logo-container">
+                <!-- Logo will be loaded here -->
+                <div id="logoPlaceholder" class="pharmacy-logo-placeholder">
+                    <div class="logo-text">
+                        <div class="main">The yellow PHARMACY</div>
+                        <div class="tagline">FoodLab Pharmaceutical & Healthcare Services</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg pharmacy-navbar navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-clinic-medical me-2"></i>Yellow Pharmacy
-            </a>
+        <div class="container">
             <button class="navbar-toggler" type="button" id="sidebarToggle">
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span> Menu
             </button>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <span class="nav-link" id="currentBranch">Not logged in</span>
+                        <span class="nav-link" id="currentBranch">
+                            <i class="fas fa-hospital me-1"></i><span id="branchDisplay">Not logged in</span>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -222,7 +361,7 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h5 class="mb-0">
+            <h5 class="mb-1">
                 <i class="fas fa-user-circle me-2"></i>
                 <span id="sidebarUser">User</span>
             </h5>
@@ -243,15 +382,15 @@
     <div class="main-content" id="mainContent">
         <!-- Login Screen (Default) -->
         <div id="loginScreen" class="fade-in">
-            <div class="login-container">
-                <div class="card login-card shadow">
+            <div class="container" style="max-width: 450px; padding-top: 40px;">
+                <div class="card pharmacy-card">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
                             <div class="rounded-circle bg-warning d-inline-flex p-3 mb-3">
                                 <i class="fas fa-clinic-medical fa-2x text-dark"></i>
                             </div>
                             <h3 class="card-title">Pharmacy Login</h3>
-                            <p class="text-muted">Access the inventory management system</p>
+                            <p class="text-muted">Secure inventory management system</p>
                         </div>
                         
                         <div class="mb-3">
@@ -275,10 +414,13 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-hospital"></i></span>
                                 <select class="form-select" id="branch">
-                                    <option value="MNK">🏥 Mankayane (Central Branch)</option>
-                                    <option value="NHO">🏥 Nhlangano Branch</option>
-                                    <option value="LSK">🏥 Lushikishikini Branch</option>
+                                    <option value="MNK">🏥 Mankayane (Central)</option>
+                                    <option value="NHO">🏥 Nhlangano</option>
+                                    <option value="LSK">🏥 Lushikishikini</option>
                                 </select>
+                            </div>
+                            <div class="form-text">
+                                <small>Mankayane: Sithabile Nkambule | Nhlangano: Philangenkosi Simelane | Lushikishikini: Nelisiwe Simelane</small>
                             </div>
                         </div>
                         
@@ -288,8 +430,8 @@
                         
                         <div class="text-center">
                             <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Contact: Sithabile Nkambule (Mankayane)
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Your data is stored securely
                             </small>
                         </div>
                     </div>
@@ -297,7 +439,7 @@
             </div>
         </div>
 
-        <!-- Dashboard (Hidden until login) -->
+        <!-- Dashboard Section -->
         <div id="dashboardSection" class="d-none fade-in">
             <div class="container-fluid">
                 <!-- Welcome Header -->
@@ -307,9 +449,14 @@
                         <p class="text-muted">You are logged into <span id="branchName" class="branch-badge"></span> branch</p>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="createRequisition()">
-                            <i class="fas fa-plus-circle me-2"></i>New Requisition
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-pharmacy me-2" onclick="createRequisition()">
+                                <i class="fas fa-plus-circle me-2"></i>New Requisition
+                            </button>
+                            <button class="btn btn-outline-pharmacy" onclick="showSection('inventory')">
+                                <i class="fas fa-pills me-2"></i>Manage Inventory
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -318,15 +465,8 @@
                     <div class="col-md-3 col-sm-6">
                         <div class="card pharmacy-card stat-card">
                             <i class="fas fa-pills stat-icon"></i>
-                            <div class="stat-number text-primary" id="totalItems">50+</div>
+                            <div class="stat-number text-primary" id="totalItems">0</div>
                             <div class="stat-label">Total Items</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card pharmacy-card stat-card">
-                            <i class="fas fa-hospital stat-icon"></i>
-                            <div class="stat-number text-success">3</div>
-                            <div class="stat-label">Active Branches</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
@@ -339,8 +479,15 @@
                     <div class="col-md-3 col-sm-6">
                         <div class="card pharmacy-card stat-card">
                             <i class="fas fa-exclamation-triangle stat-icon"></i>
-                            <div class="stat-number text-danger" id="lowStockItems">12</div>
+                            <div class="stat-number text-danger" id="lowStockItems">0</div>
                             <div class="stat-label">Low Stock Items</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card pharmacy-card stat-card">
+                            <i class="fas fa-truck stat-icon"></i>
+                            <div class="stat-number text-info" id="pendingTransfers">0</div>
+                            <div class="stat-label">Pending Transfers</div>
                         </div>
                     </div>
                 </div>
@@ -355,22 +502,22 @@
                                 </h5>
                                 <div class="row g-2">
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-primary w-100 py-3" onclick="showSection('inventory')">
+                                        <button class="btn btn-outline-primary w-100 py-2" onclick="showSection('inventory')">
                                             <i class="fas fa-boxes me-2"></i>View Inventory
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-success w-100 py-3" onclick="createRequisition()">
+                                        <button class="btn btn-outline-success w-100 py-2" onclick="createRequisition()">
                                             <i class="fas fa-file-medical me-2"></i>New Requisition
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-info w-100 py-3" onclick="showSection('transfers')">
+                                        <button class="btn btn-outline-info w-100 py-2" onclick="showSection('transfers')">
                                             <i class="fas fa-truck me-2"></i>Create Transfer
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-secondary w-100 py-3" onclick="showSection('reports')">
+                                        <button class="btn btn-outline-secondary w-100 py-2" onclick="showSection('reports')">
                                             <i class="fas fa-chart-pie me-2"></i>View Reports
                                         </button>
                                     </div>
@@ -380,7 +527,7 @@
                     </div>
                 </div>
                 
-                <!-- Recent Activity -->
+                <!-- Recent Activity & Branch Contacts -->
                 <div class="row">
                     <div class="col-md-8">
                         <div class="card pharmacy-card">
@@ -389,33 +536,12 @@
                                     <i class="fas fa-history me-2"></i>Recent Activity
                                 </h5>
                                 <div class="list-group list-group-flush" id="recentActivity">
-                                    <div class="list-group-item">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <small class="text-muted"><i class="fas fa-sign-in-alt me-1"></i>Login</small>
-                                            <small class="text-muted">Just now</small>
-                                        </div>
-                                        <p class="mb-1">You logged into Mankayane branch</p>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <small class="text-muted"><i class="fas fa-pills me-1"></i>Inventory Update</small>
-                                            <small class="text-muted">Yesterday</small>
-                                        </div>
-                                        <p class="mb-1">System updated with new medication stock</p>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <small class="text-muted"><i class="fas fa-clipboard-check me-1"></i>Requisition</small>
-                                            <small class="text-muted">2 days ago</small>
-                                        </div>
-                                        <p class="mb-1">Nhlangano submitted requisition for 15 items</p>
-                                    </div>
+                                    <!-- Activities will be added here dynamically -->
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Branch Contacts -->
                     <div class="col-md-4">
                         <div class="card pharmacy-card">
                             <div class="card-body">
@@ -425,15 +551,15 @@
                                 <div class="list-group list-group-flush">
                                     <div class="list-group-item">
                                         <strong>Mankayane (Central)</strong><br>
-                                        <small>Sithabile Nkambule</small>
+                                        <small><i class="fas fa-user me-1"></i>Sithabile Nkambule</small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Nhlangano</strong><br>
-                                        <small>Philangenkosi Simelane</small>
+                                        <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Lushikishikini</strong><br>
-                                        <small>Nelisiwe Simelane</small>
+                                        <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small>
                                     </div>
                                 </div>
                             </div>
@@ -443,39 +569,435 @@
             </div>
         </div>
         
-        <!-- Other Sections (Initially Hidden) -->
-        <div id="inventorySection" class="d-none">
-            <h2>Inventory Management</h2>
-            <p>This is where all medications will be listed.</p>
+        <!-- Inventory Management Section -->
+        <div id="inventorySection" class="d-none fade-in">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-pills me-2"></i>Inventory Management
+                        </h2>
+                        <p class="text-muted">Manage all medication items across branches</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-pharmacy" onclick="showAddItemModal()">
+                            <i class="fas fa-plus me-2"></i>Add New Item
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Inventory Stats -->
+                <div class="row g-2 mb-4">
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Total Items</small>
+                                <h4 class="mb-0" id="inventoryTotal">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Mankayane</small>
+                                <h4 class="mb-0" id="inventoryMNK">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Nhlangano</small>
+                                <h4 class="mb-0" id="inventoryNHO">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Lushikishikini</small>
+                                <h4 class="mb-0" id="inventoryLSK">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Low Stock</small>
+                                <h4 class="mb-0 text-danger" id="inventoryLow">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body text-center py-2">
+                                <small class="text-muted">Expiring Soon</small>
+                                <h4 class="mb-0 text-warning" id="inventoryExpiring">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory Table -->
+                <div class="card pharmacy-card">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="inventorySearch" placeholder="Search medications...">
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="exportInventory()">
+                                        <i class="fas fa-download me-1"></i>Export
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="importInventory()">
+                                        <i class="fas fa-upload me-1"></i>Import
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="inventoryTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Medication Name</th>
+                                        <th>Category</th>
+                                        <th>Strength</th>
+                                        <th>Form</th>
+                                        <th>Mankayane</th>
+                                        <th>Nhlangano</th>
+                                        <th>Lushikishikini</th>
+                                        <th>Min Stock</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTableBody">
+                                    <!-- Inventory items will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div id="requisitionsSection" class="d-none">
-            <h2>Requisitions</h2>
-            <p>Create and manage branch requisitions.</p>
+        <!-- Requisitions Section -->
+        <div id="requisitionsSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-clipboard-list me-2"></i>Requisitions Management
+                        </h2>
+                        <p class="text-muted">Create and manage branch requisitions</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-pharmacy" onclick="createNewRequisition()">
+                            <i class="fas fa-plus me-2"></i>New Requisition
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Requisition Table -->
+                <div class="card pharmacy-card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="requisitionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Req ID</th>
+                                        <th>Branch</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requisitionsTableBody">
+                                    <!-- Requisitions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div id="transfersSection" class="d-none">
-            <h2>Transfers</h2>
-            <p>Manage branch transfers.</p>
+        <!-- Transfers Section -->
+        <div id="transfersSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-truck-moving me-2"></i>Transfers Management
+                        </h2>
+                        <p class="text-muted">Manage stock transfers between branches</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-pharmacy" onclick="createNewTransfer()">
+                            <i class="fas fa-plus me-2"></i>New Transfer
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Transfers Table -->
+                <div class="card pharmacy-card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="transfersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Transfer ID</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transfersTableBody">
+                                    <!-- Transfers will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div id="reportsSection" class="d-none">
-            <h2>Reports</h2>
-            <p>Generate inventory reports.</p>
+        <!-- Reports Section -->
+        <div id="reportsSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <h2 class="fw-bold mb-4">
+                    <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
+                </h2>
+                <p class="text-muted">Generate inventory reports and analytics</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Quick Reports</h5>
+                                <div class="list-group list-group-flush">
+                                    <button class="list-group-item list-group-item-action" onclick="generateReport('stock')">
+                                        <i class="fas fa-box me-2"></i>Stock Level Report
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="generateReport('expiry')">
+                                        <i class="fas fa-calendar-times me-2"></i>Expiry Report
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="generateReport('requisitions')">
+                                        <i class="fas fa-clipboard-list me-2"></i>Requisition History
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="generateReport('transfers')">
+                                        <i class="fas fa-truck me-2"></i>Transfer Logs
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Export Options</h5>
+                                <div class="list-group list-group-flush">
+                                    <button class="list-group-item list-group-item-action" onclick="exportToExcel()">
+                                        <i class="fas fa-file-excel me-2 text-success"></i>Export to Excel
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="exportToPDF()">
+                                        <i class="fas fa-file-pdf me-2 text-danger"></i>Export to PDF
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="printReport()">
+                                        <i class="fas fa-print me-2"></i>Print Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div id="settingsSection" class="d-none">
-            <h2>Settings</h2>
-            <p>System settings and configuration.</p>
+        <!-- Settings Section -->
+        <div id="settingsSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <h2 class="fw-bold mb-4">
+                    <i class="fas fa-cog me-2"></i>System Settings
+                </h2>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Branch Settings</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Default Branch</label>
+                                    <select class="form-select" id="defaultBranch">
+                                        <option value="MNK">Mankayane (Central)</option>
+                                        <option value="NHO">Nhlangano</option>
+                                        <option value="LSK">Lushikishikini</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Low Stock Threshold</label>
+                                    <input type="number" class="form-control" id="lowStockThreshold" value="10">
+                                    <div class="form-text">Alert when stock falls below this number</div>
+                                </div>
+                                <button class="btn btn-pharmacy" onclick="saveSettings()">
+                                    <i class="fas fa-save me-2"></i>Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Data Management</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Backup Data</label>
+                                    <button class="btn btn-outline-secondary w-100 mb-2" onclick="backupData()">
+                                        <i class="fas fa-download me-2"></i>Download Backup
+                                    </button>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Restore Data</label>
+                                    <input type="file" class="form-control" id="restoreFile" accept=".json">
+                                    <button class="btn btn-outline-secondary w-100 mt-2" onclick="restoreData()">
+                                        <i class="fas fa-upload me-2"></i>Upload Backup
+                                    </button>
+                                </div>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <small>Backup your data regularly to prevent loss</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap & jQuery -->
+    <!-- Add Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Medication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addItemForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Medication Name *</label>
+                                <input type="text" class="form-control" id="itemName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Generic Name</label>
+                                <input type="text" class="form-control" id="itemGeneric">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Category *</label>
+                                <select class="form-select" id="itemCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Analgesics">Analgesics</option>
+                                    <option value="Antibiotics">Antibiotics</option>
+                                    <option value="Antihypertensives">Antihypertensives</option>
+                                    <option value="Diabetes">Diabetes Medications</option>
+                                    <option value="Supplies">Medical Supplies</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Strength</label>
+                                <input type="text" class="form-control" id="itemStrength" placeholder="e.g., 500mg">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Form *</label>
+                                <select class="form-select" id="itemForm" required>
+                                    <option value="">Select Form</option>
+                                    <option value="Tablets">Tablets</option>
+                                    <option value="Capsules">Capsules</option>
+                                    <option value="Syrup">Syrup</option>
+                                    <option value="Injection">Injection</option>
+                                    <option value="Cream">Cream/Ointment</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Stock (Mankayane)</label>
+                                <input type="number" class="form-control" id="stockMNK" value="0" min="0">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Stock (Nhlangano)</label>
+                                <input type="number" class="form-control" id="stockNHO" value="0" min="0">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Stock (Lushikishikini)</label>
+                                <input type="number" class="form-control" id="stockLSK" value="0" min="0">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Min Stock Level *</label>
+                                <input type="number" class="form-control" id="minStock" value="10" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="itemNotes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pharmacy" onclick="saveNewItem()">Save Medication</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     
-    <!-- Main JavaScript -->
+    <!-- Main Application JavaScript -->
     <script>
+        // Application State
+        let currentUser = null;
+        let currentBranch = null;
+        let inventory = [];
+        let requisitions = [];
+        let transfers = [];
+        
+        // Initialize DataTables
+        $(document).ready(function() {
+            $('#inventoryTable').DataTable({
+                pageLength: 10,
+                responsive: true
+            });
+            
+            $('#requisitionsTable').DataTable({
+                pageLength: 10
+            });
+            
+            $('#transfersTable').DataTable({
+                pageLength: 10
+            });
+        });
+        
         // Login function
         function login() {
             const email = document.getElementById('email').value;
@@ -489,30 +1011,33 @@
             };
             
             const branchFullNames = {
-                'MNK': 'Mankayane (Central Branch)',
-                'NHO': 'Nhlangano Branch',
-                'LSK': 'Lushikishikini Branch'
+                'MNK': 'Mankayane (Central)',
+                'NHO': 'Nhlangano',
+                'LSK': 'Lushikishikini'
             };
             
-            // Validate input
+            // Validate
             if (!email || !password) {
                 alert('Please enter both email and password');
                 return;
             }
             
-            // Hide login, show dashboard
+            // Set current user
+            currentUser = email;
+            currentBranch = branch;
+            
+            // Update UI
             document.getElementById('loginScreen').classList.add('d-none');
             document.getElementById('dashboardSection').classList.remove('d-none');
             
-            // Update user information
             const userName = email.split('@')[0].replace('.', ' ');
             document.getElementById('userName').textContent = userName;
             document.getElementById('branchName').textContent = branchFullNames[branch];
+            document.getElementById('branchDisplay').textContent = branchNames[branch];
             
             // Update sidebar
             document.getElementById('sidebarUser').textContent = userName;
             document.getElementById('sidebarBranch').textContent = branchNames[branch];
-            document.getElementById('currentBranch').innerHTML = `<i class="fas fa-hospital me-1"></i>${branchNames[branch]}`;
             
             // Show sidebar for desktop
             if (window.innerWidth > 768) {
@@ -520,15 +1045,393 @@
                 document.getElementById('mainContent').style.marginLeft = '250px';
             }
             
-            // Save to localStorage (works offline)
+            // Save to localStorage
             localStorage.setItem('pharmacy_user', email);
             localStorage.setItem('pharmacy_user_name', userName);
             localStorage.setItem('pharmacy_branch', branch);
             localStorage.setItem('pharmacy_branch_name', branchNames[branch]);
             localStorage.setItem('pharmacy_logged_in', 'true');
             
-            // Add login activity
+            // Load data
+            loadInventory();
+            loadRequisitions();
+            loadTransfers();
+            updateDashboardStats();
+            
+            // Add activity
             addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
+        }
+        
+        // Load inventory from localStorage
+        function loadInventory() {
+            const saved = localStorage.getItem('pharmacy_inventory');
+            if (saved) {
+                inventory = JSON.parse(saved);
+            } else {
+                // Sample data for demo
+                inventory = [
+                    {
+                        id: 1,
+                        name: 'Paracetamol 500mg',
+                        generic: 'Paracetamol',
+                        category: 'Analgesics',
+                        strength: '500mg',
+                        form: 'Tablets',
+                        stockMNK: 150,
+                        stockNHO: 80,
+                        stockLSK: 60,
+                        minStock: 50,
+                        notes: 'Pain relief'
+                    },
+                    {
+                        id: 2,
+                        name: 'Amoxicillin 250mg',
+                        generic: 'Amoxicillin',
+                        category: 'Antibiotics',
+                        strength: '250mg',
+                        form: 'Capsules',
+                        stockMNK: 100,
+                        stockNHO: 40,
+                        stockLSK: 30,
+                        minStock: 30,
+                        notes: 'Broad spectrum antibiotic'
+                    }
+                ];
+                saveInventory();
+            }
+            renderInventoryTable();
+        }
+        
+        // Save inventory to localStorage
+        function saveInventory() {
+            localStorage.setItem('pharmacy_inventory', JSON.stringify(inventory));
+            updateDashboardStats();
+        }
+        
+        // Render inventory table
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+            
+            let totalItems = 0;
+            let totalMNK = 0;
+            let totalNHO = 0;
+            let totalLSK = 0;
+            let lowStockCount = 0;
+            
+            inventory.forEach(item => {
+                totalItems++;
+                totalMNK += item.stockMNK || 0;
+                totalNHO += item.stockNHO || 0;
+                totalLSK += item.stockLSK || 0;
+                
+                // Check low stock
+                const isLowMNK = (item.stockMNK || 0) < item.minStock;
+                const isLowNHO = (item.stockNHO || 0) < item.minStock;
+                const isLowLSK = (item.stockLSK || 0) < item.minStock;
+                if (isLowMNK || isLowNHO || isLowLSK) lowStockCount++;
+                
+                const status = (isLowMNK || isLowNHO || isLowLSK) ? 
+                    '<span class="badge badge-pending">Low Stock</span>' : 
+                    '<span class="badge badge-approved">In Stock</span>';
+                
+                const row = `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td><strong>${item.name}</strong><br><small class="text-muted">${item.generic || ''}</small></td>
+                        <td>${item.category}</td>
+                        <td>${item.strength || '-'}</td>
+                        <td>${item.form}</td>
+                        <td><span class="${isLowMNK ? 'text-danger fw-bold' : ''}">${item.stockMNK || 0}</span></td>
+                        <td><span class="${isLowNHO ? 'text-danger fw-bold' : ''}">${item.stockNHO || 0}</span></td>
+                        <td><span class="${isLowLSK ? 'text-danger fw-bold' : ''}">${item.stockLSK || 0}</span></td>
+                        <td>${item.minStock}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem(${item.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Update stats
+            document.getElementById('inventoryTotal').textContent = totalItems;
+            document.getElementById('inventoryMNK').textContent = totalMNK;
+            document.getElementById('inventoryNHO').textContent = totalNHO;
+            document.getElementById('inventoryLSK').textContent = totalLSK;
+            document.getElementById('inventoryLow').textContent = lowStockCount;
+        }
+        
+        // Show add item modal
+        function showAddItemModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
+            modal.show();
+        }
+        
+        // Save new item
+        function saveNewItem() {
+            const form = document.getElementById('addItemForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const newItem = {
+                id: inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1,
+                name: document.getElementById('itemName').value,
+                generic: document.getElementById('itemGeneric').value,
+                category: document.getElementById('itemCategory').value,
+                strength: document.getElementById('itemStrength').value,
+                form: document.getElementById('itemForm').value,
+                stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
+                stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
+                stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
+                minStock: parseInt(document.getElementById('minStock').value) || 10,
+                notes: document.getElementById('itemNotes').value
+            };
+            
+            inventory.push(newItem);
+            saveInventory();
+            
+            // Close modal and reset form
+            bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+            form.reset();
+            
+            addActivity(`Added new medication: ${newItem.name}`, 'inventory');
+            alert('Medication added successfully!');
+        }
+        
+        // Edit item
+        function editItem(id) {
+            const item = inventory.find(i => i.id === id);
+            if (item) {
+                // Pre-fill modal with item data
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemGeneric').value = item.generic || '';
+                document.getElementById('itemCategory').value = item.category;
+                document.getElementById('itemStrength').value = item.strength || '';
+                document.getElementById('itemForm').value = item.form;
+                document.getElementById('stockMNK').value = item.stockMNK || 0;
+                document.getElementById('stockNHO').value = item.stockNHO || 0;
+                document.getElementById('stockLSK').value = item.stockLSK || 0;
+                document.getElementById('minStock').value = item.minStock || 10;
+                document.getElementById('itemNotes').value = item.notes || '';
+                
+                // Change modal title and button
+                document.querySelector('#addItemModal .modal-title').textContent = 'Edit Medication';
+                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Update Medication';
+                document.querySelector('#addItemModal .btn-pharmacy').onclick = function() { updateItem(id); };
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
+                modal.show();
+            }
+        }
+        
+        // Update item
+        function updateItem(id) {
+            const index = inventory.findIndex(i => i.id === id);
+            if (index !== -1) {
+                inventory[index] = {
+                    ...inventory[index],
+                    name: document.getElementById('itemName').value,
+                    generic: document.getElementById('itemGeneric').value,
+                    category: document.getElementById('itemCategory').value,
+                    strength: document.getElementById('itemStrength').value,
+                    form: document.getElementById('itemForm').value,
+                    stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
+                    stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
+                    stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
+                    minStock: parseInt(document.getElementById('minStock').value) || 10,
+                    notes: document.getElementById('itemNotes').value
+                };
+                
+                saveInventory();
+                bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+                document.getElementById('addItemForm').reset();
+                
+                // Reset modal
+                document.querySelector('#addItemModal .modal-title').textContent = 'Add New Medication';
+                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Save Medication';
+                document.querySelector('#addItemModal .btn-pharmacy').onclick = saveNewItem;
+                
+                addActivity(`Updated medication: ${inventory[index].name}`, 'inventory');
+                alert('Medication updated successfully!');
+            }
+        }
+        
+        // Delete item
+        function deleteItem(id) {
+            if (confirm('Are you sure you want to delete this medication?')) {
+                const item = inventory.find(i => i.id === id);
+                inventory = inventory.filter(i => i.id !== id);
+                saveInventory();
+                addActivity(`Deleted medication: ${item.name}`, 'inventory');
+                alert('Medication deleted successfully!');
+            }
+        }
+        
+        // Load requisitions
+        function loadRequisitions() {
+            const saved = localStorage.getItem('pharmacy_requisitions');
+            requisitions = saved ? JSON.parse(saved) : [];
+            renderRequisitionsTable();
+        }
+        
+        // Render requisitions table
+        function renderRequisitionsTable() {
+            const tbody = document.getElementById('requisitionsTableBody');
+            tbody.innerHTML = '';
+            
+            requisitions.forEach(req => {
+                const statusBadge = req.status === 'approved' ? 'badge-approved' :
+                                  req.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+                
+                const row = `
+                    <tr>
+                        <td>REQ-${req.id.toString().padStart(3, '0')}</td>
+                        <td>${req.branch}</td>
+                        <td>${new Date(req.date).toLocaleDateString()}</td>
+                        <td>${req.items.length} items</td>
+                        <td><span class="badge ${statusBadge}">${req.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewRequisition(${req.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        // Create new requisition
+        function createNewRequisition() {
+            alert('Requisition form will open here.\n\nFor now, we have the inventory management ready.');
+            addActivity('Started new requisition', 'requisition');
+        }
+        
+        // Load transfers
+        function loadTransfers() {
+            const saved = localStorage.getItem('pharmacy_transfers');
+            transfers = saved ? JSON.parse(saved) : [];
+            renderTransfersTable();
+        }
+        
+        // Render transfers table
+        function renderTransfersTable() {
+            const tbody = document.getElementById('transfersTableBody');
+            tbody.innerHTML = '';
+            
+            transfers.forEach(transfer => {
+                const statusBadge = transfer.status === 'delivered' ? 'badge-delivered' : 'badge-pending';
+                
+                const row = `
+                    <tr>
+                        <td>TRF-${transfer.id.toString().padStart(3, '0')}</td>
+                        <td>${transfer.from}</td>
+                        <td>${transfer.to}</td>
+                        <td>${new Date(transfer.date).toLocaleDateString()}</td>
+                        <td>${transfer.items.length} items</td>
+                        <td><span class="badge ${statusBadge}">${transfer.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        // Create new transfer
+        function createNewTransfer() {
+            alert('Transfer form will open here.\n\nFor now, we have the inventory management ready.');
+            addActivity('Started new transfer', 'transfer');
+        }
+        
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            // Inventory stats
+            document.getElementById('totalItems').textContent = inventory.length;
+            
+            // Low stock count
+            const lowStockCount = inventory.filter(item => 
+                (item.stockMNK || 0) < item.minStock ||
+                (item.stockNHO || 0) < item.minStock ||
+                (item.stockLSK || 0) < item.minStock
+            ).length;
+            document.getElementById('lowStockItems').textContent = lowStockCount;
+            
+            // Pending requisitions
+            const pendingReqs = requisitions.filter(req => req.status === 'pending').length;
+            document.getElementById('pendingRequisitions').textContent = pendingReqs;
+            
+            // Pending transfers
+            const pendingTrans = transfers.filter(trans => trans.status === 'pending').length;
+            document.getElementById('pendingTransfers').textContent = pendingTrans;
+        }
+        
+        // Add activity to recent activities
+        function addActivity(description, type) {
+            const activityList = document.getElementById('recentActivity');
+            const icons = {
+                'login': 'fas fa-sign-in-alt',
+                'inventory': 'fas fa-pills',
+                'requisition': 'fas fa-clipboard-list',
+                'transfer': 'fas fa-truck',
+                'report': 'fas fa-chart-bar'
+            };
+            
+            const icon = icons[type] || 'fas fa-info-circle';
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const dateString = now.toLocaleDateString();
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'list-group-item';
+            activityItem.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
+                    <small class="text-muted">${dateString} ${timeString}</small>
+                </div>
+                <p class="mb-1">${description}</p>
+            `;
+            
+            // Add to top
+            activityList.insertBefore(activityItem, activityList.firstChild);
+            
+            // Keep only last 5 activities
+            if (activityList.children.length > 5) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+        
+        // Show different sections
+        function showSection(sectionId) {
+            const sections = ['dashboard', 'inventory', 'requisitions', 'transfers', 'reports', 'settings'];
+            sections.forEach(id => {
+                document.getElementById(id + 'Section').classList.add('d-none');
+            });
+            
+            document.getElementById(sectionId + 'Section').classList.remove('d-none');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeIndex = sections.indexOf(sectionId) + 1;
+            if (activeIndex > 0) {
+                document.querySelector(`.sidebar-menu a:nth-child(${activeIndex})`).classList.add('active');
+            }
         }
         
         // Logout function
@@ -537,101 +1440,20 @@
                 localStorage.removeItem('pharmacy_logged_in');
                 document.getElementById('dashboardSection').classList.add('d-none');
                 document.getElementById('loginScreen').classList.remove('d-none');
-                
-                // Hide sidebar
                 document.getElementById('sidebar').classList.remove('show');
                 document.getElementById('mainContent').style.marginLeft = '0';
-                
-                // Clear form
                 document.getElementById('password').value = '';
-                
-                // Update navbar
                 document.getElementById('currentBranch').textContent = 'Not logged in';
+                currentUser = null;
+                currentBranch = null;
             }
         }
         
-        // Show different sections
-        function showSection(sectionId) {
-            // Hide all sections
-            const sections = ['dashboardSection', 'inventorySection', 'requisitionsSection', 
-                            'transfersSection', 'reportsSection', 'settingsSection'];
-            sections.forEach(id => {
-                document.getElementById(id).classList.add('d-none');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId + 'Section').classList.remove('d-none');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Set active based on section
-            let activeLink = '';
-            switch(sectionId) {
-                case 'dashboard': activeLink = '.sidebar-menu a:nth-child(1)'; break;
-                case 'inventory': activeLink = '.sidebar-menu a:nth-child(2)'; break;
-                case 'requisitions': activeLink = '.sidebar-menu a:nth-child(3)'; break;
-                case 'transfers': activeLink = '.sidebar-menu a:nth-child(4)'; break;
-                case 'reports': activeLink = '.sidebar-menu a:nth-child(5)'; break;
-                case 'settings': activeLink = '.sidebar-menu a:nth-child(6)'; break;
-            }
-            
-            if (activeLink) {
-                document.querySelector(activeLink).classList.add('active');
-            }
-        }
-        
-        // Create requisition
-        function createRequisition() {
-            showSection('requisitions');
-            alert('Requisition form loaded. You can now:\n\n1. Select items from inventory\n2. Enter quantities needed\n3. Submit to Mankayane for processing');
-            addActivity('Started new requisition', 'requisition');
-        }
-        
-        // Add activity to recent activities
-        function addActivity(description, type) {
-            const activityList = document.getElementById('recentActivity');
-            const icons = {
-                'login': 'fas fa-sign-in-alt',
-                'requisition': 'fas fa-clipboard-list',
-                'inventory': 'fas fa-pills',
-                'transfer': 'fas fa-truck'
-            };
-            
-            const icon = icons[type] || 'fas fa-info-circle';
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = 'list-group-item';
-            activityItem.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
-                    <small class="text-muted">${timeString}</small>
-                </div>
-                <p class="mb-1">${description}</p>
-            `;
-            
-            // Add to top of list
-            activityList.insertBefore(activityItem, activityList.firstChild);
-            
-            // Limit to 5 items
-            if (activityList.children.length > 5) {
-                activityList.removeChild(activityList.lastChild);
-            }
-        }
-        
-        // Toggle sidebar on mobile
+        // Toggle sidebar
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('show');
             if (window.innerWidth <= 768) {
-                if (document.getElementById('sidebar').classList.contains('show')) {
-                    document.getElementById('mainContent').style.marginLeft = '0';
-                } else {
-                    document.getElementById('mainContent').style.marginLeft = '0';
-                }
+                document.getElementById('mainContent').style.marginLeft = '0';
             } else {
                 if (document.getElementById('sidebar').classList.contains('show')) {
                     document.getElementById('mainContent').style.marginLeft = '250px';
@@ -641,10 +1463,9 @@
             }
         });
         
-        // Check if already logged in
+        // Check login status on page load
         function checkLoginStatus() {
             if (localStorage.getItem('pharmacy_logged_in') === 'true') {
-                // Auto-login
                 document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
                 document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
                 login();
@@ -657,11 +1478,104 @@
             
             // Make login work with Enter key
             document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    login();
+                if (e.key === 'Enter') login();
+            });
+            
+            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                    e.preventDefault();
+                    document.getElementById('sidebarToggle').click();
                 }
             });
         });
+        
+        // Quick action functions (aliases for UI buttons)
+        function createRequisition() {
+            createNewRequisition();
+        }
+        
+        function viewInventory() {
+            showSection('inventory');
+        }
+        
+        function createTransfer() {
+            createNewTransfer();
+        }
+        
+        function generateReport(type) {
+            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
+            addActivity(`Generated ${type} report`, 'report');
+        }
+        
+        // Export/Import functions
+        function exportInventory() {
+            const dataStr = JSON.stringify(inventory, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            addActivity('Exported inventory data', 'report');
+        }
+        
+        function importInventory() {
+            alert('To import inventory:\n1. Prepare a JSON file with inventory data\n2. Use the "Upload Backup" feature in Settings\n\nFor Excel/CSV import, we will add that feature next.');
+        }
+        
+        // Settings functions
+        function saveSettings() {
+            const defaultBranch = document.getElementById('defaultBranch').value;
+            const lowStockThreshold = document.getElementById('lowStockThreshold').value;
+            
+            localStorage.setItem('pharmacy_default_branch', defaultBranch);
+            localStorage.setItem('pharmacy_low_stock_threshold', lowStockThreshold);
+            
+            alert('Settings saved successfully!');
+            addActivity('Updated system settings', 'settings');
+        }
+        
+        function backupData() {
+            const backup = {
+                inventory: inventory,
+                requisitions: requisitions,
+                transfers: transfers,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(backup, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `yellow-pharmacy-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            addActivity('Created system backup', 'settings');
+        }
+        
+        function restoreData() {
+            alert('To restore data:\n1. Use the file input in Settings\n2. Select your backup JSON file\n3. Click "Upload Backup"\n\nNote: This will replace all current data.');
+        }
+        
+        // Report functions
+        function exportToExcel() {
+            alert('Excel export will be available in the next update.\nFor now, use JSON export.');
+        }
+        
+        function exportToPDF() {
+            alert('PDF export will be available in the next update.\nFor now, use Print Report.');
+        }
+        
+        function printReport() {
+            window.print();
+            addActivity('Printed report', 'report');
+        }
     </script>
 </body>
 </html>
