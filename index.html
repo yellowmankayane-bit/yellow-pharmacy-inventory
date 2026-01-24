@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yellow Pharmacy Inventory</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- DataTables for professional tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    
     <style>
         /* Yellow Pharmacy Brand Colors */
         :root {
@@ -19,14 +23,14 @@
             --pharmacy-light-blue: #E3F2FD;
             --pharmacy-dark: #333333;
         }
-        
+
         /* Custom Styles */
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
         }
-        
+
         /* Pharmacy Header with Logo */
         .pharmacy-header {
             background: white;
@@ -34,26 +38,26 @@
             padding: 10px 0;
             border-bottom: 3px solid var(--pharmacy-yellow);
         }
-        
+
         .logo-container {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        
+
         .pharmacy-logo {
             height: 70px;
             width: auto;
             max-width: 200px;
             object-fit: contain;
         }
-        
+
         .logo-text {
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        
+
         .logo-text .main {
             color: var(--pharmacy-blue);
             font-weight: 800;
@@ -61,17 +65,17 @@
             line-height: 1.1;
             margin-bottom: 3px;
         }
-        
+
         .logo-text .tagline {
             color: var(--pharmacy-dark);
             font-size: 0.9rem;
             font-weight: 500;
         }
-        
+
         .pharmacy-navbar {
             background: linear-gradient(135deg, var(--pharmacy-blue) 0%, #003366 100%);
         }
-        
+
         .pharmacy-card {
             border: none;
             border-radius: 10px;
@@ -80,11 +84,11 @@
             margin-bottom: 20px;
             border-top: 4px solid var(--pharmacy-yellow);
         }
-        
+
         .pharmacy-card:hover {
             transform: translateY(-3px);
         }
-        
+
         .btn-pharmacy {
             background: linear-gradient(135deg, var(--pharmacy-yellow) 0%, var(--pharmacy-dark-yellow) 100%);
             color: #000;
@@ -94,47 +98,47 @@
             border-radius: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-pharmacy:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
         }
-        
+
         .btn-outline-pharmacy {
             border: 2px solid var(--pharmacy-yellow);
             color: var(--pharmacy-blue);
             font-weight: 600;
         }
-        
+
         .btn-outline-pharmacy:hover {
             background: var(--pharmacy-yellow);
             color: #000;
         }
-        
+
         .stat-card {
             text-align: center;
             padding: 20px;
         }
-        
+
         .stat-icon {
             font-size: 2rem;
             margin-bottom: 10px;
             color: var(--pharmacy-blue);
         }
-        
+
         .stat-number {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
-        
+
         .stat-label {
             color: #666;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .branch-badge {
             background: var(--pharmacy-blue);
             color: white;
@@ -143,23 +147,23 @@
             font-size: 0.8rem;
             font-weight: 600;
         }
-        
+
         /* DataTables customization */
         .dataTables_wrapper {
             padding: 0;
         }
-        
+
         table.dataTable {
             border-collapse: collapse !important;
             margin-top: 0 !important;
         }
-        
+
         .dataTables_filter input {
             border: 1px solid #ddd !important;
             border-radius: 4px !important;
             padding: 5px 10px !important;
         }
-        
+
         /* Sidebar */
         .sidebar {
             background: white;
@@ -172,27 +176,27 @@
             z-index: 1000;
             overflow-y: auto;
         }
-        
+
         .sidebar.show {
             left: 0;
         }
-        
+
         .sidebar-header {
             padding: 20px;
             border-bottom: 1px solid #eee;
             background: var(--pharmacy-light-blue);
         }
-        
+
         .sidebar-menu {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .sidebar-menu li {
             padding: 0;
         }
-        
+
         .sidebar-menu a {
             display: block;
             padding: 12px 20px;
@@ -201,28 +205,28 @@
             border-left: 4px solid transparent;
             transition: all 0.2s ease;
         }
-        
+
         .sidebar-menu a:hover, .sidebar-menu a.active {
             background: var(--pharmacy-light-blue);
             border-left: 4px solid var(--pharmacy-yellow);
             color: var(--pharmacy-blue);
         }
-        
+
         .sidebar-menu i {
             width: 20px;
             margin-right: 10px;
             text-align: center;
         }
-        
+
         .main-content {
             padding: 20px;
             transition: margin-left 0.3s ease;
         }
-        
+
         .sidebar.show + .main-content {
             margin-left: 250px;
         }
-        
+
         /* Form styles */
         .form-section {
             background: white;
@@ -231,39 +235,84 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
         }
-        
+
         .form-label {
             font-weight: 600;
             color: var(--pharmacy-blue);
             margin-bottom: 8px;
         }
-        
+
         .form-control:focus, .form-select:focus {
             border-color: var(--pharmacy-yellow);
             box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
         }
-        
+
         /* Status badges */
         .badge-pending {
             background: #ffc107;
             color: #000;
         }
-        
+
         .badge-approved {
             background: #198754;
             color: white;
         }
-        
+
         .badge-rejected {
             background: #dc3545;
             color: white;
         }
-        
+
         .badge-delivered {
             background: #0dcaf0;
             color: #000;
         }
-        
+
+        /* Stock status colors */
+        .stock-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .stock-medium {
+            color: #ffc107;
+        }
+
+        .stock-good {
+            color: #198754;
+        }
+
+        /* Quick action buttons */
+        .btn-quick {
+            padding: 2px 8px;
+            font-size: 0.8rem;
+        }
+
+        .requisition-status {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        /* Print styles */
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-only {
+                display: block !important;
+            }
+            
+            body {
+                font-size: 12px;
+            }
+        }
+
         /* Mobile adjustments */
         @media (max-width: 768px) {
             .logo-container {
@@ -271,88 +320,88 @@
                 text-align: center;
                 gap: 10px;
             }
-            
+
             .pharmacy-logo {
                 height: 50px;
             }
-            
+
             .logo-text .main {
                 font-size: 1.3rem;
             }
-            
+
             .logo-text .tagline {
                 font-size: 0.8rem;
             }
-            
+
             .main-content {
                 padding: 15px;
             }
-            
+
             .sidebar {
                 width: 100%;
                 left: -100%;
             }
-            
+
             .sidebar.show {
                 left: 0;
             }
-            
+
             .sidebar.show + .main-content {
                 margin-left: 0;
             }
-            
+
             .stat-card {
                 padding: 15px;
             }
-            
+
             .stat-number {
                 font-size: 1.5rem;
             }
         }
-        
+
         /* Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .fade-in {
             animation: fadeIn 0.5s ease;
         }
-        
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: var(--pharmacy-yellow);
             border-radius: 4px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--pharmacy-dark-yellow);
         }
-        
+
         /* Login Page Specific */
         .login-page .pharmacy-header {
             text-align: center;
             padding: 30px 0;
         }
-        
+
         .login-page .logo-container {
             justify-content: center;
         }
-        
+
         .login-page .logo-text .main {
             font-size: 2.2rem;
             color: var(--pharmacy-blue);
         }
-        
+
         /* Logout button in navbar */
         .logout-btn {
             background: transparent;
@@ -362,11 +411,11 @@
             border-radius: 4px;
             font-size: 0.9rem;
         }
-        
+
         .logout-btn:hover {
             background: rgba(255,255,255,0.1);
         }
-        
+
         /* Settings Tabs */
         .settings-tabs .nav-link {
             color: var(--pharmacy-blue);
@@ -375,19 +424,43 @@
             padding: 10px 20px;
             font-weight: 600;
         }
-        
+
         .settings-tabs .nav-link.active {
             color: var(--pharmacy-blue);
             background: transparent;
             border-bottom: 3px solid var(--pharmacy-yellow);
         }
-        
+
         .settings-tabs .nav-link:hover {
             border-bottom: 3px solid var(--pharmacy-yellow);
+        }
+
+        /* Modal customizations */
+        .modal-header {
+            background: var(--pharmacy-light-blue);
+            border-bottom: 2px solid var(--pharmacy-yellow);
+        }
+
+        .modal-title {
+            color: var(--pharmacy-blue);
+            font-weight: 600;
+        }
+
+        /* Activity timeline */
+        .activity-item {
+            border-left: 3px solid var(--pharmacy-yellow);
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
         }
     </style>
 </head>
 <body class="login-page">
+    
     <!-- Pharmacy Header with Logo -->
     <div class="pharmacy-header">
         <div class="container">
@@ -446,6 +519,7 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
+        
         <!-- Login Screen (Default) -->
         <div id="loginScreen" class="fade-in">
             <div class="container" style="max-width: 450px; padding-top: 20px;">
@@ -458,7 +532,6 @@
                             <h3 class="card-title">The Yellow Pharmacy Inventory</h3>
                             <p class="text-muted">Secure inventory management system</p>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Email Address</label>
                             <div class="input-group">
@@ -466,7 +539,6 @@
                                 <input type="email" class="form-control" id="email" placeholder="admin@yellowpharmacy.com" value="admin@yellowpharmacy.com">
                             </div>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <div class="input-group">
@@ -477,7 +549,6 @@
                                 <small>Each branch has a unique medication-based password</small>
                             </div>
                         </div>
-                        
                         <div class="mb-4">
                             <label class="form-label">Select Branch</label>
                             <div class="input-group">
@@ -492,11 +563,9 @@
                                 <small>Mankayane: Sithabile Mavuso | Nhlangano: Philangenkosi Simelane | Lushikishikini: Nelisiwe Simelane</small>
                             </div>
                         </div>
-                        
                         <button class="btn btn-pharmacy w-100 py-3 mb-3" onclick="login()">
                             <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
                         </button>
-                        
                         <div class="text-center">
                             <small class="text-muted">
                                 <i class="fas fa-shield-alt me-1"></i>
@@ -531,7 +600,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Stats Cards -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-3 col-sm-6">
@@ -563,7 +632,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Quick Actions -->
                 <div class="row mb-4">
                     <div class="col">
@@ -584,7 +653,7 @@
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-info w-100 py-2" onclick="showSection('transfers')">
+                                        <button class="btn btn-outline-info w-100 py-2" onclick="createNewTransfer()">
                                             <i class="fas fa-truck me-2"></i>Create Transfer
                                         </button>
                                     </div>
@@ -598,7 +667,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Recent Activity & Branch Contacts -->
                 <div class="row">
                     <div class="col-md-8">
@@ -613,7 +682,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="col-md-4">
                         <div class="card pharmacy-card">
                             <div class="card-body">
@@ -643,7 +711,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Inventory Management Section -->
         <div id="inventorySection" class="d-none fade-in">
             <div class="container-fluid">
@@ -663,7 +731,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Inventory Stats -->
                 <div class="row g-2 mb-4">
                     <div class="col-md-2 col-sm-4">
@@ -715,7 +783,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Inventory Table -->
                 <div class="card pharmacy-card">
                     <div class="card-body">
@@ -737,7 +805,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="table-responsive">
                             <table class="table table-hover" id="inventoryTable">
                                 <thead>
@@ -764,7 +831,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Requisitions Section -->
         <div id="requisitionsSection" class="d-none fade-in">
             <div class="container-fluid">
@@ -784,7 +851,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Requisition Table -->
                 <div class="card pharmacy-card">
                     <div class="card-body">
@@ -809,7 +876,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Transfers Section -->
         <div id="transfersSection" class="d-none fade-in">
             <div class="container-fluid">
@@ -829,7 +896,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Transfers Table -->
                 <div class="card pharmacy-card">
                     <div class="card-body">
@@ -855,7 +922,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Reports Section -->
         <div id="reportsSection" class="d-none fade-in">
             <div class="container-fluid">
@@ -863,7 +930,6 @@
                     <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
                 </h2>
                 <p class="text-muted">Generate inventory reports and analytics</p>
-                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card pharmacy-card">
@@ -905,7 +971,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="text-center mt-4">
                     <button class="btn btn-outline-secondary" onclick="logout()">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -913,7 +978,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Settings Section -->
         <div id="settingsSection" class="d-none fade-in">
             <div class="container-fluid">
@@ -930,7 +995,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Settings Tabs -->
                 <ul class="nav nav-tabs settings-tabs mb-4" id="settingsTabs">
                     <li class="nav-item">
@@ -952,7 +1017,7 @@
                         <button class="nav-link" onclick="showSettingsTab('data')">Data</button>
                     </li>
                 </ul>
-                
+
                 <!-- General Settings -->
                 <div id="generalSettings" class="settings-tab-content">
                     <div class="row">
@@ -994,7 +1059,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
@@ -1027,7 +1091,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Users Settings -->
                 <div id="usersSettings" class="settings-tab-content d-none">
                     <div class="card pharmacy-card">
@@ -1038,7 +1102,6 @@
                                     <i class="fas fa-user-plus me-2"></i>Add New User
                                 </button>
                             </div>
-                            
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -1060,7 +1123,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Branches Settings -->
                 <div id="branchesSettings" class="settings-tab-content d-none">
                     <div class="row">
@@ -1089,7 +1152,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
@@ -1116,7 +1178,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Inventory Settings -->
                 <div id="inventorySettings" class="settings-tab-content d-none">
                     <div class="row">
@@ -1150,7 +1212,6 @@ Other</textarea>
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
@@ -1189,7 +1250,7 @@ Box</textarea>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Notifications Settings -->
                 <div id="notificationsSettings" class="settings-tab-content d-none">
                     <div class="row">
@@ -1231,7 +1292,6 @@ Box</textarea>
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
@@ -1266,7 +1326,7 @@ Box</textarea>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Data Settings -->
                 <div id="dataSettings" class="settings-tab-content d-none">
                     <div class="row">
@@ -1304,7 +1364,6 @@ Box</textarea>
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
@@ -1394,7 +1453,6 @@ Box</textarea>
                                 </select>
                             </div>
                         </div>
-                        
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Stock (Mankayane)</label>
@@ -1413,7 +1471,6 @@ Box</textarea>
                                 <input type="number" class="form-control" id="minStock" value="10" min="1" required>
                             </div>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Additional Notes</label>
                             <textarea class="form-control" id="itemNotes" rows="2"></textarea>
@@ -1519,9 +1576,13 @@ Box</textarea>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <!-- Main Application JavaScript -->
     <script>
+        // ============================================
+        // APPLICATION STATE & INITIALIZATION
+        // ============================================
+
         // Application State
         let currentUser = null;
         let currentBranch = null;
@@ -1529,6 +1590,13 @@ Box</textarea>
         let requisitions = [];
         let transfers = [];
         let users = [];
+        let currentRequisition = {
+            items: [],
+            branch: null,
+            date: null
+        };
+
+        // Settings
         let settings = {
             general: {
                 systemName: "The Yellow Pharmacy Inventory",
@@ -1571,23 +1639,37 @@ Box</textarea>
                 dataRetention: 12
             }
         };
-        
+
         // Initialize DataTables
         $(document).ready(function() {
             $('#inventoryTable').DataTable({
                 pageLength: 10,
                 responsive: true
             });
-            
             $('#requisitionsTable').DataTable({
                 pageLength: 10
             });
-            
             $('#transfersTable').DataTable({
                 pageLength: 10
             });
+            
+            // Check login status on page load
+            checkLoginStatus();
+            
+            // Make login work with Enter key
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') login();
+            });
+            
+            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                    e.preventDefault();
+                    document.getElementById('sidebarToggle').click();
+                }
+            });
         });
-        
+
         // Load all data from localStorage
         function loadAllData() {
             // Load settings
@@ -1596,7 +1678,7 @@ Box</textarea>
                 settings = JSON.parse(savedSettings);
                 applySettings();
             }
-            
+
             // Load inventory
             const savedInventory = localStorage.getItem('pharmacy_inventory');
             if (savedInventory) {
@@ -1660,17 +1742,17 @@ Box</textarea>
                 saveInventory();
             }
             renderInventoryTable();
-            
+
             // Load requisitions
             const savedRequisitions = localStorage.getItem('pharmacy_requisitions');
             requisitions = savedRequisitions ? JSON.parse(savedRequisitions) : [];
             renderRequisitionsTable();
-            
+
             // Load transfers
             const savedTransfers = localStorage.getItem('pharmacy_transfers');
             transfers = savedTransfers ? JSON.parse(savedTransfers) : [];
             renderTransfersTable();
-            
+
             // Load users
             const savedUsers = localStorage.getItem('pharmacy_users');
             if (savedUsers) {
@@ -1711,10 +1793,14 @@ Box</textarea>
                 ];
                 saveUsers();
             }
-            
+
             updateDashboardStats();
         }
-        
+
+        // ============================================
+        // SETTINGS MANAGEMENT
+        // ============================================
+
         // Apply settings to UI
         function applySettings() {
             // Apply general settings
@@ -1722,13 +1808,13 @@ Box</textarea>
             document.getElementById('dateFormat').value = settings.general.dateFormat;
             document.getElementById('autoLogout').value = settings.general.autoLogout;
             document.getElementById('darkMode').checked = settings.general.darkMode;
-            
+
             // Apply security settings
             document.getElementById('minPasswordLength').value = settings.security.minPasswordLength;
             document.getElementById('requireSpecialChar').checked = settings.security.requireSpecialChar;
             document.getElementById('requireNumbers').checked = settings.security.requireNumbers;
             document.getElementById('sessionTimeout').value = settings.security.sessionTimeout;
-            
+
             // Apply inventory settings
             document.getElementById('lowStockThreshold').value = settings.inventory.lowStockThreshold;
             document.getElementById('expiryWarningDays').value = settings.inventory.expiryWarningDays;
@@ -1737,11 +1823,11 @@ Box</textarea>
             document.getElementById('trackBatchNumbers').checked = settings.inventory.trackBatchNumbers;
             document.getElementById('trackExpiryDates').checked = settings.inventory.trackExpiryDates;
             document.getElementById('trackSuppliers').checked = settings.inventory.trackSuppliers;
-            
+
             // Apply branch settings
             document.getElementById('defaultBranchSetting').value = settings.branches.defaultBranch;
             document.getElementById('centralWarehouse').value = settings.branches.centralWarehouse;
-            
+
             // Apply notification settings
             document.getElementById('emailLowStock').checked = settings.notifications.emailLowStock;
             document.getElementById('emailExpiry').checked = settings.notifications.emailExpiry;
@@ -1752,11 +1838,11 @@ Box</textarea>
             document.getElementById('dailySummaryTime').value = settings.notifications.dailySummaryTime;
             document.getElementById('inAppNotifications').checked = settings.notifications.inAppNotifications;
             document.getElementById('soundAlerts').checked = settings.notifications.soundAlerts;
-            
+
             // Apply data settings
             document.getElementById('autoBackup').value = settings.data.autoBackup;
             document.getElementById('dataRetention').value = settings.data.dataRetention;
-            
+
             // Apply dark mode if enabled
             if (settings.general.darkMode) {
                 document.body.classList.add('dark-mode');
@@ -1764,50 +1850,114 @@ Box</textarea>
                 document.body.classList.remove('dark-mode');
             }
         }
-        
+
         // Save settings to localStorage
         function saveSettings() {
             localStorage.setItem('pharmacy_settings', JSON.stringify(settings));
         }
-        
+
+        // Save general settings
+        function saveGeneralSettings() {
+            settings.general.systemName = document.getElementById('systemName').value;
+            settings.general.dateFormat = document.getElementById('dateFormat').value;
+            settings.general.autoLogout = parseInt(document.getElementById('autoLogout').value);
+            settings.general.darkMode = document.getElementById('darkMode').checked;
+            saveSettings();
+            applySettings();
+            addActivity('Updated general settings', 'settings');
+            alert('General settings saved successfully!');
+        }
+
+        // Save security settings
+        function saveSecuritySettings() {
+            settings.security.minPasswordLength = parseInt(document.getElementById('minPasswordLength').value);
+            settings.security.requireSpecialChar = document.getElementById('requireSpecialChar').checked;
+            settings.security.requireNumbers = document.getElementById('requireNumbers').checked;
+            settings.security.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
+            saveSettings();
+            addActivity('Updated security settings', 'settings');
+            alert('Security settings saved successfully!');
+        }
+
+        // Save inventory settings
+        function saveInventorySettings() {
+            settings.inventory.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
+            settings.inventory.expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value);
+            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').filter(c => c.trim() !== '');
+            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').filter(u => u.trim() !== '');
+            settings.inventory.trackBatchNumbers = document.getElementById('trackBatchNumbers').checked;
+            settings.inventory.trackExpiryDates = document.getElementById('trackExpiryDates').checked;
+            settings.inventory.trackSuppliers = document.getElementById('trackSuppliers').checked;
+            saveSettings();
+            addActivity('Updated inventory settings', 'settings');
+            alert('Inventory settings saved successfully!');
+        }
+
+        // Save branch settings
+        function saveBranchSettings() {
+            settings.branches.defaultBranch = document.getElementById('defaultBranchSetting').value;
+            settings.branches.centralWarehouse = document.getElementById('centralWarehouse').value;
+            saveSettings();
+            addActivity('Updated branch settings', 'settings');
+            alert('Branch settings saved successfully!');
+        }
+
+        // Save notification settings
+        function saveNotificationSettings() {
+            settings.notifications.emailLowStock = document.getElementById('emailLowStock').checked;
+            settings.notifications.emailExpiry = document.getElementById('emailExpiry').checked;
+            settings.notifications.emailRequisitions = document.getElementById('emailRequisitions').checked;
+            settings.notifications.emailTransfers = document.getElementById('emailTransfers').checked;
+            settings.notifications.notificationEmail = document.getElementById('notificationEmail').value;
+            settings.notifications.alertFrequency = document.getElementById('alertFrequency').value;
+            settings.notifications.dailySummaryTime = document.getElementById('dailySummaryTime').value;
+            settings.notifications.inAppNotifications = document.getElementById('inAppNotifications').checked;
+            settings.notifications.soundAlerts = document.getElementById('soundAlerts').checked;
+            saveSettings();
+            addActivity('Updated notification settings', 'settings');
+            alert('Notification settings saved successfully!');
+        }
+
+        // ============================================
+        // AUTHENTICATION & USER MANAGEMENT
+        // ============================================
+
         // Login function with branch-specific passwords
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const branch = document.getElementById('branch').value;
-            
             const branchNames = {
                 'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
+                'NHO': 'Nhlangano',
                 'LSK': 'Lushikishikini'
             };
-            
             const branchFullNames = {
                 'MNK': 'Mankayane (Central)',
                 'NHO': 'Nhlangano',
                 'LSK': 'Lushikishikini'
             };
-            
+
             // Branch-specific pharmacy-themed passwords
             const branchPasswords = {
-                'MNK': 'Panado500mg!',        // Mankayane - Paracetamol
-                'NHO': 'Omeprazole40mg!',     // Nhlangano - Omeprazole 40mg
-                'LSK': 'Flustat250mg!'        // Lushikishikini - Flustat 250mg
+                'MNK': 'Panado500mg!', // Mankayane - Paracetamol
+                'NHO': 'Omeprazole40mg!', // Nhlangano - Omeprazole 40mg
+                'LSK': 'Flustat250mg!' // Lushikishikini - Flustat 250mg
             };
-            
+
             // Branch password hints (shown in error messages)
             const passwordHints = {
                 'MNK': 'Panado500mg! (Paracetamol 500mg)',
                 'NHO': 'Omeprazole40mg! (Omeprazole 40mg)',
                 'LSK': 'Flustat250mg! (Flustat 250mg)'
             };
-            
+
             // Validate
             if (!email || !password) {
                 alert('Please enter both email and password');
                 return;
             }
-            
+
             // Check password for selected branch
             if (password !== branchPasswords[branch]) {
                 // Show helpful error with password hints
@@ -1818,135 +1968,166 @@ Box</textarea>
                 hintMessage += `• Nhlangano: ${passwordHints['NHO']}\n`;
                 hintMessage += `• Lushikishikini: ${passwordHints['LSK']}\n\n`;
                 hintMessage += `Tip: Use the medication name exactly as shown (case sensitive).`;
-                
                 alert(hintMessage);
                 return;
             }
-            
+
             // Check email format
             if (!email.includes('@') || !email.includes('.')) {
                 alert('Please enter a valid email address (e.g., user@yellowpharmacy.com)');
                 return;
             }
-            
+
             // Set current user
             currentUser = email;
             currentBranch = branch;
-            
+
             // Update UI
             document.getElementById('loginScreen').classList.add('d-none');
             document.getElementById('dashboardSection').classList.remove('d-none');
-            
-            // Change header text to "The Yellow Pharmacy"
             document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-            
             const userName = email.split('@')[0].replace('.', ' ');
             document.getElementById('userName').textContent = userName;
             document.getElementById('branchName').textContent = branchFullNames[branch];
             document.getElementById('branchDisplay').textContent = branchNames[branch];
-            
+
             // Update sidebar
             document.getElementById('sidebarUser').textContent = userName;
             document.getElementById('sidebarBranch').textContent = branchNames[branch];
-            
+
             // Show logout button in navbar
             document.getElementById('logoutNavItem').classList.remove('d-none');
-            
+
             // Show sidebar for desktop
             if (window.innerWidth > 768) {
                 document.getElementById('sidebar').classList.add('show');
                 document.getElementById('mainContent').style.marginLeft = '250px';
             }
-            
+
             // Remove login page class
             document.body.classList.remove('login-page');
-            
+
             // Save to localStorage
             localStorage.setItem('pharmacy_user', email);
             localStorage.setItem('pharmacy_user_name', userName);
             localStorage.setItem('pharmacy_branch', branch);
             localStorage.setItem('pharmacy_branch_name', branchNames[branch]);
             localStorage.setItem('pharmacy_logged_in', 'true');
-            
+
             // Load all data
             loadAllData();
-            
+
             // Add activity
             addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
-            
+
             // Show welcome message with medication-themed greeting
             const medicationGreetings = {
                 'MNK': 'Panado 500mg (Pain Relief)',
                 'NHO': 'Omeprazole 40mg (Acid Reducer)',
                 'LSK': 'Flustat 250mg (Antifungal)'
             };
-            
             alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nSecurity: ${medicationGreetings[branch]}\n\nYou have successfully logged in.`);
         }
-        
+
+        // Check login status on page load
+        function checkLoginStatus() {
+            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
+                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
+                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
+                login();
+            } else {
+                // Load settings for login page
+                const savedSettings = localStorage.getItem('pharmacy_settings');
+                if (savedSettings) {
+                    settings = JSON.parse(savedSettings);
+                }
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('pharmacy_logged_in');
+                document.getElementById('dashboardSection').classList.add('d-none');
+                document.getElementById('loginScreen').classList.remove('d-none');
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('mainContent').style.marginLeft = '0';
+                document.getElementById('password').value = '';
+                document.getElementById('currentBranch').textContent = 'Not logged in';
+                document.getElementById('logoutNavItem').classList.add('d-none');
+                document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
+                document.body.classList.add('login-page');
+                currentUser = null;
+                currentBranch = null;
+                addActivity('Logged out of the system', 'login');
+            }
+        }
+
+        // ============================================
+        // INVENTORY MANAGEMENT
+        // ============================================
+
         // Save inventory to localStorage
         function saveInventory() {
             localStorage.setItem('pharmacy_inventory', JSON.stringify(inventory));
             updateDashboardStats();
         }
-        
+
         // Save users to localStorage
         function saveUsers() {
             localStorage.setItem('pharmacy_users', JSON.stringify(users));
         }
-        
+
         // Render inventory table
         function renderInventoryTable() {
             const tbody = document.getElementById('inventoryTableBody');
             tbody.innerHTML = '';
-            
             let totalItems = 0;
             let totalMNK = 0;
             let totalNHO = 0;
             let totalLSK = 0;
             let lowStockCount = 0;
-            
+
             inventory.forEach(item => {
                 totalItems++;
                 totalMNK += item.stockMNK || 0;
                 totalNHO += item.stockNHO || 0;
                 totalLSK += item.stockLSK || 0;
-                
+
                 // Check low stock
                 const isLowMNK = (item.stockMNK || 0) < item.minStock;
                 const isLowNHO = (item.stockNHO || 0) < item.minStock;
                 const isLowLSK = (item.stockLSK || 0) < item.minStock;
                 if (isLowMNK || isLowNHO || isLowLSK) lowStockCount++;
-                
-                const status = (isLowMNK || isLowNHO || isLowLSK) ? 
-                    '<span class="badge badge-pending">Low Stock</span>' : 
+
+                const status = (isLowMNK || isLowNHO || isLowLSK) ?
+                    '<span class="badge badge-pending">Low Stock</span>' :
                     '<span class="badge badge-approved">In Stock</span>';
-                
+
                 const row = `
-                    <tr>
-                        <td>${item.id}</td>
-                        <td><strong>${item.name}</strong><br><small class="text-muted">${item.generic || ''}</small></td>
-                        <td>${item.category}</td>
-                        <td>${item.strength || '-'}</td>
-                        <td>${item.form}</td>
-                        <td><span class="${isLowMNK ? 'text-danger fw-bold' : ''}">${item.stockMNK || 0}</span></td>
-                        <td><span class="${isLowNHO ? 'text-danger fw-bold' : ''}">${item.stockNHO || 0}</span></td>
-                        <td><span class="${isLowLSK ? 'text-danger fw-bold' : ''}">${item.stockLSK || 0}</span></td>
-                        <td>${item.minStock}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem(${item.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td>${item.id}</td>
+                    <td><strong>${item.name}</strong><br><small class="text-muted">${item.generic || ''}</small></td>
+                    <td>${item.category}</td>
+                    <td>${item.strength || '-'}</td>
+                    <td>${item.form}</td>
+                    <td><span class="${isLowMNK ? 'text-danger fw-bold' : ''}">${item.stockMNK || 0}</span></td>
+                    <td><span class="${isLowNHO ? 'text-danger fw-bold' : ''}">${item.stockNHO || 0}</span></td>
+                    <td><span class="${isLowLSK ? 'text-danger fw-bold' : ''}">${item.stockLSK || 0}</span></td>
+                    <td>${item.minStock}</td>
+                    <td>${status}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem(${item.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
                 tbody.innerHTML += row;
             });
-            
+
             // Update stats
             document.getElementById('inventoryTotal').textContent = totalItems;
             document.getElementById('inventoryMNK').textContent = totalMNK;
@@ -1954,60 +2135,56 @@ Box</textarea>
             document.getElementById('inventoryLSK').textContent = totalLSK;
             document.getElementById('inventoryLow').textContent = lowStockCount;
         }
-        
+
         // Render users table
         function renderUsersTable() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
-            
             users.forEach(user => {
-                const statusBadge = user.status === 'active' ? 
-                    '<span class="badge badge-approved">Active</span>' : 
+                const statusBadge = user.status === 'active' ?
+                    '<span class="badge badge-approved">Active</span>' :
                     '<span class="badge badge-rejected">Inactive</span>';
-                
-                const lastLogin = user.lastLogin ? 
+                const lastLogin = user.lastLogin ?
                     new Date(user.lastLogin).toLocaleDateString() : 'Never';
-                
                 const row = `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.branch === 'MNK' ? 'Mankayane' : user.branch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}</td>
-                        <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
-                        <td>${statusBadge}</td>
-                        <td>${lastLogin}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.branch === 'MNK' ? 'Mankayane' : user.branch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}</td>
+                    <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
+                    <td>${statusBadge}</td>
+                    <td>${lastLogin}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
                 tbody.innerHTML += row;
             });
         }
-        
+
         // Show add item modal
         function showAddItemModal() {
             const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
             modal.show();
         }
-        
+
         // Show import modal
         function showImportModal() {
             const modal = new bootstrap.Modal(document.getElementById('importModal'));
             modal.show();
         }
-        
+
         // Show add user modal
         function showAddUserModal() {
             const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
             modal.show();
         }
-        
+
         // Save new item
         function saveNewItem() {
             const form = document.getElementById('addItemForm');
@@ -2015,7 +2192,6 @@ Box</textarea>
                 form.reportValidity();
                 return;
             }
-            
             const newItem = {
                 id: inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1,
                 name: document.getElementById('itemName').value,
@@ -2029,18 +2205,14 @@ Box</textarea>
                 minStock: parseInt(document.getElementById('minStock').value) || 10,
                 notes: document.getElementById('itemNotes').value
             };
-            
             inventory.push(newItem);
             saveInventory();
-            
-            // Close modal and reset form
             bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
             form.reset();
-            
             addActivity(`Added new medication: ${newItem.name}`, 'inventory');
             alert('Medication added successfully!');
         }
-        
+
         // Save new user
         function saveNewUser() {
             const form = document.getElementById('addUserForm');
@@ -2048,7 +2220,6 @@ Box</textarea>
                 form.reportValidity();
                 return;
             }
-            
             const newUser = {
                 id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
                 name: document.getElementById('userFullName').value,
@@ -2059,24 +2230,19 @@ Box</textarea>
                 lastLogin: null,
                 createdAt: new Date().toISOString()
             };
-            
             users.push(newUser);
             saveUsers();
             renderUsersTable();
-            
-            // Close modal and reset form
             bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
             form.reset();
-            
             addActivity(`Added new user: ${newUser.name}`, 'settings');
             alert('User added successfully!');
         }
-        
+
         // Edit item
         function editItem(id) {
             const item = inventory.find(i => i.id === id);
             if (item) {
-                // Pre-fill modal with item data
                 document.getElementById('itemName').value = item.name;
                 document.getElementById('itemGeneric').value = item.generic || '';
                 document.getElementById('itemCategory').value = item.category;
@@ -2087,18 +2253,14 @@ Box</textarea>
                 document.getElementById('stockLSK').value = item.stockLSK || 0;
                 document.getElementById('minStock').value = item.minStock || 10;
                 document.getElementById('itemNotes').value = item.notes || '';
-                
-                // Change modal title and button
                 document.querySelector('#addItemModal .modal-title').textContent = 'Edit Medication';
                 document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Update Medication';
                 document.querySelector('#addItemModal .btn-pharmacy').onclick = function() { updateItem(id); };
-                
-                // Show modal
                 const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
                 modal.show();
             }
         }
-        
+
         // Update item
         function updateItem(id) {
             const index = inventory.findIndex(i => i.id === id);
@@ -2116,21 +2278,17 @@ Box</textarea>
                     minStock: parseInt(document.getElementById('minStock').value) || 10,
                     notes: document.getElementById('itemNotes').value
                 };
-                
                 saveInventory();
                 bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
                 document.getElementById('addItemForm').reset();
-                
-                // Reset modal
                 document.querySelector('#addItemModal .modal-title').textContent = 'Add New Medication';
                 document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Save Medication';
                 document.querySelector('#addItemModal .btn-pharmacy').onclick = saveNewItem;
-                
                 addActivity(`Updated medication: ${inventory[index].name}`, 'inventory');
                 alert('Medication updated successfully!');
             }
         }
-        
+
         // Delete item
         function deleteItem(id) {
             if (confirm('Are you sure you want to delete this medication?')) {
@@ -2141,7 +2299,7 @@ Box</textarea>
                 alert('Medication deleted successfully!');
             }
         }
-        
+
         // Delete user
         function deleteUser(id) {
             if (confirm('Are you sure you want to delete this user?')) {
@@ -2153,40 +2311,759 @@ Box</textarea>
                 alert('User deleted successfully!');
             }
         }
-        
+
+        // ============================================
+        // CSV IMPORT/EXPORT
+        // ============================================
+
+        // CSV Import function
+        function importCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const replaceExisting = document.getElementById('replaceExisting').checked;
+            
+            if (!fileInput.files.length) {
+                alert('Please select a CSV file first.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const csvContent = e.target.result;
+                    const lines = csvContent.split('\n');
+                    
+                    // Parse CSV
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    const newInventory = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        
+                        const values = lines[i].split(',').map(v => v.trim());
+                        if (values.length < 5) continue;
+                        
+                        const item = {
+                            id: inventory.length + newInventory.length + 1,
+                            name: values[0] || '',
+                            generic: values[1] || '',
+                            category: values[2] || 'Other',
+                            strength: values[3] || '',
+                            form: values[4] || 'Tablets',
+                            stockMNK: parseInt(values[5]) || 0,
+                            stockNHO: parseInt(values[6]) || 0,
+                            stockLSK: parseInt(values[7]) || 0,
+                            minStock: parseInt(values[8]) || 10,
+                            notes: values[9] || ''
+                        };
+                        
+                        newInventory.push(item);
+                    }
+                    
+                    if (newInventory.length === 0) {
+                        alert('No valid items found in CSV file.');
+                        return;
+                    }
+                    
+                    if (replaceExisting) {
+                        inventory = newInventory;
+                    } else {
+                        inventory = [...inventory, ...newInventory];
+                    }
+                    
+                    saveInventory();
+                    renderInventoryTable();
+                    
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    
+                    addActivity(`Imported ${newInventory.length} medications from CSV`, 'inventory');
+                    alert(`Successfully imported ${newInventory.length} medications!`);
+                    
+                } catch (error) {
+                    alert('Error reading CSV file: ' + error.message);
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Download CSV template
+        function downloadCSVTemplate() {
+            const csvContent = `Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock,Notes
+Paracetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,150,80,60,50,Pain relief
+Amoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,100,40,30,30,Broad spectrum antibiotic
+Omeprazole 40mg,Omeprazole,Antihypertensives,40mg,Capsules,75,35,25,20,Acid reducer
+Flustat 250mg,Fluconazole,Antifungal,250mg,Tablets,60,25,40,15,Antifungal medication
+Metformin 500mg,Metformin,Diabetes,500mg,Tablets,120,50,40,30,Diabetes medication
+Cough Syrup 100ml,Dextromethorphan,Cough,100ml,Syrup,45,20,15,10,Cough suppressant`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'inventory-template.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            return false;
+        }
+
+        // Export inventory
+        function exportInventory() {
+            const dataStr = JSON.stringify(inventory, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            addActivity('Exported inventory data', 'report');
+        }
+
+        // ============================================
+        // REQUISITION SYSTEM
+        // ============================================
+
+        // Show requisition creation modal
+        function createNewRequisition() {
+            if (!currentBranch) {
+                alert('Please log in first.');
+                return;
+            }
+            
+            // Branch staff can only create requisitions for their own branch
+            if (currentBranch === 'MNK') {
+                alert('Mankayane (Central) cannot create requisitions. Use Inventory Management instead.');
+                return;
+            }
+            
+            currentRequisition = {
+                items: [],
+                branch: currentBranch,
+                date: new Date().toISOString()
+            };
+            
+            // Create and show requisition modal
+            showRequisitionModal();
+        }
+
+        // Alias function for UI consistency
+        function createRequisition() {
+            createNewRequisition();
+        }
+
+        // Show requisition modal
+        function showRequisitionModal() {
+            // Create modal HTML
+            const modalHTML = `
+            <div class="modal fade" id="requisitionModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Create New Requisition</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Branch:</strong> ${currentBranch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Date:</strong> ${new Date().toLocaleDateString()}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchMedication" 
+                                           placeholder="Search medication...">
+                                    <button class="btn btn-outline-secondary" onclick="searchMedications()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Medication</th>
+                                            <th>Available</th>
+                                            <th>Request Qty</th>
+                                            <th>Add</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="medicationSelection">
+                                        <!-- Medications will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6>Selected Items</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Medication</th>
+                                            <th>Quantity</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="selectedItems">
+                                        <!-- Selected items will appear here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Notes/Urgency:</label>
+                                <textarea class="form-control" id="requisitionNotes" rows="2" 
+                                          placeholder="Any special instructions or urgency..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-pharmacy" onclick="submitRequisition()">
+                                Submit Requisition
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            // Add modal to DOM
+            if (!document.getElementById('requisitionModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            }
+            
+            // Show modal and populate medications
+            const modal = new bootstrap.Modal(document.getElementById('requisitionModal'));
+            modal.show();
+            
+            // Populate medication list
+            populateMedicationSelection();
+            updateSelectedItems();
+        }
+
+        // Populate medication selection table
+        function populateMedicationSelection() {
+            const tbody = document.getElementById('medicationSelection');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            inventory.forEach(item => {
+                // Get available stock at Mankayane (Central)
+                const availableStock = item.stockMNK || 0;
+                
+                if (availableStock > 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <strong>${item.name}</strong><br>
+                            <small class="text-muted">${item.strength} ${item.form}</small>
+                        </td>
+                        <td>
+                            <span class="${availableStock < (item.minStock * 2) ? 'text-warning' : ''}">
+                                ${availableStock} available
+                            </span>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control form-control-sm" 
+                                   id="qty_${item.id}" value="1" min="1" max="${availableStock}">
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="addToRequisition(${item.id})">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+            
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        No medications available at Mankayane
+                    </td>
+                </tr>`;
+            }
+        }
+
+        // Add item to requisition
+        function addToRequisition(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            if (!item) return;
+            
+            const qtyInput = document.getElementById(`qty_${itemId}`);
+            const quantity = parseInt(qtyInput.value) || 1;
+            const availableStock = item.stockMNK || 0;
+            
+            if (quantity <= 0) {
+                alert('Quantity must be at least 1');
+                return;
+            }
+            
+            if (quantity > availableStock) {
+                alert(`Only ${availableStock} available at Mankayane`);
+                qtyInput.value = availableStock;
+                return;
+            }
+            
+            // Check if item already in requisition
+            const existingIndex = currentRequisition.items.findIndex(i => i.itemId === itemId);
+            
+            if (existingIndex > -1) {
+                currentRequisition.items[existingIndex].quantity += quantity;
+            } else {
+                currentRequisition.items.push({
+                    itemId: itemId,
+                    name: item.name,
+                    strength: item.strength,
+                    form: item.form,
+                    quantity: quantity,
+                    available: availableStock
+                });
+            }
+            
+            updateSelectedItems();
+            
+            // Reset quantity input
+            qtyInput.value = 1;
+        }
+
+        // Update selected items table
+        function updateSelectedItems() {
+            const tbody = document.getElementById('selectedItems');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (currentRequisition.items.length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center text-muted">
+                        No items selected yet
+                    </td>
+                </tr>`;
+                return;
+            }
+            
+            let totalItems = 0;
+            
+            currentRequisition.items.forEach((item, index) => {
+                totalItems += item.quantity;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${item.name}</strong><br>
+                        <small class="text-muted">${item.strength} ${item.form}</small>
+                    </td>
+                    <td>${item.quantity}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" 
+                                onclick="removeFromRequisition(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'table-active';
+            totalRow.innerHTML = `
+                <td><strong>Total</strong></td>
+                <td><strong>${totalItems}</strong></td>
+                <td></td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        // Remove item from requisition
+        function removeFromRequisition(index) {
+            currentRequisition.items.splice(index, 1);
+            updateSelectedItems();
+        }
+
+        // Submit requisition
+        function submitRequisition() {
+            if (currentRequisition.items.length === 0) {
+                alert('Please add at least one item to the requisition.');
+                return;
+            }
+            
+            // Create requisition object
+            const newReq = {
+                id: requisitions.length > 0 ? Math.max(...requisitions.map(r => r.id)) + 1 : 1,
+                branch: currentRequisition.branch,
+                date: currentRequisition.date,
+                requestedBy: currentUser,
+                items: [...currentRequisition.items],
+                notes: document.getElementById('requisitionNotes').value || '',
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to requisitions
+            requisitions.push(newReq);
+            localStorage.setItem('pharmacy_requisitions', JSON.stringify(requisitions));
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('requisitionModal')).hide();
+            
+            // Show success message
+            const branchName = currentBranch === 'NHO' ? 'Nhlangano' : 'Lushikishikini';
+            alert(`✅ Requisition submitted successfully!\n\n${branchName} branch has requested ${newReq.items.length} items.\n\nMankayane will review and approve.`);
+            
+            // Add activity
+            addActivity(`Submitted requisition from ${branchName} (${newReq.items.length} items)`, 'requisition');
+            
+            // Update dashboard
+            updateDashboardStats();
+            renderRequisitionsTable();
+            
+            // Switch to requisitions section
+            showSection('requisitions');
+        }
+
         // Render requisitions table
         function renderRequisitionsTable() {
             const tbody = document.getElementById('requisitionsTableBody');
+            if (!tbody) return;
+            
             tbody.innerHTML = '';
             
             requisitions.forEach(req => {
                 const statusBadge = req.status === 'approved' ? 'badge-approved' :
-                                  req.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+                                   req.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+                
+                // Calculate total items
+                const totalItems = req.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
                 
                 const row = `
-                    <tr>
-                        <td>REQ-${req.id.toString().padStart(3, '0')}</td>
-                        <td>${req.branch}</td>
-                        <td>${new Date(req.date).toLocaleDateString()}</td>
-                        <td>${req.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${req.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewRequisition(${req.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td>REQ-${req.id.toString().padStart(3, '0')}</td>
+                    <td>${req.branch === 'NHO' ? 'Nhlangano' : req.branch === 'LSK' ? 'Lushikishikini' : 'Mankayane'}</td>
+                    <td>${new Date(req.date).toLocaleDateString()}</td>
+                    <td>${totalItems} items</td>
+                    <td><span class="badge ${statusBadge}">${req.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewRequisition(${req.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        ${currentBranch === 'MNK' && req.status === 'pending' ? `
+                        <button class="btn btn-sm btn-success ms-1" onclick="quickApprove(${req.id})">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>`;
+                
                 tbody.innerHTML += row;
             });
+            
+            // Initialize/reinitialize DataTable
+            $('#requisitionsTable').DataTable().destroy();
+            $('#requisitionsTable').DataTable({
+                pageLength: 10,
+                responsive: true
+            });
         }
-        
-        // Create new requisition
-        function createNewRequisition() {
-            alert('Requisition form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new requisition', 'requisition');
+
+        // View requisition details
+        function viewRequisition(reqId) {
+            const req = requisitions.find(r => r.id === reqId);
+            if (!req) return;
+            
+            // Create view modal
+            const modalHTML = `
+            <div class="modal fade" id="viewRequisitionModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Requisition #REQ-${req.id.toString().padStart(3, '0')}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <p><strong>Branch:</strong> ${req.branch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}</p>
+                                    <p><strong>Date:</strong> ${new Date(req.date).toLocaleDateString()}</p>
+                                    <p><strong>Requested By:</strong> ${req.requestedBy}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Status:</strong> 
+                                        <span class="badge ${req.status === 'pending' ? 'badge-pending' : req.status === 'approved' ? 'badge-approved' : 'badge-rejected'}">
+                                            ${req.status}
+                                        </span>
+                                    </p>
+                                    <p><strong>Total Items:</strong> ${req.items.length}</p>
+                                    ${req.approvedBy ? `<p><strong>Approved By:</strong> ${req.approvedBy}</p>` : ''}
+                                </div>
+                            </div>
+                            
+                            ${req.notes ? `<div class="alert alert-info mb-4"><strong>Notes:</strong> ${req.notes}</div>` : ''}
+                            
+                            <h6>Requested Items</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Medication</th>
+                                            <th>Requested</th>
+                                            <th>Available</th>
+                                            ${currentBranch === 'MNK' && req.status === 'pending' ? '<th>Approve Qty</th>' : ''}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${req.items.map(item => `
+                                        <tr>
+                                            <td>
+                                                <strong>${item.name}</strong><br>
+                                                <small class="text-muted">${item.strength} ${item.form}</small>
+                                            </td>
+                                            <td>${item.quantity}</td>
+                                            <td>${item.available}</td>
+                                            ${currentBranch === 'MNK' && req.status === 'pending' ? 
+                                            `<td>
+                                                <input type="number" class="form-control form-control-sm" 
+                                                       id="approve_qty_${item.itemId}" 
+                                                       value="${item.quantity}" 
+                                                       min="0" max="${Math.min(item.quantity, item.available)}">
+                                            </td>` : ''}
+                                        </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            ${req.status === 'pending' && currentBranch === 'MNK' ? `
+                            <div class="mt-4">
+                                <label class="form-label">Approval Notes (optional):</label>
+                                <textarea class="form-control" id="approvalNotes" rows="2"></textarea>
+                            </div>
+                            ` : ''}
+                            
+                            ${req.status !== 'pending' && req.approvalNotes ? `
+                            <div class="alert ${req.status === 'approved' ? 'alert-success' : 'alert-danger'} mt-4">
+                                <strong>${req.status === 'approved' ? 'Approval' : 'Rejection'} Notes:</strong> ${req.approvalNotes}
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            
+                            ${req.status === 'pending' && currentBranch === 'MNK' ? `
+                            <button type="button" class="btn btn-success" onclick="approveRequisition(${req.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="rejectRequisition(${req.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            ` : ''}
+                            
+                            ${req.status === 'approved' && currentBranch === req.branch ? `
+                            <button type="button" class="btn btn-pharmacy" onclick="confirmReceipt(${req.id})">
+                                <i class="fas fa-check-circle"></i> Confirm Receipt
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            // Add modal to DOM
+            if (!document.getElementById('viewRequisitionModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            } else {
+                document.getElementById('viewRequisitionModal').outerHTML = modalHTML;
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('viewRequisitionModal'));
+            modal.show();
         }
-        
+
+        // Approve requisition (Mankayane only)
+        function approveRequisition(reqId) {
+            const req = requisitions.find(r => r.id === reqId);
+            if (!req || req.status !== 'pending') return;
+            
+            // Get approved quantities
+            const approvedItems = req.items.map(item => {
+                const approveInput = document.getElementById(`approve_qty_${item.itemId}`);
+                const approvedQty = approveInput ? parseInt(approveInput.value) || 0 : item.quantity;
+                return {
+                    ...item,
+                    approvedQuantity: Math.min(approvedQty, item.available, item.quantity)
+                };
+            });
+            
+            // Check if any items were approved
+            const totalApproved = approvedItems.reduce((sum, item) => sum + (item.approvedQuantity || 0), 0);
+            if (totalApproved === 0) {
+                alert('Please approve at least some quantity before approving.');
+                return;
+            }
+            
+            // Update requisition
+            req.status = 'approved';
+            req.approvedBy = currentUser;
+            req.approvedDate = new Date().toISOString();
+            req.approvalNotes = document.getElementById('approvalNotes').value || '';
+            req.items = approvedItems;
+            
+            // Create transfer record
+            createTransferFromRequisition(req);
+            
+            // Update stock at Mankayane (reduce)
+            approvedItems.forEach(item => {
+                const inventoryItem = inventory.find(i => i.id === item.itemId);
+                if (inventoryItem) {
+                    inventoryItem.stockMNK = Math.max(0, (inventoryItem.stockMNK || 0) - (item.approvedQuantity || 0));
+                }
+            });
+            
+            // Save everything
+            saveInventory();
+            localStorage.setItem('pharmacy_requisitions', JSON.stringify(requisitions));
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('viewRequisitionModal')).hide();
+            
+            // Show success
+            alert(`✅ Requisition approved!\n\nTransfer created for ${totalApproved} items.`);
+            
+            // Add activity
+            addActivity(`Approved requisition #REQ-${req.id.toString().padStart(3, '0')}`, 'requisition');
+            
+            // Update UI
+            updateDashboardStats();
+            renderRequisitionsTable();
+            renderTransfersTable();
+        }
+
+        // Quick approve for Mankayane staff
+        function quickApprove(reqId) {
+            const req = requisitions.find(r => r.id === reqId);
+            if (!req || req.status !== 'pending') return;
+            
+            // Auto-approve all items (max available)
+            req.items.forEach(item => {
+                const inventoryItem = inventory.find(i => i.id === item.itemId);
+                if (inventoryItem) {
+                    item.approvedQuantity = Math.min(item.quantity, inventoryItem.stockMNK || 0);
+                }
+            });
+            
+            const totalApproved = req.items.reduce((sum, item) => sum + (item.approvedQuantity || 0), 0);
+            
+            if (totalApproved === 0) {
+                alert('No stock available to approve this requisition.');
+                return;
+            }
+            
+            req.status = 'approved';
+            req.approvedBy = currentUser;
+            req.approvedDate = new Date().toISOString();
+            req.approvalNotes = 'Quick approved';
+            
+            // Update stock and create transfer
+            req.items.forEach(item => {
+                const inventoryItem = inventory.find(i => i.id === item.itemId);
+                if (inventoryItem && item.approvedQuantity) {
+                    inventoryItem.stockMNK = Math.max(0, (inventoryItem.stockMNK || 0) - item.approvedQuantity);
+                }
+            });
+            
+            // Create transfer
+            createTransferFromRequisition(req);
+            
+            // Save everything
+            saveInventory();
+            localStorage.setItem('pharmacy_requisitions', JSON.stringify(requisitions));
+            
+            alert(`✅ Quick approved! ${totalApproved} items transferred.`);
+            
+            addActivity(`Quick approved requisition #REQ-${req.id.toString().padStart(3, '0')}`, 'requisition');
+            
+            // Update UI
+            updateDashboardStats();
+            renderRequisitionsTable();
+            renderTransfersTable();
+        }
+
+        // Reject requisition
+        function rejectRequisition(reqId) {
+            const reason = prompt('Please enter reason for rejection:');
+            if (reason === null) return;
+            
+            const req = requisitions.find(r => r.id === reqId);
+            if (!req) return;
+            
+            req.status = 'rejected';
+            req.rejectedBy = currentUser;
+            req.rejectedDate = new Date().toISOString();
+            req.rejectionReason = reason;
+            
+            localStorage.setItem('pharmacy_requisitions', JSON.stringify(requisitions));
+            
+            bootstrap.Modal.getInstance(document.getElementById('viewRequisitionModal')).hide();
+            
+            alert(`Requisition #REQ-${req.id.toString().padStart(3, '0')} rejected.`);
+            
+            addActivity(`Rejected requisition #REQ-${req.id.toString().padStart(3, '0')}`, 'requisition');
+            
+            renderRequisitionsTable();
+        }
+
+        // ============================================
+        // TRANSFER MANAGEMENT
+        // ============================================
+
+        // Create transfer from approved requisition
+        function createTransferFromRequisition(req) {
+            const newTransfer = {
+                id: transfers.length > 0 ? Math.max(...transfers.map(t => t.id)) + 1 : 1,
+                requisitionId: req.id,
+                from: 'MNK',
+                to: req.branch,
+                date: new Date().toISOString(),
+                items: req.items.filter(item => (item.approvedQuantity || 0) > 0).map(item => ({
+                    itemId: item.itemId,
+                    name: item.name,
+                    strength: item.strength,
+                    form: item.form,
+                    quantity: item.approvedQuantity || 0
+                })),
+                status: 'pending', // Will change to 'delivered' when branch confirms receipt
+                createdBy: currentUser
+            };
+            
+            transfers.push(newTransfer);
+            localStorage.setItem('pharmacy_transfers', JSON.stringify(transfers));
+            
+            // Generate transfer form (PDF/printable)
+            generateTransferForm(newTransfer);
+        }
+
+        // Create new transfer (manual)
+        function createNewTransfer() {
+            alert('Manual transfer creation will be available in the next update.\n\nFor now, transfers are auto-generated from approved requisitions.');
+            addActivity('Started new transfer', 'transfer');
+        }
+
         // Render transfers table
         function renderTransfersTable() {
             const tbody = document.getElementById('transfersTableBody');
@@ -2194,54 +3071,232 @@ Box</textarea>
             
             transfers.forEach(transfer => {
                 const statusBadge = transfer.status === 'delivered' ? 'badge-delivered' : 'badge-pending';
+                const totalItems = transfer.items.reduce((sum, item) => sum + item.quantity, 0);
                 
                 const row = `
-                    <tr>
-                        <td>TRF-${transfer.id.toString().padStart(3, '0')}</td>
-                        <td>${transfer.from}</td>
-                        <td>${transfer.to}</td>
-                        <td>${new Date(transfer.date).toLocaleDateString()}</td>
-                        <td>${transfer.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${transfer.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td>TRF-${transfer.id.toString().padStart(3, '0')}</td>
+                    <td>${transfer.from === 'MNK' ? 'Mankayane' : transfer.from}</td>
+                    <td>${transfer.to === 'NHO' ? 'Nhlangano' : transfer.to === 'LSK' ? 'Lushikishikini' : transfer.to}</td>
+                    <td>${new Date(transfer.date).toLocaleDateString()}</td>
+                    <td>${totalItems} items</td>
+                    <td><span class="badge ${statusBadge}">${transfer.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>`;
                 tbody.innerHTML += row;
             });
+            
+            // Initialize/reinitialize DataTable
+            $('#transfersTable').DataTable().destroy();
+            $('#transfersTable').DataTable({
+                pageLength: 10,
+                responsive: true
+            });
         }
-        
-        // Create new transfer
-        function createNewTransfer() {
-            alert('Transfer form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new transfer', 'transfer');
+
+        // View transfer details
+        function viewTransfer(transferId) {
+            const transfer = transfers.find(t => t.id === transferId);
+            if (!transfer) return;
+            
+            alert(`Transfer #TRF-${transfer.id.toString().padStart(3, '0')}\n\nFrom: ${transfer.from}\nTo: ${transfer.to}\nStatus: ${transfer.status}\n\nClick "Print Transfer Form" in requisition view to print.`);
         }
-        
+
+        // Generate transfer form (printable)
+        function generateTransferForm(transfer) {
+            // Create printable HTML
+            const printWindow = window.open('', '_blank');
+            
+            const branchNames = {
+                'MNK': 'Mankayane (Central)',
+                'NHO': 'Nhlangano',
+                'LSK': 'Lushikishikini'
+            };
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Transfer Form #TRF-${transfer.id.toString().padStart(3, '0')}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h1 { color: #0056A6; }
+                        .info { margin-bottom: 20px; }
+                        .info table { width: 100%; border-collapse: collapse; }
+                        .info td { padding: 8px; border-bottom: 1px solid #ddd; }
+                        .items { margin-top: 20px; }
+                        .items table { width: 100%; border-collapse: collapse; }
+                        .items th, .items td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                        .items th { background-color: #f8f9fa; }
+                        .signatures { margin-top: 50px; display: flex; justify-content: space-between; }
+                        .signature-box { width: 45%; }
+                        .signature-line { border-top: 1px solid #000; margin-top: 50px; }
+                        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>THE YELLOW PHARMACY</h1>
+                        <h3>STOCK TRANSFER FORM</h3>
+                        <p>Excellent Pharmaceutical & Healthcare Services</p>
+                    </div>
+                    
+                    <div class="info">
+                        <table>
+                            <tr>
+                                <td><strong>Transfer ID:</strong> TRF-${transfer.id.toString().padStart(3, '0')}</td>
+                                <td><strong>Date:</strong> ${new Date(transfer.date).toLocaleDateString()}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>From:</strong> ${branchNames[transfer.from]}</td>
+                                <td><strong>To:</strong> ${branchNames[transfer.to]}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Requisition ID:</strong> REQ-${transfer.requisitionId.toString().padStart(3, '0')}</td>
+                                <td><strong>Prepared By:</strong> ${transfer.createdBy}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="items">
+                        <h4>Items Transferred</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Medication Name</th>
+                                    <th>Strength/Form</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transfer.items.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.name}</td>
+                                    <td>${item.strength} ${item.form}</td>
+                                    <td>${item.quantity}</td>
+                                </tr>
+                                `).join('')}
+                                <tr>
+                                    <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                                    <td><strong>${transfer.items.reduce((sum, item) => sum + item.quantity, 0)}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="signatures">
+                        <div class="signature-box">
+                            <p><strong>SENT BY (Mankayane):</strong></p>
+                            <div class="signature-line"></div>
+                            <p>Name: _______________________</p>
+                            <p>Signature: ___________________</p>
+                            <p>Date: _______________________</p>
+                        </div>
+                        
+                        <div class="signature-box">
+                            <p><strong>RECEIVED BY (${branchNames[transfer.to]}):</strong></p>
+                            <div class="signature-line"></div>
+                            <p>Name: _______________________</p>
+                            <p>Signature: ___________________</p>
+                            <p>Date: _______________________</p>
+                        </div>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>Yellow Pharmacy Inventory System | Generated on ${new Date().toLocaleString()}</p>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    </script>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            addActivity(`Generated transfer form #TRF-${transfer.id.toString().padStart(3, '0')}`, 'transfer');
+        }
+
+        // Confirm receipt (branch staff)
+        function confirmReceipt(reqId) {
+            const req = requisitions.find(r => r.id === reqId);
+            if (!req || req.status !== 'approved') return;
+            
+            // Find corresponding transfer
+            const transfer = transfers.find(t => t.requisitionId === reqId);
+            if (!transfer) return;
+            
+            // Update transfer status
+            transfer.status = 'delivered';
+            transfer.receivedBy = currentUser;
+            transfer.receivedDate = new Date().toISOString();
+            
+            // Update stock at receiving branch
+            req.items.forEach(item => {
+                const inventoryItem = inventory.find(i => i.id === item.itemId);
+                if (inventoryItem) {
+                    if (req.branch === 'NHO') {
+                        inventoryItem.stockNHO = (inventoryItem.stockNHO || 0) + (item.approvedQuantity || 0);
+                    } else if (req.branch === 'LSK') {
+                        inventoryItem.stockLSK = (inventoryItem.stockLSK || 0) + (item.approvedQuantity || 0);
+                    }
+                }
+            });
+            
+            // Save everything
+            saveInventory();
+            localStorage.setItem('pharmacy_transfers', JSON.stringify(transfers));
+            localStorage.setItem('pharmacy_requisitions', JSON.stringify(requisitions));
+            
+            bootstrap.Modal.getInstance(document.getElementById('viewRequisitionModal')).hide();
+            
+            alert(`✅ Receipt confirmed!\n\nStock has been updated at your branch.`);
+            
+            addActivity(`Confirmed receipt of transfer #TRF-${transfer.id.toString().padStart(3, '0')}`, 'transfer');
+            
+            // Update UI
+            updateDashboardStats();
+            renderRequisitionsTable();
+            renderTransfersTable();
+            renderInventoryTable();
+        }
+
+        // ============================================
+        // DASHBOARD & UI FUNCTIONS
+        // ============================================
+
         // Update dashboard statistics
         function updateDashboardStats() {
             // Inventory stats
             document.getElementById('totalItems').textContent = inventory.length;
-            
+
             // Low stock count
-            const lowStockCount = inventory.filter(item => 
+            const lowStockCount = inventory.filter(item =>
                 (item.stockMNK || 0) < item.minStock ||
                 (item.stockNHO || 0) < item.minStock ||
                 (item.stockLSK || 0) < item.minStock
             ).length;
             document.getElementById('lowStockItems').textContent = lowStockCount;
-            
+
             // Pending requisitions
             const pendingReqs = requisitions.filter(req => req.status === 'pending').length;
             document.getElementById('pendingRequisitions').textContent = pendingReqs;
-            
+
             // Pending transfers
             const pendingTrans = transfers.filter(trans => trans.status === 'pending').length;
             document.getElementById('pendingTransfers').textContent = pendingTrans;
         }
-        
+
         // Add activity to recent activities
         function addActivity(description, type) {
             const activityList = document.getElementById('recentActivity');
@@ -2253,12 +3308,10 @@ Box</textarea>
                 'report': 'fas fa-chart-bar',
                 'settings': 'fas fa-cog'
             };
-            
             const icon = icons[type] || 'fas fa-info-circle';
             const now = new Date();
             const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const dateString = now.toLocaleDateString();
-            
             const activityItem = document.createElement('div');
             activityItem.className = 'list-group-item';
             activityItem.innerHTML = `
@@ -2268,153 +3321,52 @@ Box</textarea>
                 </div>
                 <p class="mb-1">${description}</p>
             `;
-            
-            // Add to top
             activityList.insertBefore(activityItem, activityList.firstChild);
-            
-            // Keep only last 5 activities
             if (activityList.children.length > 5) {
                 activityList.removeChild(activityList.lastChild);
             }
         }
-        
+
         // Show different sections
         function showSection(sectionId) {
             const sections = ['dashboard', 'inventory', 'requisitions', 'transfers', 'reports', 'settings'];
             sections.forEach(id => {
                 document.getElementById(id + 'Section').classList.add('d-none');
             });
-            
             document.getElementById(sectionId + 'Section').classList.remove('d-none');
-            
+
             // Update sidebar active state
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.classList.remove('active');
             });
-            
             const activeIndex = sections.indexOf(sectionId) + 1;
             if (activeIndex > 0) {
                 document.querySelector(`.sidebar-menu a:nth-child(${activeIndex})`).classList.add('active');
             }
-            
+
             // If showing settings, load users table
             if (sectionId === 'settings') {
                 renderUsersTable();
                 showSettingsTab('general');
             }
         }
-        
+
         // Show settings tab
         function showSettingsTab(tabId) {
             // Hide all tabs
             document.querySelectorAll('.settings-tab-content').forEach(tab => {
                 tab.classList.add('d-none');
             });
-            
             // Remove active class from all tab buttons
             document.querySelectorAll('.settings-tabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
             // Show selected tab
             document.getElementById(tabId + 'Settings').classList.remove('d-none');
-            
             // Add active class to clicked button
             event.target.classList.add('active');
         }
-        
-        // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('pharmacy_logged_in');
-                document.getElementById('dashboardSection').classList.add('d-none');
-                document.getElementById('loginScreen').classList.remove('d-none');
-                document.getElementById('sidebar').classList.remove('show');
-                document.getElementById('mainContent').style.marginLeft = '0';
-                document.getElementById('password').value = '';
-                document.getElementById('currentBranch').textContent = 'Not logged in';
-                document.getElementById('logoutNavItem').classList.add('d-none');
-                
-                // Change header text back to "The Yellow Pharmacy" (login page style)
-                document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-                
-                // Add login page class
-                document.body.classList.add('login-page');
-                
-                currentUser = null;
-                currentBranch = null;
-                
-                addActivity('Logged out of the system', 'login');
-            }
-        }
-        
-        // Save general settings
-        function saveGeneralSettings() {
-            settings.general.systemName = document.getElementById('systemName').value;
-            settings.general.dateFormat = document.getElementById('dateFormat').value;
-            settings.general.autoLogout = parseInt(document.getElementById('autoLogout').value);
-            settings.general.darkMode = document.getElementById('darkMode').checked;
-            
-            saveSettings();
-            applySettings();
-            addActivity('Updated general settings', 'settings');
-            alert('General settings saved successfully!');
-        }
-        
-        // Save security settings
-        function saveSecuritySettings() {
-            settings.security.minPasswordLength = parseInt(document.getElementById('minPasswordLength').value);
-            settings.security.requireSpecialChar = document.getElementById('requireSpecialChar').checked;
-            settings.security.requireNumbers = document.getElementById('requireNumbers').checked;
-            settings.security.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
-            
-            saveSettings();
-            addActivity('Updated security settings', 'settings');
-            alert('Security settings saved successfully!');
-        }
-        
-        // Save inventory settings
-        function saveInventorySettings() {
-            settings.inventory.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
-            settings.inventory.expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value);
-            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').filter(c => c.trim() !== '');
-            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').filter(u => u.trim() !== '');
-            settings.inventory.trackBatchNumbers = document.getElementById('trackBatchNumbers').checked;
-            settings.inventory.trackExpiryDates = document.getElementById('trackExpiryDates').checked;
-            settings.inventory.trackSuppliers = document.getElementById('trackSuppliers').checked;
-            
-            saveSettings();
-            addActivity('Updated inventory settings', 'settings');
-            alert('Inventory settings saved successfully!');
-        }
-        
-        // Save branch settings
-        function saveBranchSettings() {
-            settings.branches.defaultBranch = document.getElementById('defaultBranchSetting').value;
-            settings.branches.centralWarehouse = document.getElementById('centralWarehouse').value;
-            
-            saveSettings();
-            addActivity('Updated branch settings', 'settings');
-            alert('Branch settings saved successfully!');
-        }
-        
-        // Save notification settings
-        function saveNotificationSettings() {
-            settings.notifications.emailLowStock = document.getElementById('emailLowStock').checked;
-            settings.notifications.emailExpiry = document.getElementById('emailExpiry').checked;
-            settings.notifications.emailRequisitions = document.getElementById('emailRequisitions').checked;
-            settings.notifications.emailTransfers = document.getElementById('emailTransfers').checked;
-            settings.notifications.notificationEmail = document.getElementById('notificationEmail').value;
-            settings.notifications.alertFrequency = document.getElementById('alertFrequency').value;
-            settings.notifications.dailySummaryTime = document.getElementById('dailySummaryTime').value;
-            settings.notifications.inAppNotifications = document.getElementById('inAppNotifications').checked;
-            settings.notifications.soundAlerts = document.getElementById('soundAlerts').checked;
-            
-            saveSettings();
-            addActivity('Updated notification settings', 'settings');
-            alert('Notification settings saved successfully!');
-        }
-        
+
         // Toggle sidebar
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('show');
@@ -2428,86 +3380,11 @@ Box</textarea>
                 }
             }
         });
-        
-        // Check login status on page load
-        function checkLoginStatus() {
-            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
-                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
-                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
-                login();
-            } else {
-                // Load settings for login page
-                const savedSettings = localStorage.getItem('pharmacy_settings');
-                if (savedSettings) {
-                    settings = JSON.parse(savedSettings);
-                }
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
-            
-            // Make login work with Enter key
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            
-            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-                    e.preventDefault();
-                    document.getElementById('sidebarToggle').click();
-                }
-            });
-        });
-        
-        // Quick action functions (aliases for UI buttons)
-        function createRequisition() {
-            createNewRequisition();
-        }
-        
-        function viewInventory() {
-            showSection('inventory');
-        }
-        
-        function createTransfer() {
-            createNewTransfer();
-        }
-        
-        function generateReport(type) {
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
-            addActivity(`Generated ${type} report`, 'report');
-        }
-        
-        // Export/Import functions
-        function exportInventory() {
-            const dataStr = JSON.stringify(inventory, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            addActivity('Exported inventory data', 'report');
-        }
-        
-        function downloadCSVTemplate() {
-            const csvContent = "Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock,Notes\nParacetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,150,80,60,50,Pain relief\nAmoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,100,40,30,30,Broad spectrum antibiotic";
-            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'inventory-template.csv');
-            linkElement.click();
-            return false;
-        }
-        
-        function importCSV() {
-            alert('CSV import feature will be implemented in the next update.\n\nFor now, use the JSON export/import feature.');
-        }
-        
+
+        // ============================================
+        // DATA MANAGEMENT & REPORTS
+        // ============================================
+
         // Backup data
         function backupData() {
             const backup = {
@@ -2519,34 +3396,29 @@ Box</textarea>
                 timestamp: new Date().toISOString(),
                 version: '1.0'
             };
-            
             const dataStr = JSON.stringify(backup, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             const exportFileDefaultName = `yellow-pharmacy-backup-${new Date().toISOString().split('T')[0]}.json`;
-            
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
-            
             addActivity('Created system backup', 'settings');
             alert('Backup downloaded successfully!');
         }
-        
+
+        // Restore data
         function restoreData() {
             const fileInput = document.getElementById('restoreFile');
             if (!fileInput.files.length) {
                 alert('Please select a backup file first.');
                 return;
             }
-            
             const file = fileInput.files[0];
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 try {
                     const backup = JSON.parse(e.target.result);
-                    
                     if (confirm('This will replace ALL current data. Are you sure?')) {
                         // Restore data
                         if (backup.inventory) inventory = backup.inventory;
@@ -2554,19 +3426,16 @@ Box</textarea>
                         if (backup.transfers) transfers = backup.transfers;
                         if (backup.users) users = backup.users;
                         if (backup.settings) settings = backup.settings;
-                        
                         // Save all data
                         saveInventory();
                         saveUsers();
                         saveSettings();
-                        
                         // Reload UI
                         renderInventoryTable();
                         renderRequisitionsTable();
                         renderTransfersTable();
                         renderUsersTable();
                         applySettings();
-                        
                         addActivity('Restored system from backup', 'settings');
                         alert('Data restored successfully!');
                     }
@@ -2574,24 +3443,31 @@ Box</textarea>
                     alert('Error reading backup file: ' + error.message);
                 }
             };
-            
             reader.readAsText(file);
         }
-        
-        // Report functions
+
+        // Generate report
+        function generateReport(type) {
+            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
+            addActivity(`Generated ${type} report`, 'report');
+        }
+
+        // Export to Excel
         function exportToExcel() {
             alert('Excel export will be available in the next update.\nFor now, use JSON export.');
         }
-        
+
+        // Export to PDF
         function exportToPDF() {
             alert('PDF export will be available in the next update.\nFor now, use Print Report.');
         }
-        
+
+        // Print report
         function printReport() {
             window.print();
             addActivity('Printed report', 'report');
         }
-        
+
         // Confirm reset data
         function confirmResetData() {
             if (confirm('⚠️ WARNING: This will delete ALL data including:\n• All medications\n• All requisitions\n• All transfers\n• All users\n• All settings\n\nThis action cannot be undone!\n\nAre you absolutely sure?')) {
@@ -2600,6 +3476,15 @@ Box</textarea>
                     location.reload();
                 }
             }
+        }
+
+        // Quick action functions
+        function viewInventory() {
+            showSection('inventory');
+        }
+
+        function createTransfer() {
+            createNewTransfer();
         }
     </script>
 </body>
