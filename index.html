@@ -3,2665 +3,1323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yellow Pharmacy Inventory</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- DataTables for professional tables -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <title>Pharmacy Supply System</title>
     <style>
-        /* Yellow Pharmacy Brand Colors */
-        :root {
-            --pharmacy-yellow: #FFD700;
-            --pharmacy-dark-yellow: #FFC107;
-            --pharmacy-blue: #0056A6;
-            --pharmacy-light-blue: #E3F2FD;
-            --pharmacy-dark: #333333;
-        }
-        
-        /* Custom Styles */
-        body {
-            background-color: #f8f9fa;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
         }
-        
-        /* Pharmacy Header with Logo */
-        .pharmacy-header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px 0;
-            border-bottom: 3px solid var(--pharmacy-yellow);
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .pharmacy-logo {
-            height: 70px;
-            width: auto;
-            max-width: 200px;
-            object-fit: contain;
-        }
-        
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .logo-text .main {
-            color: var(--pharmacy-blue);
-            font-weight: 800;
-            font-size: 1.8rem;
-            line-height: 1.1;
-            margin-bottom: 3px;
-        }
-        
-        .logo-text .tagline {
-            color: var(--pharmacy-dark);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .pharmacy-navbar {
-            background: linear-gradient(135deg, var(--pharmacy-blue) 0%, #003366 100%);
-        }
-        
-        .pharmacy-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
-            margin-bottom: 20px;
-            border-top: 4px solid var(--pharmacy-yellow);
-        }
-        
-        .pharmacy-card:hover {
-            transform: translateY(-3px);
-        }
-        
-        .btn-pharmacy {
-            background: linear-gradient(135deg, var(--pharmacy-yellow) 0%, var(--pharmacy-dark-yellow) 100%);
-            color: #000;
-            font-weight: 600;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-pharmacy:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-        }
-        
-        .btn-outline-pharmacy {
-            border: 2px solid var(--pharmacy-yellow);
-            color: var(--pharmacy-blue);
-            font-weight: 600;
-        }
-        
-        .btn-outline-pharmacy:hover {
-            background: var(--pharmacy-yellow);
-            color: #000;
-        }
-        
-        /* Emergency Button */
-        .btn-emergency {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
-            font-weight: 600;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-emergency:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-            color: white;
-            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-        }
-        
-        .stat-card {
-            text-align: center;
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
             padding: 20px;
+            line-height: 1.6;
         }
-        
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--pharmacy-blue);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
-        
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
             margin-bottom: 5px;
         }
-        
-        .stat-label {
-            color: #666;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+
+        header p {
+            opacity: 0.9;
+            font-size: 16px;
         }
-        
-        .branch-badge {
-            background: var(--pharmacy-blue);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        /* Clickable phone numbers */
-        .phone-link {
-            color: var(--pharmacy-blue);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-        
-        .phone-link:hover {
-            color: var(--pharmacy-dark);
-            text-decoration: underline;
-        }
-        
-        /* DataTables customization */
-        .dataTables_wrapper {
-            padding: 0;
-        }
-        
-        table.dataTable {
-            border-collapse: collapse !important;
-            margin-top: 0 !important;
-        }
-        
-        .dataTables_filter input {
-            border: 1px solid #ddd !important;
-            border-radius: 4px !important;
-            padding: 5px 10px !important;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            background: white;
-            min-height: calc(100vh - 140px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            width: 250px;
-            left: -250px;
-            transition: left 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        .sidebar.show {
-            left: 0;
-        }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            background: var(--pharmacy-light-blue);
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .sidebar-menu li {
-            padding: 0;
-        }
-        
-        .sidebar-menu a {
-            display: block;
-            padding: 12px 20px;
-            color: #333;
-            text-decoration: none;
-            border-left: 4px solid transparent;
-            transition: all 0.2s ease;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: var(--pharmacy-light-blue);
-            border-left: 4px solid var(--pharmacy-yellow);
-            color: var(--pharmacy-blue);
-        }
-        
-        .sidebar-menu i {
-            width: 20px;
-            margin-right: 10px;
+
+        .logo-container {
             text-align: center;
+            margin-bottom: 15px;
         }
-        
-        .main-content {
+
+        .logo {
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .form-selector {
+            display: flex;
+            background-color: #34495e;
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .form-tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid #2c3e50;
+        }
+
+        .form-tab:last-child {
+            border-right: none;
+        }
+
+        .form-tab:hover {
+            background-color: #3d566e;
+        }
+
+        .form-tab.active {
+            background-color: #1abc9c;
+            color: white;
+        }
+
+        .form-container {
+            padding: 30px;
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-header {
+            background-color: #f8f9fa;
             padding: 20px;
-            transition: margin-left 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
         }
-        
-        .sidebar.show + .main-content {
-            margin-left: 250px;
+
+        .form-title {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
-        
-        /* Form styles */
+
+        .form-description {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+
         .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+            padding: 0 10px;
             margin-bottom: 20px;
         }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--pharmacy-blue);
+
+        .form-group label {
+            display: block;
             margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
         }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--pharmacy-yellow);
-            box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border 0.3s;
         }
-        
-        /* Status badges */
-        .badge-pending {
-            background: #ffc107;
-            color: #000;
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
-        
-        .badge-approved {
-            background: #198754;
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .items-table th {
+            background-color: #2c3e50;
             color: white;
-        }
-        
-        .badge-rejected {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .badge-delivered {
-            background: #0dcaf0;
-            color: #000;
-        }
-        
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            .logo-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            
-            .pharmacy-logo {
-                height: 50px;
-            }
-            
-            .logo-text .main {
-                font-size: 1.3rem;
-            }
-            
-            .logo-text .tagline {
-                font-size: 0.8rem;
-            }
-            
-            .main-content {
-                padding: 15px;
-            }
-            
-            .sidebar {
-                width: 100%;
-                left: -100%;
-            }
-            
-            .sidebar.show {
-                left: 0;
-            }
-            
-            .sidebar.show + .main-content {
-                margin-left: 0;
-            }
-            
-            .stat-card {
-                padding: 15px;
-            }
-            
-            .stat-number {
-                font-size: 1.5rem;
-            }
-        }
-        
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--pharmacy-yellow);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--pharmacy-dark-yellow);
-        }
-        
-        /* Login Page Specific */
-        .login-page .pharmacy-header {
-            text-align: center;
-            padding: 30px 0;
-        }
-        
-        .login-page .logo-container {
-            justify-content: center;
-        }
-        
-        .login-page .logo-text .main {
-            font-size: 2.2rem;
-            color: var(--pharmacy-blue);
-        }
-        
-        /* Logout button in navbar */
-        .logout-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.5);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        /* Settings Tabs */
-        .settings-tabs .nav-link {
-            color: var(--pharmacy-blue);
-            border: none;
-            border-bottom: 3px solid transparent;
-            padding: 10px 20px;
+            padding: 15px;
+            text-align: left;
             font-weight: 600;
         }
-        
-        .settings-tabs .nav-link.active {
-            color: var(--pharmacy-blue);
-            background: transparent;
-            border-bottom: 3px solid var(--pharmacy-yellow);
+
+        .items-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
         }
-        
-        .settings-tabs .nav-link:hover {
-            border-bottom: 3px solid var(--pharmacy-yellow);
+
+        .items-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .items-table input, 
+        .items-table select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .add-item-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .add-item-btn:hover {
+            background-color: #219653;
+        }
+
+        .remove-item-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+
+        .remove-item-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .signature-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .signature-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .signature-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 0 10px;
+            margin-bottom: 20px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .draft-section {
+            background-color: #fff8e1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .draft-selector {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .draft-select {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-pending {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+
+        .status-completed {
+            background-color: #a3e4d7;
+            color: #27ae60;
+        }
+
+        .auto-gen-field {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .total-row {
+            background-color: #ecf0f1;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .form-container.active, 
+            .form-container.active * {
+                visibility: visible;
+            }
+
+            .form-container.active {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block;
+            }
+
+            .form-tab, .action-buttons, .draft-section {
+                display: none !important;
+            }
+
+            .signature-line {
+                margin-top: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row, .signature-row {
+                flex-direction: column;
+            }
+            
+            .form-group, .signature-box {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
-<body class="login-page">
-    <!-- Pharmacy Header with Logo -->
-    <div class="pharmacy-header">
-        <div class="container">
+<body>
+    <div class="container">
+        <header>
             <div class="logo-container">
-                <img src="Logo_Image-removebg-preview (1).png" alt="Yellow Pharmacy" class="pharmacy-logo">
-                <div class="logo-text">
-                    <div class="main">The Yellow Pharmacy</div>
-                    <div class="tagline">Excellent Pharmaceutical & Healthcare Services</div>
+                <div class="logo-placeholder">
+                    <svg class="logo" width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1>Pharmacy Supply Management System</h1>
+                <p>Digital Requisition & Transfer Forms</p>
+            </div>
+        </header>
+
+        <div class="form-selector">
+            <div class="form-tab active" data-form="requisition">E-REQUISITION FORM</div>
+            <div class="form-tab" data-form="transfer">TRANSFER / REQUEST FORM</div>
+        </div>
+
+        <!-- Draft Load Section -->
+        <div class="draft-section no-print">
+            <h3>Load Saved Draft</h3>
+            <div class="draft-selector">
+                <select class="draft-select" id="draftSelect">
+                    <option value="">Select a saved draft to load...</option>
+                </select>
+                <button class="btn btn-secondary" id="loadDraftBtn">Load Draft</button>
+                <button class="btn btn-secondary" id="deleteDraftBtn">Delete Draft</button>
+                <div style="margin-left: auto; font-size: 14px;">
+                    <span id="draftCount">0</span> drafts saved
                 </div>
             </div>
         </div>
+
+        <!-- Requisition Form -->
+        <div class="form-container active" id="requisitionForm">
+            <div class="form-header">
+                <h2 class="form-title">E-REQUISITION FORM</h2>
+                <p class="form-description">To be filled by NHO/LSK when requesting supplies from Mankayane</p>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Request Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reqNumber">Requisition Number</label>
+                        <input type="text" id="reqNumber" class="auto-gen-field" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="reqDate">Date</label>
+                        <input type="text" id="reqDate" class="auto-gen-field" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="facilityName">Facility / Pharmacy</label>
+                        <select id="facilityName">
+                            <option value="">Select Facility</option>
+                            <option value="NHO">Nhlangano (NHO)</option>
+                            <option value="LSK">LSK Clinic</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="requestedBy">Requested By</label>
+                        <input type="text" id="requestedBy" placeholder="Full Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="reqSignature">Signature</label>
+                        <input type="text" id="reqSignature" placeholder="To be signed on printed copy">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Requested Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Unit</th>
+                            <th>Quantity Requested</th>
+                            <th>Quantity Issued</th>
+                            <th>Remarks</th>
+                            <th class="no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requisitionItems">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td id="reqTotalRequested">0</td>
+                            <td id="reqTotalIssued">0</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <button class="add-item-btn no-print" id="addRequisitionItem">+ Add Item</button>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Approval</h3>
+                <div class="signature-section">
+                    <div class="signature-row">
+                        <div class="signature-box">
+                            <label for="approvedBy">Approved By</label>
+                            <input type="text" id="approvedBy" placeholder="Name of Approver">
+                            <div class="signature-line">Signature</div>
+                        </div>
+                        <div class="signature-box">
+                            <label for="approvalDate">Date</label>
+                            <input type="date" id="approvalDate">
+                            <div class="signature-line">Date</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons no-print">
+                <div>
+                    <button class="btn btn-primary" id="saveRequisitionDraft">Save Draft</button>
+                    <button class="btn btn-secondary" id="clearRequisition">Clear Form</button>
+                </div>
+                <div>
+                    <button class="btn btn-success" id="printRequisition">Print / Save as PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Form -->
+        <div class="form-container" id="transferForm">
+            <div class="form-header">
+                <h2 class="form-title">TRANSFER / REQUEST FORM</h2>
+                <p class="form-description">To be filled by Mankayane when transferring supplies to NHO/LSK</p>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Transfer Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transferDate">Date</label>
+                        <input type="date" id="transferDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="docNumber">Document Number</label>
+                        <input type="text" id="docNumber" placeholder="Auto-generated">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transferFrom">From (Facility)</label>
+                        <input type="text" id="transferFrom" value="Mankayane Central Pharmacy" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="transferTo">To (Facility)</label>
+                        <select id="transferTo">
+                            <option value="">Select Facility</option>
+                            <option value="NHO">Nhlangano (NHO)</option>
+                            <option value="LSK">LSK Clinic</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="referenceReq">Reference Requisition #</label>
+                        <input type="text" id="referenceReq" placeholder="Enter REQ number from requisition form">
+                    </div>
+                    <div class="form-group">
+                        <label for="suppliedBy">Supplied By</label>
+                        <input type="text" id="suppliedBy" placeholder="Name">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Transfer Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Units</th>
+                            <th>SOB</th>
+                            <th>REQ</th>
+                            <th>Supplied</th>
+                            <th>Order Cost</th>
+                            <th>Remarks</th>
+                            <th class="no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transferItems">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="4"><strong>Total</strong></td>
+                            <td id="transferTotalSupplied">0</td>
+                            <td id="transferTotalCost">$0.00</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <button class="add-item-btn no-print" id="addTransferItem">+ Add Item</button>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Receipt Confirmation</h3>
+                <div class="signature-section">
+                    <div class="signature-row">
+                        <div class="signature-box">
+                            <label for="receivedBy">Received By</label>
+                            <input type="text" id="receivedBy" placeholder="Name of Receiver">
+                            <div class="signature-line">Signature</div>
+                        </div>
+                        <div class="signature-box">
+                            <label for="receiverSignature">Date Received</label>
+                            <input type="date" id="receiverSignature">
+                            <div class="signature-line">Date</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons no-print">
+                <div>
+                    <button class="btn btn-primary" id="saveTransferDraft">Save Draft</button>
+                    <button class="btn btn-secondary" id="clearTransfer">Clear Form</button>
+                </div>
+                <div>
+                    <button class="btn btn-info" id="loadFromRequisition">Load from Requisition</button>
+                    <button class="btn btn-success" id="printTransfer">Print / Save as PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Pharmacy Supply Management System | Digital Forms v1.0</p>
+            <p>Forms can be filled digitally, printed for signing, scanned, and uploaded to the system.</p>
+            <p class="print-only">Generated on <span id="printDate"></span></p>
+        </footer>
     </div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg pharmacy-navbar navbar-dark">
-        <div class="container">
-            <button class="navbar-toggler" type="button" id="sidebarToggle">
-                <span class="navbar-toggler-icon"></span> Menu
-            </button>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="nav-link" id="currentBranch">
-                            <i class="fas fa-hospital me-1"></i><span id="branchDisplay">Not logged in</span>
-                        </span>
-                    </li>
-                    <li class="nav-item d-none" id="logoutNavItem">
-                        <button class="btn logout-btn ms-3" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-1"></i>Logout
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h5 class="mb-1">
-                <i class="fas fa-user-circle me-2"></i>
-                <span id="sidebarUser">User</span>
-            </h5>
-            <small class="text-muted" id="sidebarBranch">Select Branch</small>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="#" onclick="showSection('inventory')"><i class="fas fa-pills"></i> Inventory</a></li>
-            <li><a href="#" onclick="showSection('requisitions')"><i class="fas fa-clipboard-list"></i> Requisitions</a></li>
-            <li><a href="#" onclick="showSection('transfers')"><i class="fas fa-truck-moving"></i> Transfers</a></li>
-            <li><a href="#" onclick="showSection('reports')"><i class="fas fa-chart-bar"></i> Reports</a></li>
-            <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
-            <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <!-- Login Screen (Default) -->
-        <div id="loginScreen" class="fade-in">
-            <div class="container" style="max-width: 450px; padding-top: 20px;">
-                <div class="card pharmacy-card">
-                    <div class="card-body p-4">
-                        <div class="text-center mb-4">
-                            <div class="rounded-circle bg-warning d-inline-flex p-3 mb-3">
-                                <i class="fas fa-clinic-medical fa-2x text-dark"></i>
-                            </div>
-                            <h3 class="card-title">The Yellow Pharmacy Inventory</h3>
-                            <p class="text-muted">Secure inventory management system</p>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Email Address</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" placeholder="admin@yellowpharmacy.com" value="admin@yellowpharmacy.com">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="Enter branch-specific password">
-                            </div>
-                            <div class="form-text">
-                                <small>Password format: MedicationName + Strength + ! (Case sensitive)</small>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label">Select Branch</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-hospital"></i></span>
-                                <select class="form-select" id="branch">
-                                    <option value="MNK">🏥 Mankayane (Central)</option>
-                                    <option value="NHO">🏥 Nhlangano</option>
-                                    <option value="LSK">🏥 Lushikishikini</option>
-                                </select>
-                            </div>
-                            <div class="form-text">
-                                <small>Contact Mankayane for password assistance</small>
-                            </div>
-                        </div>
-                        
-                        <button class="btn btn-pharmacy w-100 py-3 mb-3" onclick="login()">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
-                        </button>
-                        
-                        <!-- Emergency Call Button -->
-                        <div class="text-center mt-4">
-                            <button class="btn btn-emergency" onclick="callEmergency()">
-                                <i class="fas fa-phone-alt me-2"></i>Emergency Call to Mankayane
-                            </button>
-                            <div class="mt-2">
-                                <small class="text-muted">
-                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                    For urgent medical supplies only
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Section -->
-        <div id="dashboardSection" class="d-none fade-in">
-            <div class="container-fluid">
-                <!-- Welcome Header -->
-                <div class="row mb-4">
-                    <div class="col">
-                        <h2 class="fw-bold">Welcome, <span id="userName">Admin</span>!</h2>
-                        <p class="text-muted">You are logged into <span id="branchName" class="branch-badge"></span> branch</p>
-                    </div>
-                    <div class="col-auto">
-                        <div class="btn-group">
-                            <button class="btn btn-pharmacy me-2" onclick="createRequisition()">
-                                <i class="fas fa-plus-circle me-2"></i>New Requisition
-                            </button>
-                            <button class="btn btn-outline-pharmacy" onclick="showSection('inventory')">
-                                <i class="fas fa-pills me-2"></i>Manage Inventory
-                            </button>
-                            <button class="btn btn-outline-secondary ms-2" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Stats Cards -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card pharmacy-card stat-card">
-                            <i class="fas fa-pills stat-icon"></i>
-                            <div class="stat-number text-primary" id="totalItems">0</div>
-                            <div class="stat-label">Total Items</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card pharmacy-card stat-card">
-                            <i class="fas fa-clipboard-list stat-icon"></i>
-                            <div class="stat-number text-warning" id="pendingRequisitions">0</div>
-                            <div class="stat-label">Pending Requisitions</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card pharmacy-card stat-card">
-                            <i class="fas fa-exclamation-triangle stat-icon"></i>
-                            <div class="stat-number text-danger" id="lowStockItems">0</div>
-                            <div class="stat-label">Low Stock Items</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card pharmacy-card stat-card">
-                            <i class="fas fa-truck stat-icon"></i>
-                            <div class="stat-number text-info" id="pendingTransfers">0</div>
-                            <div class="stat-label">Pending Transfers</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Quick Actions -->
-                <div class="row mb-4">
-                    <div class="col">
-                        <div class="card pharmacy-card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">
-                                    <i class="fas fa-bolt me-2"></i>Quick Actions
-                                </h5>
-                                <div class="row g-2">
-                                    <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-primary w-100 py-2" onclick="showSection('inventory')">
-                                            <i class="fas fa-boxes me-2"></i>View Inventory
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-success w-100 py-2" onclick="createRequisition()">
-                                            <i class="fas fa-file-medical me-2"></i>New Requisition
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-info w-100 py-2" onclick="showSection('transfers')">
-                                            <i class="fas fa-truck me-2"></i>Create Transfer
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-secondary w-100 py-2" onclick="showSection('reports')">
-                                            <i class="fas fa-chart-pie me-2"></i>View Reports
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Recent Activity & Branch Contacts -->
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card pharmacy-card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">
-                                    <i class="fas fa-history me-2"></i>Recent Activity
-                                </h5>
-                                <div class="list-group list-group-flush" id="recentActivity">
-                                    <!-- Activities will be added here dynamically -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">
-                                    <i class="fas fa-address-book me-2"></i>Branch Contacts
-                                </h5>
-                                <div class="list-group list-group-flush">
-                                    <div class="list-group-item">
-                                        <strong>Mankayane (Central)</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Sithabile Mavuso</small><br>
-                                        <small><i class="fas fa-phone me-1"></i>
-                                            <a href="tel:+26876460256" class="phone-link">7646 0256</a>
-                                        </small>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <strong>Nhlangano</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
-                                        <small><i class="fas fa-phone me-1"></i>
-                                            <a href="tel:+26878270547" class="phone-link">7827 0547</a>
-                                        </small>
-                                    </div>
-                                    <div class="list-group-item">
-                                        <strong>Lushikishikini</strong><br>
-                                        <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
-                                        <small><i class="fas fa-phone me-1"></i>
-                                            <a href="tel:+26878715244" class="phone-link">7871 5244</a>
-                                        </small>
-                                    </div>
-                                </div>
-                                
-                                <!-- Emergency Call Button -->
-                                <div class="text-center mt-3">
-                                    <button class="btn btn-emergency w-100" onclick="callEmergency()">
-                                        <i class="fas fa-phone-alt me-2"></i>Emergency Call
-                                    </button>
-                                    <small class="text-muted d-block mt-1">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>
-                                        For urgent medical supplies only
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Inventory Management Section -->
-        <div id="inventorySection" class="d-none fade-in">
-            <div class="container-fluid">
-                <div class="row mb-4">
-                    <div class="col">
-                        <h2 class="fw-bold">
-                            <i class="fas fa-pills me-2"></i>Inventory Management
-                        </h2>
-                        <p class="text-muted">Manage all medication items across branches</p>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="showAddItemModal()">
-                            <i class="fas fa-plus me-2"></i>Add New Item
-                        </button>
-                        <button class="btn btn-outline-secondary ms-2" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Inventory Stats -->
-                <div class="row g-2 mb-4">
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Total Items</small>
-                                <h4 class="mb-0" id="inventoryTotal">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Mankayane</small>
-                                <h4 class="mb-0" id="inventoryMNK">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Nhlangano</small>
-                                <h4 class="mb-0" id="inventoryNHO">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Lushikishikini</small>
-                                <h4 class="mb-0" id="inventoryLSK">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Low Stock</small>
-                                <h4 class="mb-0 text-danger" id="inventoryLow">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <div class="card pharmacy-card">
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">Expiring Soon</small>
-                                <h4 class="mb-0 text-warning" id="inventoryExpiring">0</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Inventory Table -->
-                <div class="card pharmacy-card">
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" class="form-control" id="inventorySearch" placeholder="Search medications...">
-                                </div>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <div class="btn-group">
-                                    <button class="btn btn-outline-secondary btn-sm" onclick="exportInventory()">
-                                        <i class="fas fa-download me-1"></i>Export
-                                    </button>
-                                    <button class="btn btn-outline-secondary btn-sm" onclick="showImportModal()">
-                                        <i class="fas fa-upload me-1"></i>Import
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="inventoryTable">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Medication Name</th>
-                                        <th>Category</th>
-                                        <th>Strength</th>
-                                        <th>Form</th>
-                                        <th>Mankayane</th>
-                                        <th>Nhlangano</th>
-                                        <th>Lushikishikini</th>
-                                        <th>Min Stock</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventoryTableBody">
-                                    <!-- Inventory items will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Requisitions Section -->
-        <div id="requisitionsSection" class="d-none fade-in">
-            <div class="container-fluid">
-                <div class="row mb-4">
-                    <div class="col">
-                        <h2 class="fw-bold">
-                            <i class="fas fa-clipboard-list me-2"></i>Requisitions Management
-                        </h2>
-                        <p class="text-muted">Create and manage branch requisitions</p>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="createNewRequisition()">
-                            <i class="fas fa-plus me-2"></i>New Requisition
-                        </button>
-                        <button class="btn btn-outline-secondary ms-2" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Requisition Table -->
-                <div class="card pharmacy-card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="requisitionsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Req ID</th>
-                                        <th>Branch</th>
-                                        <th>Date</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="requisitionsTableBody">
-                                    <!-- Requisitions will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Transfers Section -->
-        <div id="transfersSection" class="d-none fade-in">
-            <div class="container-fluid">
-                <div class="row mb-4">
-                    <div class="col">
-                        <h2 class="fw-bold">
-                            <i class="fas fa-truck-moving me-2"></i>Transfers Management
-                        </h2>
-                        <p class="text-muted">Manage stock transfers between branches</p>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="createNewTransfer()">
-                            <i class="fas fa-plus me-2"></i>New Transfer
-                        </button>
-                        <button class="btn btn-outline-secondary ms-2" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Transfers Table -->
-                <div class="card pharmacy-card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="transfersTable">
-                                <thead>
-                                    <tr>
-                                        <th>Transfer ID</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Date</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transfersTableBody">
-                                    <!-- Transfers will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Reports Section -->
-        <div id="reportsSection" class="d-none fade-in">
-            <div class="container-fluid">
-                <h2 class="fw-bold mb-4">
-                    <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
-                </h2>
-                <p class="text-muted">Generate inventory reports and analytics</p>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card pharmacy-card">
-                            <div class="card-body">
-                                <h5 class="card-title">Quick Reports</h5>
-                                <div class="list-group list-group-flush">
-                                    <button class="list-group-item list-group-item-action" onclick="generateReport('stock')">
-                                        <i class="fas fa-box me-2"></i>Stock Level Report
-                                    </button>
-                                    <button class="list-group-item list-group-item-action" onclick="generateReport('expiry')">
-                                        <i class="fas fa-calendar-times me-2"></i>Expiry Report
-                                    </button>
-                                    <button class="list-group-item list-group-item-action" onclick="generateReport('requisitions')">
-                                        <i class="fas fa-clipboard-list me-2"></i>Requisition History
-                                    </button>
-                                    <button class="list-group-item list-group-item-action" onclick="generateReport('transfers')">
-                                        <i class="fas fa-truck me-2"></i>Transfer Logs
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card pharmacy-card">
-                            <div class="card-body">
-                                <h5 class="card-title">Export Options</h5>
-                                <div class="list-group list-group-flush">
-                                    <button class="list-group-item list-group-item-action" onclick="exportToExcel()">
-                                        <i class="fas fa-file-excel me-2 text-success"></i>Export to Excel
-                                    </button>
-                                    <button class="list-group-item list-group-item-action" onclick="exportToPDF()">
-                                        <i class="fas fa-file-pdf me-2 text-danger"></i>Export to PDF
-                                    </button>
-                                    <button class="list-group-item list-group-item-action" onclick="printReport()">
-                                        <i class="fas fa-print me-2"></i>Print Report
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <button class="btn btn-outline-secondary" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Settings Section -->
-        <div id="settingsSection" class="d-none fade-in">
-            <div class="container-fluid">
-                <div class="row mb-4">
-                    <div class="col">
-                        <h2 class="fw-bold">
-                            <i class="fas fa-cog me-2"></i>System Settings
-                        </h2>
-                        <p class="text-muted">Configure and manage system preferences</p>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-outline-secondary" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Settings Tabs -->
-                <ul class="nav nav-tabs settings-tabs mb-4" id="settingsTabs">
-                    <li class="nav-item">
-                        <button class="nav-link active" onclick="showSettingsTab('general')">General</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('users')">Users</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('branches')">Branches</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('inventory')">Inventory</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('notifications')">Notifications</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('data')">Data</button>
-                    </li>
-                </ul>
-                
-                <!-- General Settings -->
-                <div id="generalSettings" class="settings-tab-content">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">System Preferences</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">System Name</label>
-                                        <input type="text" class="form-control" id="systemName" value="The Yellow Pharmacy Inventory">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Date Format</label>
-                                        <select class="form-select" id="dateFormat">
-                                            <option value="DD/MM/YYYY">DD/MM/YYYY (13/01/2024)</option>
-                                            <option value="MM/DD/YYYY">MM/DD/YYYY (01/13/2024)</option>
-                                            <option value="YYYY-MM-DD">YYYY-MM-DD (2024-01-13)</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Auto-logout Time</label>
-                                        <select class="form-select" id="autoLogout">
-                                            <option value="15">15 minutes</option>
-                                            <option value="30" selected>30 minutes</option>
-                                            <option value="60">60 minutes</option>
-                                            <option value="0">Never (not recommended)</option>
-                                        </select>
-                                        <div class="form-text">Automatically log out after inactivity</div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="darkMode">
-                                        <label class="form-check-label" for="darkMode">
-                                            Enable Dark Mode
-                                        </label>
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveGeneralSettings()">
-                                        <i class="fas fa-save me-2"></i>Save General Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Security Settings</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Minimum Password Length</label>
-                                        <input type="number" class="form-control" id="minPasswordLength" value="8" min="6" max="20">
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="requireSpecialChar">
-                                        <label class="form-check-label" for="requireSpecialChar">
-                                            Require special character in passwords
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="requireNumbers">
-                                        <label class="form-check-label" for="requireNumbers">
-                                            Require numbers in passwords
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Session Timeout (minutes)</label>
-                                        <input type="number" class="form-control" id="sessionTimeout" value="30" min="5" max="240">
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveSecuritySettings()">
-                                        <i class="fas fa-shield-alt me-2"></i>Save Security Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Users Settings -->
-                <div id="usersSettings" class="settings-tab-content d-none">
-                    <div class="card pharmacy-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h5 class="card-title mb-0">User Management</h5>
-                                <button class="btn btn-pharmacy" onclick="showAddUserModal()">
-                                    <i class="fas fa-user-plus me-2"></i>Add New User
-                                </button>
-                            </div>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Branch</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Last Login</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody">
-                                        <!-- Users will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Branches Settings -->
-                <div id="branchesSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Branch Configuration</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Branch</label>
-                                        <select class="form-select" id="defaultBranchSetting">
-                                            <option value="MNK">Mankayane (Central)</option>
-                                            <option value="NHO">Nhlangano</option>
-                                            <option value="LSK">Lushikishikini</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Central Warehouse</label>
-                                        <select class="form-select" id="centralWarehouse">
-                                            <option value="MNK" selected>Mankayane</option>
-                                        </select>
-                                        <div class="form-text">This branch manages all incoming stock</div>
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveBranchSettings()">
-                                        <i class="fas fa-save me-2"></i>Save Branch Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Branch Details</h5>
-                                    <div class="list-group">
-                                        <div class="list-group-item">
-                                            <strong>Mankayane (MNK) - Central</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Sithabile Mavuso</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26876460256" class="phone-link">7646 0256</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                        <div class="list-group-item">
-                                            <strong>Nhlangano (NHO)</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26878270547" class="phone-link">7827 0547</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                        <div class="list-group-item">
-                                            <strong>Lushikishikini (LSK)</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26878715244" class="phone-link">7871 5244</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Inventory Settings -->
-                <div id="inventorySettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Stock Management</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Low Stock Threshold</label>
-                                        <input type="number" class="form-control" id="lowStockThreshold" value="10">
-                                        <div class="form-text">Alert when stock falls below this number</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Expiry Warning Days</label>
-                                        <input type="number" class="form-control" id="expiryWarningDays" value="30">
-                                        <div class="form-text">Warn this many days before expiry</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Categories</label>
-                                        <textarea class="form-control" id="defaultCategories" rows="4">Analgesics
-Antibiotics
-Antihypertensives
-Diabetes Medications
-Medical Supplies
-Other</textarea>
-                                        <div class="form-text">One category per line</div>
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveInventorySettings()">
-                                        <i class="fas fa-save me-2"></i>Save Inventory Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Units & Measurements</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Units</label>
-                                        <textarea class="form-control" id="defaultUnits" rows="4">Tablets
-Capsules
-Syrup (ml)
-Injection (vial)
-Cream/Ointment (tube)
-Bottle
-Box</textarea>
-                                        <div class="form-text">One unit per line</div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackBatchNumbers">
-                                        <label class="form-check-label" for="trackBatchNumbers">
-                                            Track batch numbers
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackExpiryDates">
-                                        <label class="form-check-label" for="trackExpiryDates">
-                                            Track expiry dates (required)
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackSuppliers">
-                                        <label class="form-check-label" for="trackSuppliers">
-                                            Track supplier information
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Notifications Settings -->
-                <div id="notificationsSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Email Notifications</h5>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailLowStock">
-                                        <label class="form-check-label" for="emailLowStock">
-                                            Low stock alerts
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailExpiry">
-                                        <label class="form-check-label" for="emailExpiry">
-                                            Expiry warnings
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailRequisitions">
-                                        <label class="form-check-label" for="emailRequisitions">
-                                            New requisitions
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailTransfers">
-                                        <label class="form-check-label" for="emailTransfers">
-                                            Transfer updates
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Notification Email</label>
-                                        <input type="email" class="form-control" id="notificationEmail" value="pharmacy@yellowpharmacy.com">
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveNotificationSettings()">
-                                        <i class="fas fa-bell me-2"></i>Save Notification Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Alert Settings</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Alert Frequency</label>
-                                        <select class="form-select" id="alertFrequency">
-                                            <option value="immediate">Immediately</option>
-                                            <option value="daily" selected>Daily Summary</option>
-                                            <option value="weekly">Weekly Summary</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Daily Summary Time</label>
-                                        <input type="time" class="form-control" id="dailySummaryTime" value="17:00">
-                                        <div class="form-text">Time to send daily summary email</div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="inAppNotifications">
-                                        <label class="form-check-label" for="inAppNotifications">
-                                            Show in-app notifications
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="soundAlerts">
-                                        <label class="form-check-label" for="soundAlerts">
-                                            Play sound for alerts
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Data Settings -->
-                <div id="dataSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Backup & Restore</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Automatic Backup</label>
-                                        <select class="form-select" id="autoBackup">
-                                            <option value="daily">Daily</option>
-                                            <option value="weekly" selected>Weekly</option>
-                                            <option value="monthly">Monthly</option>
-                                            <option value="never">Never</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="backupData()">
-                                            <i class="fas fa-download me-2"></i>Download Backup Now
-                                        </button>
-                                        <div class="form-text">Download all data as JSON file</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Restore from Backup</label>
-                                        <input type="file" class="form-control" id="restoreFile" accept=".json">
-                                        <button class="btn btn-outline-secondary w-100 mt-2" onclick="restoreData()">
-                                            <i class="fas fa-upload me-2"></i>Upload Backup File
-                                        </button>
-                                        <div class="form-text">Restore data from previous backup</div>
-                                    </div>
-                                    <div class="alert alert-warning">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>
-                                        <small>Backup your data regularly to prevent loss</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Data Management</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Data Retention</label>
-                                        <select class="form-select" id="dataRetention">
-                                            <option value="3">3 months</option>
-                                            <option value="6">6 months</option>
-                                            <option value="12" selected>12 months</option>
-                                            <option value="forever">Forever</option>
-                                        </select>
-                                        <div class="form-text">How long to keep historical data</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="exportToExcel()">
-                                            <i class="fas fa-file-excel me-2 text-success"></i>Export to Excel
-                                        </button>
-                                        <div class="form-text">Export current inventory to Excel</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="exportToPDF()">
-                                            <i class="fas fa-file-pdf me-2 text-danger"></i>Export to PDF
-                                        </button>
-                                        <div class="form-text">Generate PDF report</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-danger w-100" onclick="confirmResetData()">
-                                            <i class="fas fa-trash me-2"></i>Reset All Data
-                                        </button>
-                                        <div class="form-text">⚠️ This will delete ALL data</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Item Modal -->
-    <div class="modal fade" id="addItemModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Medication</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addItemForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Medication Name *</label>
-                                <input type="text" class="form-control" id="itemName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Generic Name</label>
-                                <input type="text" class="form-control" id="itemGeneric">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Category *</label>
-                                <select class="form-select" id="itemCategory" required>
-                                    <option value="">Select Category</option>
-                                    <option value="Analgesics">Analgesics</option>
-                                    <option value="Antibiotics">Antibiotics</option>
-                                    <option value="Antihypertensives">Antihypertensives</option>
-                                    <option value="Diabetes">Diabetes Medications</option>
-                                    <option value="Supplies">Medical Supplies</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Strength</label>
-                                <input type="text" class="form-control" id="itemStrength" placeholder="e.g., 500mg">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Form *</label>
-                                <select class="form-select" id="itemForm" required>
-                                    <option value="">Select Form</option>
-                                    <option value="Tablets">Tablets</option>
-                                    <option value="Capsules">Capsules</option>
-                                    <option value="Syrup">Syrup</option>
-                                    <option value="Injection">Injection</option>
-                                    <option value="Cream">Cream/Ointment</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Stock (Mankayane)</label>
-                                <input type="number" class="form-control" id="stockMNK" value="0" min="0">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Stock (Nhlangano)</label>
-                                <input type="number" class="form-control" id="stockNHO" value="0" min="0">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Stock (Lushikishikini)</label>
-                                <input type="number" class="form-control" id="stockLSK" value="0" min="0">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label">Min Stock Level *</label>
-                                <input type="number" class="form-control" id="minStock" value="10" min="1" required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Additional Notes</label>
-                            <textarea class="form-control" id="itemNotes" rows="2"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-pharmacy" onclick="saveNewItem()">Save Medication</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="mb-3">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" id="userFullName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email Address *</label>
-                            <input type="email" class="form-control" id="userEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Branch *</label>
-                            <select class="form-select" id="userBranch" required>
-                                <option value="">Select Branch</option>
-                                <option value="MNK">Mankayane (Central)</option>
-                                <option value="NHO">Nhlangano</option>
-                                <option value="LSK">Lushikishikini</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role *</label>
-                            <select class="form-select" id="userRole" required>
-                                <option value="">Select Role</option>
-                                <option value="admin">Admin (Full Access)</option>
-                                <option value="manager">Manager (Branch Management)</option>
-                                <option value="user">User (Limited Access)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Initial Password *</label>
-                            <input type="password" class="form-control" id="userPassword" required>
-                            <div class="form-text">User will be prompted to change on first login</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-pharmacy" onclick="saveNewUser()">Add User</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Import Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Import Medications</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Import Instructions:</strong><br>
-                        1. Prepare a CSV file with columns: Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock<br>
-                        2. Download template: <a href="#" onclick="downloadCSVTemplate()">template.csv</a><br>
-                        3. Upload your CSV file below
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Select CSV File</label>
-                        <input type="file" class="form-control" id="csvFile" accept=".csv">
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="replaceExisting">
-                        <label class="form-check-label" for="replaceExisting">
-                            Replace existing inventory (will delete all current items)
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-pharmacy" onclick="importCSV()">Import Medications</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    
-    <!-- Main Application JavaScript -->
     <script>
-        // Application State
-        let currentUser = null;
-        let currentBranch = null;
-        let inventory = [];
-        let requisitions = [];
-        let transfers = [];
-        let users = [];
-        let settings = {
-            general: {
-                systemName: "The Yellow Pharmacy Inventory",
-                dateFormat: "DD/MM/YYYY",
-                autoLogout: 30,
-                darkMode: false
-            },
-            security: {
-                minPasswordLength: 8,
-                requireSpecialChar: true,
-                requireNumbers: true,
-                sessionTimeout: 30
-            },
-            inventory: {
-                lowStockThreshold: 10,
-                expiryWarningDays: 30,
-                defaultCategories: ["Analgesics", "Antibiotics", "Antihypertensives", "Diabetes Medications", "Medical Supplies", "Other"],
-                defaultUnits: ["Tablets", "Capsules", "Syrup (ml)", "Injection (vial)", "Cream/Ointment (tube)", "Bottle", "Box"],
-                trackBatchNumbers: false,
-                trackExpiryDates: true,
-                trackSuppliers: false
-            },
-            branches: {
-                defaultBranch: "MNK",
-                centralWarehouse: "MNK"
-            },
-            notifications: {
-                emailLowStock: true,
-                emailExpiry: true,
-                emailRequisitions: true,
-                emailTransfers: true,
-                notificationEmail: "pharmacy@yellowpharmacy.com",
-                alertFrequency: "daily",
-                dailySummaryTime: "17:00",
-                inAppNotifications: true,
-                soundAlerts: true
-            },
-            data: {
-                autoBackup: "weekly",
-                dataRetention: 12
-            }
-        };
-        
-        // Initialize DataTables
-        $(document).ready(function() {
-            $('#inventoryTable').DataTable({
-                pageLength: 10,
-                responsive: true
-            });
+        // Predefined list of pharmacy items
+        const pharmacyItems = [
+            { name: "Paracetamol 500mg", unit: "Tablets", category: "Analgesics" },
+            { name: "Amoxicillin 250mg", unit: "Capsules", category: "Antibiotics" },
+            { name: "Ibuprofen 400mg", unit: "Tablets", category: "Analgesics" },
+            { name: "Cetirizine 10mg", unit: "Tablets", category: "Antihistamines" },
+            { name: "Metformin 500mg", unit: "Tablets", category: "Antidiabetics" },
+            { name: "Salbutamol Inhaler", unit: "Pieces", category: "Respiratory" },
+            { name: "Bandage 10cm", unit: "Rolls", category: "Dressings" },
+            { name: "Surgical Gloves", unit: "Pairs", category: "Disposables" },
+            { name: "Syringe 5ml", unit: "Pieces", category: "Disposables" },
+            { name: "Gauze Swabs", unit: "Packs", category: "Dressings" },
+            { name: "Hand Sanitizer", unit: "Bottles", category: "Hygiene" },
+            { name: "Face Masks", unit: "Boxes", category: "PPE" },
+            { name: "IV Fluid 500ml", unit: "Bags", category: "Fluids" },
+            { name: "Alcohol Swabs", unit: "Packs", category: "Disposables" },
+            { name: "Thermometer", unit: "Pieces", category: "Equipment" }
+        ];
+
+        // Initialize forms
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            const displayDate = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
             
-            $('#requisitionsTable').DataTable({
-                pageLength: 10
-            });
+            // Initialize Requisition Form
+            document.getElementById('reqDate').value = displayDate;
+            document.getElementById('approvalDate').value = formattedDate;
             
-            $('#transfersTable').DataTable({
-                pageLength: 10
-            });
+            // Generate Requisition Number
+            generateRequisitionNumber();
+            
+            // Initialize Transfer Form
+            document.getElementById('transferDate').value = formattedDate;
+            document.getElementById('receiverSignature').value = formattedDate;
+            generateDocumentNumber();
+            
+            // Set print date
+            document.getElementById('printDate').textContent = displayDate;
+            
+            // Add initial rows to both tables
+            addRequisitionItemRow();
+            addTransferItemRow();
+            
+            // Load drafts from localStorage
+            updateDraftList();
+            
+            // Setup event listeners
+            setupEventListeners();
         });
-        
-        // Load all data from localStorage
-        function loadAllData() {
-            // Load settings
-            const savedSettings = localStorage.getItem('pharmacy_settings');
-            if (savedSettings) {
-                settings = JSON.parse(savedSettings);
-                applySettings();
-            }
+
+        // Generate requisition number (REQ-YYYY-XXX)
+        function generateRequisitionNumber() {
+            const today = new Date();
+            const year = today.getFullYear();
             
-            // Load inventory
-            const savedInventory = localStorage.getItem('pharmacy_inventory');
-            if (savedInventory) {
-                inventory = JSON.parse(savedInventory);
+            // Get next number from localStorage or start from 1
+            let nextNum = localStorage.getItem('lastRequisitionNumber');
+            if (!nextNum) {
+                nextNum = 1;
             } else {
-                // Sample data for demo
-                inventory = [
-                    {
-                        id: 1,
-                        name: 'Paracetamol 500mg',
-                        generic: 'Paracetamol',
-                        category: 'Analgesics',
-                        strength: '500mg',
-                        form: 'Tablets',
-                        stockMNK: 150,
-                        stockNHO: 80,
-                        stockLSK: 60,
-                        minStock: 50,
-                        notes: 'Pain relief'
-                    },
-                    {
-                        id: 2,
-                        name: 'Amoxicillin 250mg',
-                        generic: 'Amoxicillin',
-                        category: 'Antibiotics',
-                        strength: '250mg',
-                        form: 'Capsules',
-                        stockMNK: 100,
-                        stockNHO: 40,
-                        stockLSK: 30,
-                        minStock: 30,
-                        notes: 'Broad spectrum antibiotic'
-                    },
-                    {
-                        id: 3,
-                        name: 'Omeprazole 40mg',
-                        generic: 'Omeprazole',
-                        category: 'Antihypertensives',
-                        strength: '40mg',
-                        form: 'Capsules',
-                        stockMNK: 75,
-                        stockNHO: 35,
-                        stockLSK: 25,
-                        minStock: 20,
-                        notes: 'Acid reducer'
-                    },
-                    {
-                        id: 4,
-                        name: 'Flustat 250mg',
-                        generic: 'Fluconazole',
-                        category: 'Antifungal',
-                        strength: '250mg',
-                        form: 'Tablets',
-                        stockMNK: 60,
-                        stockNHO: 25,
-                        stockLSK: 40,
-                        minStock: 15,
-                        notes: 'Antifungal'
-                    }
-                ];
-                saveInventory();
+                nextNum = parseInt(nextNum) + 1;
             }
-            renderInventoryTable();
             
-            // Load requisitions
-            const savedRequisitions = localStorage.getItem('pharmacy_requisitions');
-            requisitions = savedRequisitions ? JSON.parse(savedRequisitions) : [];
-            renderRequisitionsTable();
+            // Store for next time
+            localStorage.setItem('lastRequisitionNumber', nextNum);
             
-            // Load transfers
-            const savedTransfers = localStorage.getItem('pharmacy_transfers');
-            transfers = savedTransfers ? JSON.parse(savedTransfers) : [];
-            renderTransfersTable();
+            const reqNumber = `REQ-${year}-${nextNum.toString().padStart(3, '0')}`;
+            document.getElementById('reqNumber').value = reqNumber;
+            return reqNumber;
+        }
+
+        // Generate document number for transfer form
+        function generateDocumentNumber() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
             
-            // Load users
-            const savedUsers = localStorage.getItem('pharmacy_users');
-            if (savedUsers) {
-                users = JSON.parse(savedUsers);
+            // Get next number from localStorage or start from 1
+            let nextNum = localStorage.getItem('lastDocumentNumber');
+            if (!nextNum) {
+                nextNum = 1;
             } else {
-                // Default users
-                users = [
-                    {
-                        id: 1,
-                        name: 'Sithabile Mavuso',
-                        email: 'sithabile@yellowpharmacy.com',
-                        branch: 'MNK',
-                        role: 'admin',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: 2,
-                        name: 'Philangenkosi Simelane',
-                        email: 'philangenkosi@yellowpharmacy.com',
-                        branch: 'NHO',
-                        role: 'user',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: 3,
-                        name: 'Nelisiwe Simelane',
-                        email: 'nelisiwe@yellowpharmacy.com',
-                        branch: 'LSK',
-                        role: 'user',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-                saveUsers();
+                nextNum = parseInt(nextNum) + 1;
             }
             
-            updateDashboardStats();
+            // Store for next time
+            localStorage.setItem('lastDocumentNumber', nextNum);
+            
+            const docNumber = `TRF-${year}${month}${day}-${nextNum.toString().padStart(3, '0')}`;
+            document.getElementById('docNumber').value = docNumber;
+            return docNumber;
         }
-        
-        // Apply settings to UI
-        function applySettings() {
-            // Apply general settings
-            document.getElementById('systemName').value = settings.general.systemName;
-            document.getElementById('dateFormat').value = settings.general.dateFormat;
-            document.getElementById('autoLogout').value = settings.general.autoLogout;
-            document.getElementById('darkMode').checked = settings.general.darkMode;
+
+        // Add item row to requisition table
+        function addRequisitionItemRow(item = null) {
+            const tbody = document.getElementById('requisitionItems');
+            const rowCount = tbody.children.length;
+            const rowId = `req-row-${rowCount}`;
             
-            // Apply security settings
-            document.getElementById('minPasswordLength').value = settings.security.minPasswordLength;
-            document.getElementById('requireSpecialChar').checked = settings.security.requireSpecialChar;
-            document.getElementById('requireNumbers').checked = settings.security.requireNumbers;
-            document.getElementById('sessionTimeout').value = settings.security.sessionTimeout;
+            const row = document.createElement('tr');
+            row.id = rowId;
             
-            // Apply inventory settings
-            document.getElementById('lowStockThreshold').value = settings.inventory.lowStockThreshold;
-            document.getElementById('expiryWarningDays').value = settings.inventory.expiryWarningDays;
-            document.getElementById('defaultCategories').value = settings.inventory.defaultCategories.join('\n');
-            document.getElementById('defaultUnits').value = settings.inventory.defaultUnits.join('\n');
-            document.getElementById('trackBatchNumbers').checked = settings.inventory.trackBatchNumbers;
-            document.getElementById('trackExpiryDates').checked = settings.inventory.trackExpiryDates;
-            document.getElementById('trackSuppliers').checked = settings.inventory.trackSuppliers;
+            // Item description dropdown
+            const itemCell = document.createElement('td');
+            const itemSelect = document.createElement('select');
+            itemSelect.className = 'item-select';
+            itemSelect.innerHTML = '<option value="">Select Item</option>' +
+                pharmacyItems.map(item => `<option value="${item.name}" data-unit="${item.unit}">${item.name}</option>`).join('');
             
-            // Apply branch settings
-            document.getElementById('defaultBranchSetting').value = settings.branches.defaultBranch;
-            document.getElementById('centralWarehouse').value = settings.branches.centralWarehouse;
-            
-            // Apply notification settings
-            document.getElementById('emailLowStock').checked = settings.notifications.emailLowStock;
-            document.getElementById('emailExpiry').checked = settings.notifications.emailExpiry;
-            document.getElementById('emailRequisitions').checked = settings.notifications.emailRequisitions;
-            document.getElementById('emailTransfers').checked = settings.notifications.emailTransfers;
-            document.getElementById('notificationEmail').value = settings.notifications.notificationEmail;
-            document.getElementById('alertFrequency').value = settings.notifications.alertFrequency;
-            document.getElementById('dailySummaryTime').value = settings.notifications.dailySummaryTime;
-            document.getElementById('inAppNotifications').checked = settings.notifications.inAppNotifications;
-            document.getElementById('soundAlerts').checked = settings.notifications.soundAlerts;
-            
-            // Apply data settings
-            document.getElementById('autoBackup').value = settings.data.autoBackup;
-            document.getElementById('dataRetention').value = settings.data.dataRetention;
-            
-            // Apply dark mode if enabled
-            if (settings.general.darkMode) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
+            if (item && item.description) {
+                itemSelect.value = item.description;
             }
-        }
-        
-        // Save settings to localStorage
-        function saveSettings() {
-            localStorage.setItem('pharmacy_settings', JSON.stringify(settings));
-        }
-        
-        // SECURE LOGIN FUNCTION - NO PASSWORD HINTS
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const branch = document.getElementById('branch').value;
             
-            const branchNames = {
-                'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
-                'LSK': 'Lushikishikini'
+            itemSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const unit = selectedOption.getAttribute('data-unit');
+                this.closest('tr').querySelector('.unit-cell').textContent = unit || '';
+                updateRequisitionTotals();
+            });
+            
+            itemCell.appendChild(itemSelect);
+            
+            // Unit cell (auto-filled from item selection)
+            const unitCell = document.createElement('td');
+            unitCell.className = 'unit-cell';
+            if (item && item.unit) {
+                unitCell.textContent = item.unit;
+            }
+            
+            // Quantity Requested
+            const qtyRequestedCell = document.createElement('td');
+            const qtyRequestedInput = document.createElement('input');
+            qtyRequestedInput.type = 'number';
+            qtyRequestedInput.min = '0';
+            qtyRequestedInput.value = item ? item.qtyRequested || '' : '';
+            qtyRequestedInput.addEventListener('input', updateRequisitionTotals);
+            qtyRequestedCell.appendChild(qtyRequestedInput);
+            
+            // Quantity Issued
+            const qtyIssuedCell = document.createElement('td');
+            const qtyIssuedInput = document.createElement('input');
+            qtyIssuedInput.type = 'number';
+            qtyIssuedInput.min = '0';
+            qtyIssuedInput.value = item ? item.qtyIssued || '' : '';
+            qtyIssuedInput.addEventListener('input', updateRequisitionTotals);
+            qtyIssuedCell.appendChild(qtyIssuedInput);
+            
+            // Remarks
+            const remarksCell = document.createElement('td');
+            const remarksInput = document.createElement('input');
+            remarksInput.type = 'text';
+            remarksInput.placeholder = 'Notes';
+            remarksInput.value = item ? item.remarks || '' : '';
+            remarksCell.appendChild(remarksInput);
+            
+            // Remove button
+            const actionCell = document.createElement('td');
+            actionCell.className = 'no-print';
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-item-btn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                updateRequisitionTotals();
+            });
+            actionCell.appendChild(removeBtn);
+            
+            // Append all cells to row
+            row.appendChild(itemCell);
+            row.appendChild(unitCell);
+            row.appendChild(qtyRequestedCell);
+            row.appendChild(qtyIssuedCell);
+            row.appendChild(remarksCell);
+            row.appendChild(actionCell);
+            
+            tbody.appendChild(row);
+            updateRequisitionTotals();
+        }
+
+        // Add item row to transfer table
+        function addTransferItemRow(item = null) {
+            const tbody = document.getElementById('transferItems');
+            const rowCount = tbody.children.length;
+            const rowId = `transfer-row-${rowCount}`;
+            
+            const row = document.createElement('tr');
+            row.id = rowId;
+            
+            // Item description dropdown
+            const itemCell = document.createElement('td');
+            const itemSelect = document.createElement('select');
+            itemSelect.className = 'item-select';
+            itemSelect.innerHTML = '<option value="">Select Item</option>' +
+                pharmacyItems.map(item => `<option value="${item.name}" data-unit="${item.unit}">${item.name}</option>`).join('');
+            
+            if (item && item.description) {
+                itemSelect.value = item.description;
+            }
+            
+            itemSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const unit = selectedOption.getAttribute('data-unit');
+                const unitInput = this.closest('tr').querySelector('.unit-input');
+                if (unitInput) unitInput.value = unit || '';
+                updateTransferTotals();
+            });
+            
+            itemCell.appendChild(itemSelect);
+            
+            // Unit
+            const unitCell = document.createElement('td');
+            const unitInput = document.createElement('input');
+            unitInput.type = 'text';
+            unitInput.className = 'unit-input';
+            unitInput.value = item ? item.unit || '' : '';
+            unitCell.appendChild(unitInput);
+            
+            // SOB (Stock on Hand)
+            const sobCell = document.createElement('td');
+            const sobInput = document.createElement('input');
+            sobInput.type = 'number';
+            sobInput.min = '0';
+            sobInput.value = item ? item.sob || '' : '';
+            sobInput.addEventListener('input', updateTransferTotals);
+            sobCell.appendChild(sobInput);
+            
+            // REQ (Requested Quantity)
+            const reqCell = document.createElement('td');
+            const reqInput = document.createElement('input');
+            reqInput.type = 'number';
+            reqInput.min = '0';
+            reqInput.value = item ? item.req || '' : '';
+            reqInput.addEventListener('input', updateTransferTotals);
+            reqCell.appendChild(reqInput);
+            
+            // Supplied
+            const suppliedCell = document.createElement('td');
+            const suppliedInput = document.createElement('input');
+            suppliedInput.type = 'number';
+            suppliedInput.min = '0';
+            suppliedInput.value = item ? item.supplied || '' : '';
+            suppliedInput.addEventListener('input', updateTransferTotals);
+            suppliedCell.appendChild(suppliedInput);
+            
+            // Order Cost
+            const costCell = document.createElement('td');
+            const costInput = document.createElement('input');
+            costInput.type = 'number';
+            costInput.min = '0';
+            costInput.step = '0.01';
+            costInput.value = item ? item.cost || '' : '';
+            costInput.addEventListener('input', updateTransferTotals);
+            costCell.appendChild(costInput);
+            
+            // Remarks
+            const remarksCell = document.createElement('td');
+            const remarksInput = document.createElement('input');
+            remarksInput.type = 'text';
+            remarksInput.placeholder = 'Notes';
+            remarksInput.value = item ? item.remarks || '' : '';
+            remarksCell.appendChild(remarksInput);
+            
+            // Remove button
+            const actionCell = document.createElement('td');
+            actionCell.className = 'no-print';
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-item-btn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                updateTransferTotals();
+            });
+            actionCell.appendChild(removeBtn);
+            
+            // Append all cells to row
+            row.appendChild(itemCell);
+            row.appendChild(unitCell);
+            row.appendChild(sobCell);
+            row.appendChild(reqCell);
+            row.appendChild(suppliedCell);
+            row.appendChild(costCell);
+            row.appendChild(remarksCell);
+            row.appendChild(actionCell);
+            
+            tbody.appendChild(row);
+            updateTransferTotals();
+        }
+
+        // Update requisition totals
+        function updateRequisitionTotals() {
+            let totalRequested = 0;
+            let totalIssued = 0;
+            
+            const rows = document.querySelectorAll('#requisitionItems tr');
+            rows.forEach(row => {
+                const qtyRequestedInput = row.querySelector('input[type="number"]:nth-of-type(1)');
+                const qtyIssuedInput = row.querySelector('input[type="number"]:nth-of-type(2)');
+                
+                if (qtyRequestedInput) {
+                    totalRequested += parseInt(qtyRequestedInput.value) || 0;
+                }
+                
+                if (qtyIssuedInput) {
+                    totalIssued += parseInt(qtyIssuedInput.value) || 0;
+                }
+            });
+            
+            document.getElementById('reqTotalRequested').textContent = totalRequested;
+            document.getElementById('reqTotalIssued').textContent = totalIssued;
+        }
+
+        // Update transfer totals
+        function updateTransferTotals() {
+            let totalSupplied = 0;
+            let totalCost = 0;
+            
+            const rows = document.querySelectorAll('#transferItems tr');
+            rows.forEach(row => {
+                const suppliedInput = row.querySelector('td:nth-child(5) input');
+                const costInput = row.querySelector('td:nth-child(6) input');
+                
+                if (suppliedInput) {
+                    totalSupplied += parseInt(suppliedInput.value) || 0;
+                }
+                
+                if (costInput) {
+                    totalCost += parseFloat(costInput.value) || 0;
+                }
+            });
+            
+            document.getElementById('transferTotalSupplied').textContent = totalSupplied;
+            document.getElementById('transferTotalCost').textContent = '$' + totalCost.toFixed(2);
+        }
+
+        // Save requisition draft
+        function saveRequisitionDraft() {
+            const draft = {
+                type: 'requisition',
+                id: document.getElementById('reqNumber').value,
+                date: new Date().toISOString(),
+                data: {
+                    reqNumber: document.getElementById('reqNumber').value,
+                    reqDate: document.getElementById('reqDate').value,
+                    facilityName: document.getElementById('facilityName').value,
+                    requestedBy: document.getElementById('requestedBy').value,
+                    reqSignature: document.getElementById('reqSignature').value,
+                    approvedBy: document.getElementById('approvedBy').value,
+                    approvalDate: document.getElementById('approvalDate').value,
+                    items: []
+                }
             };
             
-            const branchFullNames = {
-                'MNK': 'Mankayane (Central)',
-                'NHO': 'Nhlangano',
-                'LSK': 'Lushikishikini'
-            };
-            
-            // Branch-specific pharmacy-themed passwords (SECURE - NOT DISPLAYED)
-            const branchPasswords = {
-                'MNK': 'Panado500mg!',        // Mankayane - Paracetamol
-                'NHO': 'Omeprazole40mg!',     // Nhlangano - Omeprazole 40mg
-                'LSK': 'Flustat250mg!'        // Lushikishikini - Flustat 250mg
-            };
-            
-            // Validate
-            if (!email || !password) {
-                alert('Please enter both email and password');
-                return;
-            }
-            
-            // Check password for selected branch (SECURE - NO HINTS)
-            if (password !== branchPasswords[branch]) {
-                // SECURE ERROR MESSAGE - No password hints!
-                alert('❌ Incorrect password for selected branch.\n\nPassword format: MedicationName + Strength + !\nExample: Panado500mg!\n\nNote: Password is case-sensitive.');
-                return;
-            }
-            
-            // Check email format
-            if (!email.includes('@') || !email.includes('.')) {
-                alert('Please enter a valid email address (e.g., user@yellowpharmacy.com)');
-                return;
-            }
-            
-            // Set current user
-            currentUser = email;
-            currentBranch = branch;
-            
-            // Update UI
-            document.getElementById('loginScreen').classList.add('d-none');
-            document.getElementById('dashboardSection').classList.remove('d-none');
-            
-            // Change header text to "The Yellow Pharmacy"
-            document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-            
-            const userName = email.split('@')[0].replace('.', ' ');
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('branchName').textContent = branchFullNames[branch];
-            document.getElementById('branchDisplay').textContent = branchNames[branch];
-            
-            // Update sidebar
-            document.getElementById('sidebarUser').textContent = userName;
-            document.getElementById('sidebarBranch').textContent = branchNames[branch];
-            
-            // Show logout button in navbar
-            document.getElementById('logoutNavItem').classList.remove('d-none');
-            
-            // Show sidebar for desktop
-            if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.add('show');
-                document.getElementById('mainContent').style.marginLeft = '250px';
-            }
-            
-            // Remove login page class
-            document.body.classList.remove('login-page');
+            // Collect items
+            const rows = document.querySelectorAll('#requisitionItems tr');
+            rows.forEach(row => {
+                const itemSelect = row.querySelector('.item-select');
+                const unitCell = row.querySelector('.unit-cell');
+                const qtyRequestedInput = row.querySelector('input[type="number"]:nth-of-type(1)');
+                const qtyIssuedInput = row.querySelector('input[type="number"]:nth-of-type(2)');
+                const remarksInput = row.querySelector('td:nth-child(5) input');
+                
+                if (itemSelect && itemSelect.value) {
+                    draft.data.items.push({
+                        description: itemSelect.value,
+                        unit: unitCell ? unitCell.textContent : '',
+                        qtyRequested: qtyRequestedInput ? qtyRequestedInput.value : '',
+                        qtyIssued: qtyIssuedInput ? qtyIssuedInput.value : '',
+                        remarks: remarksInput ? remarksInput.value : ''
+                    });
+                }
+            });
             
             // Save to localStorage
-            localStorage.setItem('pharmacy_user', email);
-            localStorage.setItem('pharmacy_user_name', userName);
-            localStorage.setItem('pharmacy_branch', branch);
-            localStorage.setItem('pharmacy_branch_name', branchNames[branch]);
-            localStorage.setItem('pharmacy_logged_in', 'true');
+            const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+            drafts[draft.id] = draft;
+            localStorage.setItem('pharmacyDrafts', JSON.stringify(drafts));
             
-            // Load all data
-            loadAllData();
-            
-            // Add activity
-            addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
-            
-            // Show welcome message without password information
-            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nYou have successfully logged in.`);
+            alert(`Draft saved: ${draft.id}`);
+            updateDraftList();
         }
-        
-        // Emergency call function
-        function callEmergency() {
-            if (confirm('Call Sithabile Mavuso at Mankayane for emergency medical supplies?\n\nPhone: 7646 0256')) {
-                // Create a phone link for mobile devices
-                const phoneLink = document.createElement('a');
-                phoneLink.href = 'tel:+26876460256';
-                phoneLink.style.display = 'none';
-                document.body.appendChild(phoneLink);
-                phoneLink.click();
-                document.body.removeChild(phoneLink);
-                
-                // Add activity log
-                addActivity('Initiated emergency call to Mankayane', 'emergency');
-                
-                // Show confirmation
-                alert('📞 Emergency call initiated. Please describe your urgent medical supply needs to Sithabile.');
-            }
-        }
-        
-        // Save inventory to localStorage
-        function saveInventory() {
-            localStorage.setItem('pharmacy_inventory', JSON.stringify(inventory));
-            updateDashboardStats();
-        }
-        
-        // Save users to localStorage
-        function saveUsers() {
-            localStorage.setItem('pharmacy_users', JSON.stringify(users));
-        }
-        
-        // Render inventory table
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = '';
+
+        // Save transfer draft
+        function saveTransferDraft() {
+            const draft = {
+                type: 'transfer',
+                id: document.getElementById('docNumber').value,
+                date: new Date().toISOString(),
+                data: {
+                    transferDate: document.getElementById('transferDate').value,
+                    docNumber: document.getElementById('docNumber').value,
+                    transferFrom: document.getElementById('transferFrom').value,
+                    transferTo: document.getElementById('transferTo').value,
+                    referenceReq: document.getElementById('referenceReq').value,
+                    suppliedBy: document.getElementById('suppliedBy').value,
+                    receivedBy: document.getElementById('receivedBy').value,
+                    receiverSignature: document.getElementById('receiverSignature').value,
+                    items: []
+                }
+            };
             
-            let totalItems = 0;
-            let totalMNK = 0;
-            let totalNHO = 0;
-            let totalLSK = 0;
-            let lowStockCount = 0;
-            
-            inventory.forEach(item => {
-                totalItems++;
-                totalMNK += item.stockMNK || 0;
-                totalNHO += item.stockNHO || 0;
-                totalLSK += item.stockLSK || 0;
+            // Collect items
+            const rows = document.querySelectorAll('#transferItems tr');
+            rows.forEach(row => {
+                const itemSelect = row.querySelector('.item-select');
+                const unitInput = row.querySelector('.unit-input');
+                const sobInput = row.querySelector('td:nth-child(3) input');
+                const reqInput = row.querySelector('td:nth-child(4) input');
+                const suppliedInput = row.querySelector('td:nth-child(5) input');
+                const costInput = row.querySelector('td:nth-child(6) input');
+                const remarksInput = row.querySelector('td:nth-child(7) input');
                 
-                // Check low stock
-                const isLowMNK = (item.stockMNK || 0) < item.minStock;
-                const isLowNHO = (item.stockNHO || 0) < item.minStock;
-                const isLowLSK = (item.stockLSK || 0) < item.minStock;
-                if (isLowMNK || isLowNHO || isLowLSK) lowStockCount++;
-                
-                const status = (isLowMNK || isLowNHO || isLowLSK) ? 
-                    '<span class="badge badge-pending">Low Stock</span>' : 
-                    '<span class="badge badge-approved">In Stock</span>';
-                
-                const row = `
-                    <tr>
-                        <td>${item.id}</td>
-                        <td><strong>${item.name}</strong><br><small class="text-muted">${item.generic || ''}</small></td>
-                        <td>${item.category}</td>
-                        <td>${item.strength || '-'}</td>
-                        <td>${item.form}</td>
-                        <td><span class="${isLowMNK ? 'text-danger fw-bold' : ''}">${item.stockMNK || 0}</span></td>
-                        <td><span class="${isLowNHO ? 'text-danger fw-bold' : ''}">${item.stockNHO || 0}</span></td>
-                        <td><span class="${isLowLSK ? 'text-danger fw-bold' : ''}">${item.stockLSK || 0}</span></td>
-                        <td>${item.minStock}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem(${item.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
+                if (itemSelect && itemSelect.value) {
+                    draft.data.items.push({
+                        description: itemSelect.value,
+                        unit: unitInput ? unitInput.value : '',
+                        sob: sobInput ? sobInput.value : '',
+                        req: reqInput ? reqInput.value : '',
+                        supplied: suppliedInput ? suppliedInput.value : '',
+                        cost: costInput ? costInput.value : '',
+                        remarks: remarksInput ? remarksInput.value : ''
+                    });
+                }
             });
             
-            // Update stats
-            document.getElementById('inventoryTotal').textContent = totalItems;
-            document.getElementById('inventoryMNK').textContent = totalMNK;
-            document.getElementById('inventoryNHO').textContent = totalNHO;
-            document.getElementById('inventoryLSK').textContent = totalLSK;
-            document.getElementById('inventoryLow').textContent = lowStockCount;
-        }
-        
-        // Render users table
-        function renderUsersTable() {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
+            // Save to localStorage
+            const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+            drafts[draft.id] = draft;
+            localStorage.setItem('pharmacyDrafts', JSON.stringify(drafts));
             
-            users.forEach(user => {
-                const statusBadge = user.status === 'active' ? 
-                    '<span class="badge badge-approved">Active</span>' : 
-                    '<span class="badge badge-rejected">Inactive</span>';
-                
-                const lastLogin = user.lastLogin ? 
-                    new Date(user.lastLogin).toLocaleDateString() : 'Never';
-                
-                const row = `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.branch === 'MNK' ? 'Mankayane' : user.branch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}</td>
-                        <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
-                        <td>${statusBadge}</td>
-                        <td>${lastLogin}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
+            alert(`Draft saved: ${draft.id}`);
+            updateDraftList();
         }
-        
-        // Show add item modal
-        function showAddItemModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
-            modal.show();
-        }
-        
-        // Show import modal
-        function showImportModal() {
-            const modal = new bootstrap.Modal(document.getElementById('importModal'));
-            modal.show();
-        }
-        
-        // Show add user modal
-        function showAddUserModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
-            modal.show();
-        }
-        
-        // Save new item
-        function saveNewItem() {
-            const form = document.getElementById('addItemForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
+
+        // Load a draft
+        function loadDraft(draftId) {
+            const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+            const draft = drafts[draftId];
+            
+            if (!draft) {
+                alert('Draft not found!');
                 return;
             }
             
-            const newItem = {
-                id: inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1,
-                name: document.getElementById('itemName').value,
-                generic: document.getElementById('itemGeneric').value,
-                category: document.getElementById('itemCategory').value,
-                strength: document.getElementById('itemStrength').value,
-                form: document.getElementById('itemForm').value,
-                stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
-                stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
-                stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
-                minStock: parseInt(document.getElementById('minStock').value) || 10,
-                notes: document.getElementById('itemNotes').value
-            };
+            // Switch to correct form
+            if (draft.type === 'requisition') {
+                document.querySelector('.form-tab[data-form="requisition"]').click();
+                
+                // Fill requisition form
+                document.getElementById('reqNumber').value = draft.data.reqNumber;
+                document.getElementById('reqDate').value = draft.data.reqDate;
+                document.getElementById('facilityName').value = draft.data.facilityName;
+                document.getElementById('requestedBy').value = draft.data.requestedBy;
+                document.getElementById('reqSignature').value = draft.data.reqSignature;
+                document.getElementById('approvedBy').value = draft.data.approvedBy;
+                document.getElementById('approvalDate').value = draft.data.approvalDate;
+                
+                // Clear and add items
+                document.getElementById('requisitionItems').innerHTML = '';
+                draft.data.items.forEach(item => addRequisitionItemRow(item));
+                
+            } else if (draft.type === 'transfer') {
+                document.querySelector('.form-tab[data-form="transfer"]').click();
+                
+                // Fill transfer form
+                document.getElementById('transferDate').value = draft.data.transferDate;
+                document.getElementById('docNumber').value = draft.data.docNumber;
+                document.getElementById('transferFrom').value = draft.data.transferFrom;
+                document.getElementById('transferTo').value = draft.data.transferTo;
+                document.getElementById('referenceReq').value = draft.data.referenceReq;
+                document.getElementById('suppliedBy').value = draft.data.suppliedBy;
+                document.getElementById('receivedBy').value = draft.data.receivedBy;
+                document.getElementById('receiverSignature').value = draft.data.receiverSignature;
+                
+                // Clear and add items
+                document.getElementById('transferItems').innerHTML = '';
+                draft.data.items.forEach(item => addTransferItemRow(item));
+            }
             
-            inventory.push(newItem);
-            saveInventory();
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
-            form.reset();
-            
-            addActivity(`Added new medication: ${newItem.name}`, 'inventory');
-            alert('Medication added successfully!');
+            alert(`Draft loaded: ${draftId}`);
         }
-        
-        // Save new user
-        function saveNewUser() {
-            const form = document.getElementById('addUserForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
+
+        // Update draft list dropdown
+        function updateDraftList() {
+            const draftSelect = document.getElementById('draftSelect');
+            const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+            
+            // Clear existing options except first
+            while (draftSelect.options.length > 1) {
+                draftSelect.remove(1);
+            }
+            
+            // Add drafts to dropdown
+            Object.keys(drafts).forEach(draftId => {
+                const draft = drafts[draftId];
+                const option = document.createElement('option');
+                option.value = draftId;
+                option.textContent = `${draftId} (${draft.type}, ${new Date(draft.date).toLocaleDateString()})`;
+                draftSelect.appendChild(option);
+            });
+            
+            // Update count
+            document.getElementById('draftCount').textContent = Object.keys(drafts).length;
+        }
+
+        // Load transfer form from requisition
+        function loadFromRequisition() {
+            const reqNumber = document.getElementById('referenceReq').value.trim();
+            if (!reqNumber) {
+                alert('Please enter a requisition number first');
                 return;
             }
             
-            const newUser = {
-                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-                name: document.getElementById('userFullName').value,
-                email: document.getElementById('userEmail').value,
-                branch: document.getElementById('userBranch').value,
-                role: document.getElementById('userRole').value,
-                status: 'active',
-                lastLogin: null,
-                createdAt: new Date().toISOString()
-            };
+            const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+            const requisitionDraft = Object.values(drafts).find(d => 
+                d.type === 'requisition' && d.data.reqNumber === reqNumber
+            );
             
-            users.push(newUser);
-            saveUsers();
-            renderUsersTable();
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
-            form.reset();
-            
-            addActivity(`Added new user: ${newUser.name}`, 'settings');
-            alert('User added successfully!');
-        }
-        
-        // Edit item
-        function editItem(id) {
-            const item = inventory.find(i => i.id === id);
-            if (item) {
-                // Pre-fill modal with item data
-                document.getElementById('itemName').value = item.name;
-                document.getElementById('itemGeneric').value = item.generic || '';
-                document.getElementById('itemCategory').value = item.category;
-                document.getElementById('itemStrength').value = item.strength || '';
-                document.getElementById('itemForm').value = item.form;
-                document.getElementById('stockMNK').value = item.stockMNK || 0;
-                document.getElementById('stockNHO').value = item.stockNHO || 0;
-                document.getElementById('stockLSK').value = item.stockLSK || 0;
-                document.getElementById('minStock').value = item.minStock || 10;
-                document.getElementById('itemNotes').value = item.notes || '';
-                
-                // Change modal title and button
-                document.querySelector('#addItemModal .modal-title').textContent = 'Edit Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Update Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').onclick = function() { updateItem(id); };
-                
-                // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
-                modal.show();
-            }
-        }
-        
-        // Update item
-        function updateItem(id) {
-            const index = inventory.findIndex(i => i.id === id);
-            if (index !== -1) {
-                inventory[index] = {
-                    ...inventory[index],
-                    name: document.getElementById('itemName').value,
-                    generic: document.getElementById('itemGeneric').value,
-                    category: document.getElementById('itemCategory').value,
-                    strength: document.getElementById('itemStrength').value,
-                    form: document.getElementById('itemForm').value,
-                    stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
-                    stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
-                    stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
-                    minStock: parseInt(document.getElementById('minStock').value) || 10,
-                    notes: document.getElementById('itemNotes').value
-                };
-                
-                saveInventory();
-                bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
-                document.getElementById('addItemForm').reset();
-                
-                // Reset modal
-                document.querySelector('#addItemModal .modal-title').textContent = 'Add New Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Save Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').onclick = saveNewItem;
-                
-                addActivity(`Updated medication: ${inventory[index].name}`, 'inventory');
-                alert('Medication updated successfully!');
-            }
-        }
-        
-        // Delete item
-        function deleteItem(id) {
-            if (confirm('Are you sure you want to delete this medication?')) {
-                const item = inventory.find(i => i.id === id);
-                inventory = inventory.filter(i => i.id !== id);
-                saveInventory();
-                addActivity(`Deleted medication: ${item.name}`, 'inventory');
-                alert('Medication deleted successfully!');
-            }
-        }
-        
-        // Delete user
-        function deleteUser(id) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                const user = users.find(u => u.id === id);
-                users = users.filter(u => u.id !== id);
-                saveUsers();
-                renderUsersTable();
-                addActivity(`Deleted user: ${user.name}`, 'settings');
-                alert('User deleted successfully!');
-            }
-        }
-        
-        // Render requisitions table
-        function renderRequisitionsTable() {
-            const tbody = document.getElementById('requisitionsTableBody');
-            tbody.innerHTML = '';
-            
-            requisitions.forEach(req => {
-                const statusBadge = req.status === 'approved' ? 'badge-approved' :
-                                  req.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
-                
-                const row = `
-                    <tr>
-                        <td>REQ-${req.id.toString().padStart(3, '0')}</td>
-                        <td>${req.branch}</td>
-                        <td>${new Date(req.date).toLocaleDateString()}</td>
-                        <td>${req.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${req.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewRequisition(${req.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-        
-        // Create new requisition
-        function createNewRequisition() {
-            alert('Requisition form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new requisition', 'requisition');
-        }
-        
-        // Render transfers table
-        function renderTransfersTable() {
-            const tbody = document.getElementById('transfersTableBody');
-            tbody.innerHTML = '';
-            
-            transfers.forEach(transfer => {
-                const statusBadge = transfer.status === 'delivered' ? 'badge-delivered' : 'badge-pending';
-                
-                const row = `
-                    <tr>
-                        <td>TRF-${transfer.id.toString().padStart(3, '0')}</td>
-                        <td>${transfer.from}</td>
-                        <td>${transfer.to}</td>
-                        <td>${new Date(transfer.date).toLocaleDateString()}</td>
-                        <td>${transfer.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${transfer.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-        
-        // Create new transfer
-        function createNewTransfer() {
-            alert('Transfer form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new transfer', 'transfer');
-        }
-        
-        // Update dashboard statistics
-        function updateDashboardStats() {
-            // Inventory stats
-            document.getElementById('totalItems').textContent = inventory.length;
-            
-            // Low stock count
-            const lowStockCount = inventory.filter(item => 
-                (item.stockMNK || 0) < item.minStock ||
-                (item.stockNHO || 0) < item.minStock ||
-                (item.stockLSK || 0) < item.minStock
-            ).length;
-            document.getElementById('lowStockItems').textContent = lowStockCount;
-            
-            // Pending requisitions
-            const pendingReqs = requisitions.filter(req => req.status === 'pending').length;
-            document.getElementById('pendingRequisitions').textContent = pendingReqs;
-            
-            // Pending transfers
-            const pendingTrans = transfers.filter(trans => trans.status === 'pending').length;
-            document.getElementById('pendingTransfers').textContent = pendingTrans;
-        }
-        
-        // Add activity to recent activities
-        function addActivity(description, type) {
-            const activityList = document.getElementById('recentActivity');
-            const icons = {
-                'login': 'fas fa-sign-in-alt',
-                'inventory': 'fas fa-pills',
-                'requisition': 'fas fa-clipboard-list',
-                'transfer': 'fas fa-truck',
-                'report': 'fas fa-chart-bar',
-                'settings': 'fas fa-cog',
-                'emergency': 'fas fa-exclamation-triangle'
-            };
-            
-            const icon = icons[type] || 'fas fa-info-circle';
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const dateString = now.toLocaleDateString();
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = 'list-group-item';
-            activityItem.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
-                    <small class="text-muted">${dateString} ${timeString}</small>
-                </div>
-                <p class="mb-1">${description}</p>
-            `;
-            
-            // Add to top
-            activityList.insertBefore(activityItem, activityList.firstChild);
-            
-            // Keep only last 5 activities
-            if (activityList.children.length > 5) {
-                activityList.removeChild(activityList.lastChild);
-            }
-        }
-        
-        // Show different sections
-        function showSection(sectionId) {
-            const sections = ['dashboard', 'inventory', 'requisitions', 'transfers', 'reports', 'settings'];
-            sections.forEach(id => {
-                document.getElementById(id + 'Section').classList.add('d-none');
-            });
-            
-            document.getElementById(sectionId + 'Section').classList.remove('d-none');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            const activeIndex = sections.indexOf(sectionId) + 1;
-            if (activeIndex > 0) {
-                document.querySelector(`.sidebar-menu a:nth-child(${activeIndex})`).classList.add('active');
-            }
-            
-            // If showing settings, load users table
-            if (sectionId === 'settings') {
-                renderUsersTable();
-                showSettingsTab('general');
-            }
-        }
-        
-        // Show settings tab
-        function showSettingsTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.settings-tab-content').forEach(tab => {
-                tab.classList.add('d-none');
-            });
-            
-            // Remove active class from all tab buttons
-            document.querySelectorAll('.settings-tabs .nav-link').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabId + 'Settings').classList.remove('d-none');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-        }
-        
-        // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('pharmacy_logged_in');
-                document.getElementById('dashboardSection').classList.add('d-none');
-                document.getElementById('loginScreen').classList.remove('d-none');
-                document.getElementById('sidebar').classList.remove('show');
-                document.getElementById('mainContent').style.marginLeft = '0';
-                document.getElementById('password').value = '';
-                document.getElementById('currentBranch').textContent = 'Not logged in';
-                document.getElementById('logoutNavItem').classList.add('d-none');
-                
-                // Change header text back to "The Yellow Pharmacy" (login page style)
-                document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-                
-                // Add login page class
-                document.body.classList.add('login-page');
-                
-                currentUser = null;
-                currentBranch = null;
-                
-                addActivity('Logged out of the system', 'login');
-            }
-        }
-        
-        // Save general settings
-        function saveGeneralSettings() {
-            settings.general.systemName = document.getElementById('systemName').value;
-            settings.general.dateFormat = document.getElementById('dateFormat').value;
-            settings.general.autoLogout = parseInt(document.getElementById('autoLogout').value);
-            settings.general.darkMode = document.getElementById('darkMode').checked;
-            
-            saveSettings();
-            applySettings();
-            addActivity('Updated general settings', 'settings');
-            alert('General settings saved successfully!');
-        }
-        
-        // Save security settings
-        function saveSecuritySettings() {
-            settings.security.minPasswordLength = parseInt(document.getElementById('minPasswordLength').value);
-            settings.security.requireSpecialChar = document.getElementById('requireSpecialChar').checked;
-            settings.security.requireNumbers = document.getElementById('requireNumbers').checked;
-            settings.security.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
-            
-            saveSettings();
-            addActivity('Updated security settings', 'settings');
-            alert('Security settings saved successfully!');
-        }
-        
-        // Save inventory settings
-        function saveInventorySettings() {
-            settings.inventory.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
-            settings.inventory.expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value);
-            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').filter(c => c.trim() !== '');
-            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').filter(u => u.trim() !== '');
-            settings.inventory.trackBatchNumbers = document.getElementById('trackBatchNumbers').checked;
-            settings.inventory.trackExpiryDates = document.getElementById('trackExpiryDates').checked;
-            settings.inventory.trackSuppliers = document.getElementById('trackSuppliers').checked;
-            
-            saveSettings();
-            addActivity('Updated inventory settings', 'settings');
-            alert('Inventory settings saved successfully!');
-        }
-        
-        // Save branch settings
-        function saveBranchSettings() {
-            settings.branches.defaultBranch = document.getElementById('defaultBranchSetting').value;
-            settings.branches.centralWarehouse = document.getElementById('centralWarehouse').value;
-            
-            saveSettings();
-            addActivity('Updated branch settings', 'settings');
-            alert('Branch settings saved successfully!');
-        }
-        
-        // Save notification settings
-        function saveNotificationSettings() {
-            settings.notifications.emailLowStock = document.getElementById('emailLowStock').checked;
-            settings.notifications.emailExpiry = document.getElementById('emailExpiry').checked;
-            settings.notifications.emailRequisitions = document.getElementById('emailRequisitions').checked;
-            settings.notifications.emailTransfers = document.getElementById('emailTransfers').checked;
-            settings.notifications.notificationEmail = document.getElementById('notificationEmail').value;
-            settings.notifications.alertFrequency = document.getElementById('alertFrequency').value;
-            settings.notifications.dailySummaryTime = document.getElementById('dailySummaryTime').value;
-            settings.notifications.inAppNotifications = document.getElementById('inAppNotifications').checked;
-            settings.notifications.soundAlerts = document.getElementById('soundAlerts').checked;
-            
-            saveSettings();
-            addActivity('Updated notification settings', 'settings');
-            alert('Notification settings saved successfully!');
-        }
-        
-        // Toggle sidebar
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-            if (window.innerWidth <= 768) {
-                document.getElementById('mainContent').style.marginLeft = '0';
-            } else {
-                if (document.getElementById('sidebar').classList.contains('show')) {
-                    document.getElementById('mainContent').style.marginLeft = '250px';
-                } else {
-                    document.getElementById('mainContent').style.marginLeft = '0';
-                }
-            }
-        });
-        
-        // Check login status on page load
-        function checkLoginStatus() {
-            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
-                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
-                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
-                login();
-            } else {
-                // Load settings for login page
-                const savedSettings = localStorage.getItem('pharmacy_settings');
-                if (savedSettings) {
-                    settings = JSON.parse(savedSettings);
-                }
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
-            
-            // Make login work with Enter key
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            
-            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-                    e.preventDefault();
-                    document.getElementById('sidebarToggle').click();
-                }
-            });
-        });
-        
-        // Quick action functions (aliases for UI buttons)
-        function createRequisition() {
-            createNewRequisition();
-        }
-        
-        function viewInventory() {
-            showSection('inventory');
-        }
-        
-        function createTransfer() {
-            createNewTransfer();
-        }
-        
-        function generateReport(type) {
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
-            addActivity(`Generated ${type} report`, 'report');
-        }
-        
-        // Export/Import functions
-        function exportInventory() {
-            const dataStr = JSON.stringify(inventory, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            addActivity('Exported inventory data', 'report');
-        }
-        
-        function downloadCSVTemplate() {
-            const csvContent = "Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock,Notes\nParacetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,150,80,60,50,Pain relief\nAmoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,100,40,30,30,Broad spectrum antibiotic";
-            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'inventory-template.csv');
-            linkElement.click();
-            return false;
-        }
-        
-        function importCSV() {
-            alert('CSV import feature will be implemented in the next update.\n\nFor now, use the JSON export/import feature.');
-        }
-        
-        // Backup data
-        function backupData() {
-            const backup = {
-                inventory: inventory,
-                requisitions: requisitions,
-                transfers: transfers,
-                users: users,
-                settings: settings,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const dataStr = JSON.stringify(backup, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `yellow-pharmacy-backup-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            addActivity('Created system backup', 'settings');
-            alert('Backup downloaded successfully!');
-        }
-        
-        function restoreData() {
-            const fileInput = document.getElementById('restoreFile');
-            if (!fileInput.files.length) {
-                alert('Please select a backup file first.');
+            if (!requisitionDraft) {
+                alert(`Requisition ${reqNumber} not found in drafts. Save the requisition as draft first.`);
                 return;
             }
             
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+            // Set transfer to facility from requisition
+            document.getElementById('transferTo').value = requisitionDraft.data.facilityName;
             
-            reader.onload = function(e) {
-                try {
-                    const backup = JSON.parse(e.target.result);
+            // Clear existing items and add from requisition
+            document.getElementById('transferItems').innerHTML = '';
+            
+            requisitionDraft.data.items.forEach(reqItem => {
+                addTransferItemRow({
+                    description: reqItem.description,
+                    unit: reqItem.unit,
+                    req: reqItem.qtyRequested,
+                    supplied: reqItem.qtyIssued || '',
+                    remarks: reqItem.remarks
+                });
+            });
+            
+            alert(`Loaded ${requisitionDraft.data.items.length} items from requisition ${reqNumber}`);
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Form tab switching
+            document.querySelectorAll('.form-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const formId = this.getAttribute('data-form');
                     
-                    if (confirm('This will replace ALL current data. Are you sure?')) {
-                        // Restore data
-                        if (backup.inventory) inventory = backup.inventory;
-                        if (backup.requisitions) requisitions = backup.requisitions;
-                        if (backup.transfers) transfers = backup.transfers;
-                        if (backup.users) users = backup.users;
-                        if (backup.settings) settings = backup.settings;
-                        
-                        // Save all data
-                        saveInventory();
-                        saveUsers();
-                        saveSettings();
-                        
-                        // Reload UI
-                        renderInventoryTable();
-                        renderRequisitionsTable();
-                        renderTransfersTable();
-                        renderUsersTable();
-                        applySettings();
-                        
-                        addActivity('Restored system from backup', 'settings');
-                        alert('Data restored successfully!');
-                    }
-                } catch (error) {
-                    alert('Error reading backup file: ' + error.message);
-                }
-            };
+                    // Update active tab
+                    document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show correct form
+                    document.querySelectorAll('.form-container').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById(formId + 'Form').classList.add('active');
+                });
+            });
             
-            reader.readAsText(file);
-        }
-        
-        // Report functions
-        function exportToExcel() {
-            alert('Excel export will be available in the next update.\nFor now, use JSON export.');
-        }
-        
-        function exportToPDF() {
-            alert('PDF export will be available in the next update.\nFor now, use Print Report.');
-        }
-        
-        function printReport() {
-            window.print();
-            addActivity('Printed report', 'report');
-        }
-        
-        // Confirm reset data
-        function confirmResetData() {
-            if (confirm('⚠️ WARNING: This will delete ALL data including:\n• All medications\n• All requisitions\n• All transfers\n• All users\n• All settings\n\nThis action cannot be undone!\n\nAre you absolutely sure?')) {
-                if (confirm('Type "RESET" to confirm deletion:')) {
-                    localStorage.clear();
-                    location.reload();
+            // Requisition form buttons
+            document.getElementById('addRequisitionItem').addEventListener('click', () => addRequisitionItemRow());
+            document.getElementById('saveRequisitionDraft').addEventListener('click', saveRequisitionDraft);
+            document.getElementById('clearRequisition').addEventListener('click', function() {
+                if (confirm('Clear the entire requisition form?')) {
+                    document.getElementById('requisitionForm').querySelectorAll('input, select').forEach(el => {
+                        if (!el.id || !el.id.includes('reqNumber') || !el.id.includes('reqDate')) {
+                            if (el.tagName === 'SELECT') el.value = '';
+                            else if (el.type === 'date') el.value = '';
+                            else el.value = '';
+                        }
+                    });
+                    document.getElementById('requisitionItems').innerHTML = '';
+                    addRequisitionItemRow();
+                    updateRequisitionTotals();
                 }
-            }
+            });
+            
+            document.getElementById('printRequisition').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Transfer form buttons
+            document.getElementById('addTransferItem').addEventListener('click', () => addTransferItemRow());
+            document.getElementById('saveTransferDraft').addEventListener('click', saveTransferDraft);
+            document.getElementById('clearTransfer').addEventListener('click', function() {
+                if (confirm('Clear the entire transfer form?')) {
+                    document.getElementById('transferForm').querySelectorAll('input, select').forEach(el => {
+                        if (!el.id || (!el.id.includes('docNumber') && !el.id.includes('transferFrom'))) {
+                            if (el.tagName === 'SELECT') el.value = '';
+                            else if (el.type === 'date') el.value = '';
+                            else el.value = '';
+                        }
+                    });
+                    document.getElementById('transferItems').innerHTML = '';
+                    addTransferItemRow();
+                    updateTransferTotals();
+                }
+            });
+            
+            document.getElementById('loadFromRequisition').addEventListener('click', loadFromRequisition);
+            document.getElementById('printTransfer').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Draft management
+            document.getElementById('loadDraftBtn').addEventListener('click', function() {
+                const draftId = document.getElementById('draftSelect').value;
+                if (draftId) {
+                    loadDraft(draftId);
+                } else {
+                    alert('Please select a draft to load');
+                }
+            });
+            
+            document.getElementById('deleteDraftBtn').addEventListener('click', function() {
+                const draftId = document.getElementById('draftSelect').value;
+                if (draftId && confirm(`Delete draft ${draftId}?`)) {
+                    const drafts = JSON.parse(localStorage.getItem('pharmacyDrafts') || '{}');
+                    delete drafts[draftId];
+                    localStorage.setItem('pharmacyDrafts', JSON.stringify(drafts));
+                    updateDraftList();
+                    alert('Draft deleted');
+                }
+            });
+            
+            // Auto-update totals when inputs change
+            document.addEventListener('input', function(e) {
+                if (e.target.type === 'number') {
+                    if (e.target.closest('#requisitionItems')) {
+                        updateRequisitionTotals();
+                    } else if (e.target.closest('#transferItems')) {
+                        updateTransferTotals();
+                    }
+                }
+            });
         }
     </script>
 </body>
