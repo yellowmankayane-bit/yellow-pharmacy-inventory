@@ -111,6 +111,24 @@
             color: #000;
         }
         
+        /* Emergency Button */
+        .btn-emergency {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-emergency:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            color: white;
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+        }
+        
         .stat-card {
             text-align: center;
             padding: 20px;
@@ -142,6 +160,19 @@
             border-radius: 15px;
             font-size: 0.8rem;
             font-weight: 600;
+        }
+        
+        /* Clickable phone numbers */
+        .phone-link {
+            color: var(--pharmacy-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .phone-link:hover {
+            color: var(--pharmacy-dark);
+            text-decoration: underline;
         }
         
         /* DataTables customization */
@@ -474,7 +505,7 @@
                                 <input type="password" class="form-control" id="password" placeholder="Enter branch-specific password">
                             </div>
                             <div class="form-text">
-                                <small>Each branch has a unique medication-based password</small>
+                                <small>Password format: MedicationName + Strength + ! (Case sensitive)</small>
                             </div>
                         </div>
                         
@@ -489,7 +520,7 @@
                                 </select>
                             </div>
                             <div class="form-text">
-                                <small>Mankayane: Sithabile Mavuso | Nhlangano: Philangenkosi Simelane | Lushikishikini: Nelisiwe Simelane</small>
+                                <small>Contact Mankayane for password assistance</small>
                             </div>
                         </div>
                         
@@ -497,11 +528,17 @@
                             <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
                         </button>
                         
-                        <div class="text-center">
-                            <small class="text-muted">
-                                <i class="fas fa-shield-alt me-1"></i>
-                                Branch-specific security enabled
-                            </small>
+                        <!-- Emergency Call Button -->
+                        <div class="text-center mt-4">
+                            <button class="btn btn-emergency" onclick="callEmergency()">
+                                <i class="fas fa-phone-alt me-2"></i>Emergency Call to Mankayane
+                            </button>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    For urgent medical supplies only
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -624,18 +661,35 @@
                                     <div class="list-group-item">
                                         <strong>Mankayane (Central)</strong><br>
                                         <small><i class="fas fa-user me-1"></i>Sithabile Mavuso</small><br>
-                                        <small><i class="fas fa-key me-1"></i>Password: Panado500mg!</small>
+                                        <small><i class="fas fa-phone me-1"></i>
+                                            <a href="tel:+26876460256" class="phone-link">7646 0256</a>
+                                        </small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Nhlangano</strong><br>
                                         <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
-                                        <small><i class="fas fa-key me-1"></i>Password: Omeprazole40mg!</small>
+                                        <small><i class="fas fa-phone me-1"></i>
+                                            <a href="tel:+26878270547" class="phone-link">7827 0547</a>
+                                        </small>
                                     </div>
                                     <div class="list-group-item">
                                         <strong>Lushikishikini</strong><br>
                                         <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
-                                        <small><i class="fas fa-key me-1"></i>Password: Flustat250mg!</small>
+                                        <small><i class="fas fa-phone me-1"></i>
+                                            <a href="tel:+26878715244" class="phone-link">7871 5244</a>
+                                        </small>
                                     </div>
+                                </div>
+                                
+                                <!-- Emergency Call Button -->
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-emergency w-100" onclick="callEmergency()">
+                                        <i class="fas fa-phone-alt me-2"></i>Emergency Call
+                                    </button>
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        For urgent medical supplies only
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -1097,17 +1151,26 @@
                                     <div class="list-group">
                                         <div class="list-group-item">
                                             <strong>Mankayane (MNK) - Central</strong><br>
-                                            <small>Contact: Sithabile Mavuso</small><br>
+                                            <small><i class="fas fa-user me-1"></i>Sithabile Mavuso</small><br>
+                                            <small><i class="fas fa-phone me-1"></i>
+                                                <a href="tel:+26876460256" class="phone-link">7646 0256</a>
+                                            </small><br>
                                             <small>Status: <span class="text-success">Active</span></small>
                                         </div>
                                         <div class="list-group-item">
                                             <strong>Nhlangano (NHO)</strong><br>
-                                            <small>Contact: Philangenkosi Simelane</small><br>
+                                            <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
+                                            <small><i class="fas fa-phone me-1"></i>
+                                                <a href="tel:+26878270547" class="phone-link">7827 0547</a>
+                                            </small><br>
                                             <small>Status: <span class="text-success">Active</span></small>
                                         </div>
                                         <div class="list-group-item">
                                             <strong>Lushikishikini (LSK)</strong><br>
-                                            <small>Contact: Nelisiwe Simelane</small><br>
+                                            <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
+                                            <small><i class="fas fa-phone me-1"></i>
+                                                <a href="tel:+26878715244" class="phone-link">7871 5244</a>
+                                            </small><br>
                                             <small>Status: <span class="text-success">Active</span></small>
                                         </div>
                                     </div>
@@ -1641,7 +1704,7 @@ Box</textarea>
                         stockNHO: 35,
                         stockLSK: 25,
                         minStock: 20,
-                        notes: 'Acid reducer - Nhlangano branch password'
+                        notes: 'Acid reducer'
                     },
                     {
                         id: 4,
@@ -1654,7 +1717,7 @@ Box</textarea>
                         stockNHO: 25,
                         stockLSK: 40,
                         minStock: 15,
-                        notes: 'Antifungal - Lushikishikini branch password'
+                        notes: 'Antifungal'
                     }
                 ];
                 saveInventory();
@@ -1770,7 +1833,7 @@ Box</textarea>
             localStorage.setItem('pharmacy_settings', JSON.stringify(settings));
         }
         
-        // Login function with branch-specific passwords
+        // SECURE LOGIN FUNCTION - NO PASSWORD HINTS
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -1788,18 +1851,11 @@ Box</textarea>
                 'LSK': 'Lushikishikini'
             };
             
-            // Branch-specific pharmacy-themed passwords
+            // Branch-specific pharmacy-themed passwords (SECURE - NOT DISPLAYED)
             const branchPasswords = {
                 'MNK': 'Panado500mg!',        // Mankayane - Paracetamol
                 'NHO': 'Omeprazole40mg!',     // Nhlangano - Omeprazole 40mg
                 'LSK': 'Flustat250mg!'        // Lushikishikini - Flustat 250mg
-            };
-            
-            // Branch password hints (shown in error messages)
-            const passwordHints = {
-                'MNK': 'Panado500mg! (Paracetamol 500mg)',
-                'NHO': 'Omeprazole40mg! (Omeprazole 40mg)',
-                'LSK': 'Flustat250mg! (Flustat 250mg)'
             };
             
             // Validate
@@ -1808,18 +1864,10 @@ Box</textarea>
                 return;
             }
             
-            // Check password for selected branch
+            // Check password for selected branch (SECURE - NO HINTS)
             if (password !== branchPasswords[branch]) {
-                // Show helpful error with password hints
-                let hintMessage = `Incorrect password for ${branchNames[branch]} branch.\n\n`;
-                hintMessage += `Correct password format: MedicationName + Strength + !\n\n`;
-                hintMessage += `Branch passwords:\n`;
-                hintMessage += `• Mankayane (Central): ${passwordHints['MNK']}\n`;
-                hintMessage += `• Nhlangano: ${passwordHints['NHO']}\n`;
-                hintMessage += `• Lushikishikini: ${passwordHints['LSK']}\n\n`;
-                hintMessage += `Tip: Use the medication name exactly as shown (case sensitive).`;
-                
-                alert(hintMessage);
+                // SECURE ERROR MESSAGE - No password hints!
+                alert('❌ Incorrect password for selected branch.\n\nPassword format: MedicationName + Strength + !\nExample: Panado500mg!\n\nNote: Password is case-sensitive.');
                 return;
             }
             
@@ -1874,14 +1922,27 @@ Box</textarea>
             // Add activity
             addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
             
-            // Show welcome message with medication-themed greeting
-            const medicationGreetings = {
-                'MNK': 'Panado 500mg (Pain Relief)',
-                'NHO': 'Omeprazole 40mg (Acid Reducer)',
-                'LSK': 'Flustat 250mg (Antifungal)'
-            };
-            
-            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nSecurity: ${medicationGreetings[branch]}\n\nYou have successfully logged in.`);
+            // Show welcome message without password information
+            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nYou have successfully logged in.`);
+        }
+        
+        // Emergency call function
+        function callEmergency() {
+            if (confirm('Call Sithabile Mavuso at Mankayane for emergency medical supplies?\n\nPhone: 7646 0256')) {
+                // Create a phone link for mobile devices
+                const phoneLink = document.createElement('a');
+                phoneLink.href = 'tel:+26876460256';
+                phoneLink.style.display = 'none';
+                document.body.appendChild(phoneLink);
+                phoneLink.click();
+                document.body.removeChild(phoneLink);
+                
+                // Add activity log
+                addActivity('Initiated emergency call to Mankayane', 'emergency');
+                
+                // Show confirmation
+                alert('📞 Emergency call initiated. Please describe your urgent medical supply needs to Sithabile.');
+            }
         }
         
         // Save inventory to localStorage
@@ -2251,7 +2312,8 @@ Box</textarea>
                 'requisition': 'fas fa-clipboard-list',
                 'transfer': 'fas fa-truck',
                 'report': 'fas fa-chart-bar',
-                'settings': 'fas fa-cog'
+                'settings': 'fas fa-cog',
+                'emergency': 'fas fa-exclamation-triangle'
             };
             
             const icon = icons[type] || 'fas fa-info-circle';
