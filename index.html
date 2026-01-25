@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- DataTables for professional tables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <!-- Signature Pad CSS -->
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         /* Yellow Pharmacy Brand Colors */
         :root {
@@ -232,6 +233,7 @@
             text-decoration: none;
             border-left: 4px solid transparent;
             transition: all 0.2s ease;
+            position: relative;
         }
         
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -243,6 +245,21 @@
         .sidebar-menu i {
             width: 20px;
             margin-right: 10px;
+            text-align: center;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #dc3545;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            min-width: 20px;
             text-align: center;
         }
         
@@ -309,6 +326,48 @@
         .badge-cancelled {
             background: #6c757d;
             color: white;
+        }
+        
+        /* Message styles */
+        .message-item {
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .message-item.unread {
+            border-left-color: var(--pharmacy-blue);
+            background-color: var(--pharmacy-light-blue);
+        }
+        
+        .message-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .message-priority-high {
+            border-left-color: #dc3545 !important;
+        }
+        
+        .message-priority-medium {
+            border-left-color: #ffc107 !important;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            color: var(--pharmacy-blue);
+        }
+        
+        .message-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .message-preview {
+            color: #495057;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
         
         /* Mobile adjustments */
@@ -593,6 +652,131 @@
                 border: 1px solid #ddd !important;
             }
         }
+        
+        /* Quick add item in forms */
+        .quick-add-item {
+            background: #e8f5e9;
+            border: 1px dashed #28a745;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .quick-add-item:hover {
+            background: #d4edda;
+        }
+        
+        /* Notification alert */
+        .notification-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Message view */
+        .message-view {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .message-attachments {
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+        
+        /* New message button */
+        .new-message-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--pharmacy-blue);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 86, 166, 0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .new-message-btn:hover {
+            transform: scale(1.1);
+            background: var(--pharmacy-blue);
+            color: white;
+        }
+        
+        /* Search and add item */
+        .search-add-container {
+            position: relative;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .search-result-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .add-new-item-option {
+            background: #e8f5e9;
+            color: #155724;
+            font-weight: 600;
+        }
+        
+        .add-new-item-option:hover {
+            background: #d4edda;
+        }
     </style>
 </head>
 <body class="login-page">
@@ -646,6 +830,10 @@
             <li><a href="#" onclick="showSection('inventory')"><i class="fas fa-pills"></i> Inventory</a></li>
             <li><a href="#" onclick="showSection('requisitions')"><i class="fas fa-clipboard-list"></i> Requisitions</a></li>
             <li><a href="#" onclick="showSection('transfers')"><i class="fas fa-truck-moving"></i> Transfers</a></li>
+            <li><a href="#" onclick="showSection('messages')">
+                <i class="fas fa-inbox"></i> Messages 
+                <span class="notification-badge" id="sidebarUnreadCount">0</span>
+            </a></li>
             <li><a href="#" onclick="showSection('reports')"><i class="fas fa-chart-bar"></i> Reports</a></li>
             <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
             <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -803,8 +991,8 @@
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-secondary w-100 py-2" onclick="showSection('reports')">
-                                            <i class="fas fa-chart-pie me-2"></i>View Reports
+                                        <button class="btn btn-outline-secondary w-100 py-2" onclick="showSection('messages')">
+                                            <i class="fas fa-inbox me-2"></i>View Messages
                                         </button>
                                     </div>
                                 </div>
@@ -823,6 +1011,21 @@
                                 </h5>
                                 <div class="list-group list-group-flush" id="recentActivity">
                                     <!-- Activities will be added here dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Messages -->
+                        <div class="card pharmacy-card mt-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-envelope me-2"></i>Recent Messages
+                                    </h5>
+                                    <a href="#" onclick="showSection('messages')" class="btn btn-sm btn-outline-primary">View All</a>
+                                </div>
+                                <div id="recentMessages">
+                                    <!-- Recent messages will be loaded here -->
                                 </div>
                             </div>
                         </div>
@@ -858,8 +1061,13 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Emergency Call Button -->
+                                <!-- Quick Message Button -->
                                 <div class="text-center mt-3">
+                                    <button class="btn btn-pharmacy w-100 mb-2" onclick="composeMessage()">
+                                        <i class="fas fa-envelope me-2"></i>Send Quick Message
+                                    </button>
+                                    
+                                    <!-- Emergency Call Button -->
                                     <button class="btn btn-emergency w-100" onclick="callEmergency()">
                                         <i class="fas fa-phone-alt me-2"></i>Emergency Call
                                     </button>
@@ -1124,14 +1332,19 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Search and Add Items -->
-                                <div class="mb-4">
+                                <!-- Search and Add Items with NEW Search-Add Feature -->
+                                <div class="mb-4 search-add-container">
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                        <input type="text" class="form-control" id="searchMedication" placeholder="Search medication by name or category...">
-                                        <button class="btn btn-outline-primary" onclick="searchMedication()">
-                                            <i class="fas fa-search me-1"></i>Search
+                                        <input type="text" class="form-control" id="searchMedication" 
+                                               placeholder="Type medication name or click 'Add New' for new items..."
+                                               onkeyup="searchRequisitionMedications()">
+                                        <button class="btn btn-outline-success" onclick="showQuickAddItemModal('requisition')">
+                                            <i class="fas fa-plus me-1"></i>Add New
                                         </button>
+                                    </div>
+                                    <div class="search-results" id="requisitionSearchResults">
+                                        <!-- Search results will appear here -->
                                     </div>
                                 </div>
                                 
@@ -1382,7 +1595,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Transfer From *</label>
-                                            <select class="form-select" id="transferFrom" required>
+                                            <select class="form-select" id="transferFrom" required onchange="updateTransferBranchDisplays()">
                                                 <option value="">Select Source Branch</option>
                                                 <option value="MNK">Mankayane (Central)</option>
                                                 <option value="NHO">Nhlangano</option>
@@ -1393,7 +1606,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Transfer To *</label>
-                                            <select class="form-select" id="transferTo" required>
+                                            <select class="form-select" id="transferTo" required onchange="updateTransferBranchDisplays()">
                                                 <option value="">Select Destination Branch</option>
                                                 <option value="MNK">Mankayane (Central)</option>
                                                 <option value="NHO">Nhlangano</option>
@@ -1418,14 +1631,19 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Search and Add Items -->
-                                <div class="mb-4">
+                                <!-- Search and Add Items with NEW Search-Add Feature -->
+                                <div class="mb-4 search-add-container">
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                        <input type="text" class="form-control" id="transferSearchMedication" placeholder="Search medication from source branch...">
-                                        <button class="btn btn-outline-primary" onclick="searchTransferMedication()">
-                                            <i class="fas fa-search me-1"></i>Search
+                                        <input type="text" class="form-control" id="transferSearchMedication" 
+                                               placeholder="Search medication or add new item..."
+                                               onkeyup="searchTransferMedications()">
+                                        <button class="btn btn-outline-success" onclick="showQuickAddItemModal('transfer')">
+                                            <i class="fas fa-plus me-1"></i>Add New
                                         </button>
+                                    </div>
+                                    <div class="search-results" id="transferSearchResults">
+                                        <!-- Search results will appear here -->
                                     </div>
                                 </div>
                                 
@@ -1586,6 +1804,127 @@
                 
                 <!-- Transfer Details will be loaded here -->
                 <div id="transferDetailsContent"></div>
+            </div>
+        </div>
+        
+        <!-- Messages Section -->
+        <div id="messagesSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-inbox me-2"></i>Message Center
+                        </h2>
+                        <p class="text-muted">Communicate with other branches</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-pharmacy" onclick="composeMessage()">
+                            <i class="fas fa-plus me-2"></i>New Message
+                        </button>
+                        <button class="btn btn-outline-secondary ms-2" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Message Tabs -->
+                <ul class="nav nav-tabs mb-4" id="messageTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" onclick="showMessageTab('inbox')">
+                            <i class="fas fa-inbox me-1"></i>Inbox
+                            <span class="badge bg-danger ms-1" id="inboxBadge">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="showMessageTab('sent')">
+                            <i class="fas fa-paper-plane me-1"></i>Sent
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="showMessageTab('system')">
+                            <i class="fas fa-bell me-1"></i>System Notifications
+                            <span class="badge bg-warning ms-1" id="systemBadge">0</span>
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Inbox -->
+                <div id="inboxTab" class="message-tab-content">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card pharmacy-card">
+                                <div class="card-body">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Search messages..." id="searchMessages">
+                                        <button class="btn btn-outline-secondary" onclick="searchMessages()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <div class="list-group list-group-flush" id="messageList">
+                                        <!-- Messages will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="message-view" id="messageView">
+                                <div class="text-center text-muted py-5">
+                                    <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                                    <h4>Select a message to read</h4>
+                                    <p>Click on a message from the list to view its contents</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sent -->
+                <div id="sentTab" class="message-tab-content d-none">
+                    <div class="card pharmacy-card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>To</th>
+                                            <th>Subject</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sentMessagesTable">
+                                        <!-- Sent messages will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Notifications -->
+                <div id="systemTab" class="message-tab-content d-none">
+                    <div class="card pharmacy-card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Message</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="systemMessagesTable">
+                                        <!-- System notifications will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -2170,6 +2509,118 @@ Box</textarea>
         </div>
     </div>
 
+    <!-- Quick Add Item Modal (for requisitions/transfers) -->
+    <div class="modal fade" id="quickAddItemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Medication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quickAddItemForm">
+                        <div class="mb-3">
+                            <label class="form-label">Medication Name *</label>
+                            <input type="text" class="form-control" id="quickItemName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Strength</label>
+                            <input type="text" class="form-control" id="quickItemStrength" placeholder="e.g., 500mg">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Form *</label>
+                            <select class="form-select" id="quickItemForm" required>
+                                <option value="">Select Form</option>
+                                <option value="Tablets">Tablets</option>
+                                <option value="Capsules">Capsules</option>
+                                <option value="Syrup">Syrup</option>
+                                <option value="Injection">Injection</option>
+                                <option value="Cream">Cream/Ointment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="quickItemCategory">
+                                <option value="Other">Other</option>
+                                <option value="Analgesics">Analgesics</option>
+                                <option value="Antibiotics">Antibiotics</option>
+                                <option value="Antihypertensives">Antihypertensives</option>
+                                <option value="Diabetes">Diabetes Medications</option>
+                                <option value="Supplies">Medical Supplies</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Unit</label>
+                            <input type="text" class="form-control" id="quickItemUnit" placeholder="e.g., pcs, bottles, ml">
+                        </div>
+                        <input type="hidden" id="quickAddContext" value=""> <!-- requisition or transfer -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pharmacy" onclick="saveQuickAddItem()">Add & Select</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Compose Modal -->
+    <div class="modal fade" id="messageComposeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="messageComposeForm">
+                        <div class="mb-3">
+                            <label class="form-label">To *</label>
+                            <select class="form-select" id="messageTo" required>
+                                <option value="">Select Recipient</option>
+                                <option value="all">All Branches</option>
+                                <option value="MNK">Mankayane (Central)</option>
+                                <option value="NHO">Nhlangano</option>
+                                <option value="LSK">Lushikishikini</option>
+                                <option value="specific">Specific User...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="specificUserContainer" style="display: none;">
+                            <label class="form-label">Specific User</label>
+                            <input type="text" class="form-control" id="specificUser" placeholder="Enter user name or email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Subject *</label>
+                            <input type="text" class="form-control" id="messageSubject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message *</label>
+                            <textarea class="form-control" id="messageBody" rows="8" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <select class="form-select" id="messagePriority">
+                                <option value="normal">Normal</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Attachments (Optional)</label>
+                            <input type="file" class="form-control" id="messageAttachments" multiple>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pharmacy" onclick="sendMessage()">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add User Modal -->
     <div class="modal fade" id="addUserModal" tabindex="-1">
         <div class="modal-dialog">
@@ -2256,6 +2707,14 @@ Box</textarea>
         </div>
     </div>
 
+    <!-- New Message Button (Floating) -->
+    <button class="new-message-btn d-none" id="floatingMessageBtn" onclick="composeMessage()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Notification Alert Container -->
+    <div id="notificationContainer"></div>
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -2271,6 +2730,7 @@ Box</textarea>
         let requisitions = [];
         let transfers = [];
         let users = [];
+        let messages = [];
         let settings = {
             general: {
                 systemName: "The Yellow Pharmacy Inventory",
@@ -2325,12 +2785,9 @@ Box</textarea>
             receiver: null
         };
         
-        // Signature canvases
-        let signatureCanvas = {
-            requisition: null,
-            supplier: null,
-            receiver: null
-        };
+        // Message Data
+        let currentMessageTab = 'inbox';
+        let currentMessageId = null;
         
         // Initialize DataTables
         $(document).ready(function() {
@@ -2348,7 +2805,36 @@ Box</textarea>
                 pageLength: 10,
                 responsive: true
             });
+            
+            // Load data if user is already logged in
+            checkLoginStatus();
         });
+        
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const loggedIn = localStorage.getItem('pharmacy_logged_in');
+            if (loggedIn === 'true') {
+                currentUser = localStorage.getItem('pharmacy_user');
+                currentBranch = localStorage.getItem('pharmacy_branch');
+                const userName = localStorage.getItem('pharmacy_user_name');
+                const branchName = localStorage.getItem('pharmacy_branch_name');
+                
+                // Update UI
+                document.getElementById('loginScreen').classList.add('d-none');
+                document.getElementById('dashboardSection').classList.remove('d-none');
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('branchName').textContent = branchName;
+                document.getElementById('branchDisplay').textContent = branchName;
+                document.getElementById('sidebarUser').textContent = userName;
+                document.getElementById('sidebarBranch').textContent = branchName;
+                document.getElementById('logoutNavItem').classList.remove('d-none');
+                document.getElementById('floatingMessageBtn').classList.remove('d-none');
+                document.body.classList.remove('login-page');
+                
+                // Load all data
+                loadAllData();
+            }
+        }
         
         // Load all data from localStorage
         function loadAllData() {
@@ -2433,6 +2919,10 @@ Box</textarea>
             transfers = savedTransfers ? JSON.parse(savedTransfers) : [];
             renderTransfersTable();
             
+            // Load messages
+            const savedMessages = localStorage.getItem('pharmacy_messages');
+            messages = savedMessages ? JSON.parse(savedMessages) : [];
+            
             // Load users
             const savedUsers = localStorage.getItem('pharmacy_users');
             if (savedUsers) {
@@ -2475,6 +2965,9 @@ Box</textarea>
             }
             
             updateDashboardStats();
+            updateUnreadCount();
+            loadRecentMessages();
+            loadRecentActivity();
         }
         
         // Apply settings to UI
@@ -2530,6 +3023,12 @@ Box</textarea>
         // Save settings to localStorage
         function saveSettings() {
             localStorage.setItem('pharmacy_settings', JSON.stringify(settings));
+        }
+        
+        // Save messages to localStorage
+        function saveMessages() {
+            localStorage.setItem('pharmacy_messages', JSON.stringify(messages));
+            updateUnreadCount();
         }
         
         // SECURE LOGIN FUNCTION - NO PASSWORD HINTS
@@ -2605,6 +3104,9 @@ Box</textarea>
                 document.getElementById('mainContent').style.marginLeft = '250px';
             }
             
+            // Show floating message button
+            document.getElementById('floatingMessageBtn').classList.remove('d-none');
+            
             // Remove login page class
             document.body.classList.remove('login-page');
             
@@ -2621,8 +3123,41 @@ Box</textarea>
             // Add activity
             addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
             
-            // Show welcome message without password information
-            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nYou have successfully logged in.`);
+            // Show welcome message
+            showNotification('success', `Welcome to ${branchNames[branch]} branch!`, 'You have successfully logged in.');
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear session data
+                localStorage.removeItem('pharmacy_user');
+                localStorage.removeItem('pharmacy_user_name');
+                localStorage.removeItem('pharmacy_branch');
+                localStorage.removeItem('pharmacy_branch_name');
+                localStorage.removeItem('pharmacy_logged_in');
+                
+                // Reset application state
+                currentUser = null;
+                currentBranch = null;
+                
+                // Reset UI
+                document.getElementById('loginScreen').classList.remove('d-none');
+                document.getElementById('dashboardSection').classList.add('d-none');
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('mainContent').style.marginLeft = '0';
+                document.getElementById('logoutNavItem').classList.add('d-none');
+                document.getElementById('floatingMessageBtn').classList.add('d-none');
+                document.body.classList.add('login-page');
+                
+                // Reset form
+                document.getElementById('email').value = 'admin@yellowpharmacy.com';
+                document.getElementById('password').value = '';
+                document.getElementById('branch').value = 'MNK';
+                
+                // Show logout message
+                showNotification('info', 'Logged out successfully');
+            }
         }
         
         // Emergency call function
@@ -2640,7 +3175,7 @@ Box</textarea>
                 addActivity('Initiated emergency call to Mankayane', 'emergency');
                 
                 // Show confirmation
-                alert('📞 Emergency call initiated. Please describe your urgent medical supply needs to Sithabile.');
+                showNotification('warning', 'Emergency call initiated', 'Please describe your urgent medical supply needs to Sithabile.');
             }
         }
         
@@ -2665,6 +3200,181 @@ Box</textarea>
         // Save users to localStorage
         function saveUsers() {
             localStorage.setItem('pharmacy_users', JSON.stringify(users));
+        }
+        
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            // Total items
+            document.getElementById('totalItems').textContent = inventory.length;
+            
+            // Pending requisitions
+            const pendingReqs = requisitions.filter(r => r.status === 'pending').length;
+            document.getElementById('pendingRequisitions').textContent = pendingReqs;
+            
+            // Low stock items
+            let lowStockCount = 0;
+            inventory.forEach(item => {
+                const isLowMNK = (item.stockMNK || 0) < (item.minStock || 10);
+                const isLowNHO = (item.stockNHO || 0) < (item.minStock || 10);
+                const isLowLSK = (item.stockLSK || 0) < (item.minStock || 10);
+                if (isLowMNK || isLowNHO || isLowLSK) lowStockCount++;
+            });
+            document.getElementById('lowStockItems').textContent = lowStockCount;
+            
+            // Pending transfers
+            const pendingTrans = transfers.filter(t => t.status === 'pending').length;
+            document.getElementById('pendingTransfers').textContent = pendingTrans;
+            
+            // Inventory stats
+            document.getElementById('inventoryTotal').textContent = inventory.length;
+            document.getElementById('inventoryMNK').textContent = inventory.reduce((sum, item) => sum + (item.stockMNK || 0), 0);
+            document.getElementById('inventoryNHO').textContent = inventory.reduce((sum, item) => sum + (item.stockNHO || 0), 0);
+            document.getElementById('inventoryLSK').textContent = inventory.reduce((sum, item) => sum + (item.stockLSK || 0), 0);
+            document.getElementById('inventoryLow').textContent = lowStockCount;
+        }
+        
+        // Update unread message count
+        function updateUnreadCount() {
+            const unreadCount = messages.filter(m => m.status === 'unread').length;
+            document.getElementById('sidebarUnreadCount').textContent = unreadCount;
+            document.getElementById('inboxBadge').textContent = unreadCount;
+            
+            // System notifications count
+            const systemCount = messages.filter(m => m.type === 'system' && m.status === 'unread').length;
+            document.getElementById('systemBadge').textContent = systemCount;
+        }
+        
+        // Load recent activity
+        function loadRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = '';
+            
+            // Sample activities (in a real app, this would come from a database)
+            const activities = [
+                { text: 'Updated inventory: Added Amoxicillin 500mg', time: '2 hours ago', icon: 'fas fa-pills' },
+                { text: 'Approved requisition REQ-001 from Nhlangano', time: '4 hours ago', icon: 'fas fa-clipboard-check' },
+                { text: 'Created transfer to Lushikishikini', time: 'Yesterday', icon: 'fas fa-truck' },
+                { text: 'Received new shipment of medications', time: '2 days ago', icon: 'fas fa-box' },
+                { text: 'System backup completed successfully', time: '3 days ago', icon: 'fas fa-save' }
+            ];
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item list-group-item-action';
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <div>
+                            <i class="${activity.icon} me-2"></i>
+                            ${activity.text}
+                        </div>
+                        <small class="text-muted">${activity.time}</small>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Load recent messages
+        function loadRecentMessages() {
+            const container = document.getElementById('recentMessages');
+            container.innerHTML = '';
+            
+            // Get recent messages (last 5)
+            const recentMsgs = messages.slice(-5).reverse();
+            
+            if (recentMsgs.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-3">No recent messages</div>';
+                return;
+            }
+            
+            recentMsgs.forEach(msg => {
+                const isUnread = msg.status === 'unread';
+                const priorityClass = msg.priority === 'high' ? 'message-priority-high' : 
+                                   msg.priority === 'medium' ? 'message-priority-medium' : '';
+                
+                const item = document.createElement('div');
+                item.className = `message-item list-group-item list-group-item-action ${isUnread ? 'unread' : ''} ${priorityClass}`;
+                item.onclick = () => viewMessage(msg.id);
+                
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <div class="message-sender">${msg.from}</div>
+                        <small class="message-time">${formatTime(msg.date)}</small>
+                    </div>
+                    <div class="mb-1">${msg.subject}</div>
+                    <div class="message-preview">${msg.body.substring(0, 80)}${msg.body.length > 80 ? '...' : ''}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Format time for display
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 60) {
+                return `${diffMins}m ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours}h ago`;
+            } else if (diffDays < 7) {
+                return `${diffDays}d ago`;
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+        
+        // Show notification
+        function showNotification(type, title, message = '') {
+            const container = document.getElementById('notificationContainer');
+            const alert = document.createElement('div');
+            alert.className = `notification-alert alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                <strong>${title}</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            container.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+        
+        // Add activity
+        function addActivity(text, type) {
+            // In a real app, this would save to a database
+            console.log(`Activity: ${text} (${type})`);
+        }
+        
+        // Send system notification
+        function sendSystemNotification(toBranch, subject, body) {
+            const newMessage = {
+                id: messages.length > 0 ? Math.max(...messages.map(m => m.id)) + 1 : 1,
+                from: 'System',
+                to: toBranch,
+                subject: subject,
+                body: body,
+                date: new Date().toISOString(),
+                type: 'system',
+                priority: 'normal',
+                status: 'unread',
+                attachments: []
+            };
+            
+            messages.push(newMessage);
+            saveMessages();
+            
+            // Update UI if we're on messages page
+            if (document.getElementById('messagesSection').classList.contains('d-none') === false) {
+                loadMessageList();
+            }
         }
         
         // Render inventory table
@@ -2762,6 +3472,54 @@ Box</textarea>
             });
         }
         
+        // Show sections
+        function showSection(sectionId) {
+            // Hide all sections
+            hideAllSections();
+            
+            // Show selected section
+            document.getElementById(sectionId + 'Section').classList.remove('d-none');
+            
+            // Update sidebar active item
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.sidebar-menu a[onclick*="${sectionId}"]`).classList.add('active');
+            
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('mainContent').style.marginLeft = '0';
+            }
+        }
+        
+        // Hide all sections
+        function hideAllSections() {
+            const sections = [
+                'dashboard', 'inventory', 'requisitions', 'createRequisition', 
+                'viewRequisition', 'transfers', 'createTransfer', 'viewTransfer',
+                'messages', 'reports', 'settings'
+            ];
+            
+            sections.forEach(section => {
+                const element = document.getElementById(section + 'Section');
+                if (element) {
+                    element.classList.add('d-none');
+                }
+            });
+        }
+        
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+            
+            if (window.innerWidth > 768) {
+                document.getElementById('mainContent').style.marginLeft = 
+                    sidebar.classList.contains('show') ? '250px' : '0';
+            }
+        });
+        
         // Show add item modal
         function showAddItemModal() {
             const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
@@ -2778,6 +3536,74 @@ Box</textarea>
         function showAddUserModal() {
             const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
             modal.show();
+        }
+        
+        // Show quick add item modal
+        function showQuickAddItemModal(context) {
+            // Set context (requisition or transfer)
+            document.getElementById('quickAddContext').value = context;
+            
+            // Reset form
+            document.getElementById('quickItemName').value = '';
+            document.getElementById('quickItemStrength').value = '';
+            document.getElementById('quickItemForm').value = '';
+            document.getElementById('quickItemCategory').value = 'Other';
+            document.getElementById('quickItemUnit').value = '';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('quickAddItemModal'));
+            modal.show();
+        }
+        
+        // Save quick add item
+        function saveQuickAddItem() {
+            const form = document.getElementById('quickAddItemForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const itemName = document.getElementById('quickItemName').value;
+            const itemStrength = document.getElementById('quickItemStrength').value;
+            const itemForm = document.getElementById('quickItemForm').value;
+            const itemCategory = document.getElementById('quickItemCategory').value;
+            const itemUnit = document.getElementById('quickItemUnit').value;
+            const context = document.getElementById('quickAddContext').value;
+            
+            // Create new item
+            const newItem = {
+                id: inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1,
+                name: itemName + (itemStrength ? ` ${itemStrength}` : ''),
+                generic: '',
+                category: itemCategory,
+                strength: itemStrength,
+                form: itemForm,
+                stockMNK: 0,
+                stockNHO: 0,
+                stockLSK: 0,
+                minStock: 10,
+                notes: 'Added via quick add'
+            };
+            
+            // Add to inventory
+            inventory.push(newItem);
+            saveInventory();
+            
+            // Add to current selection based on context
+            if (context === 'requisition') {
+                addToRequisition(newItem.id);
+            } else if (context === 'transfer') {
+                addToTransfer(newItem.id);
+            }
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('quickAddItemModal')).hide();
+            
+            // Show success message
+            showNotification('success', 'Medication added successfully!', 'The new medication has been added to inventory and selected.');
+            
+            // Add activity
+            addActivity(`Added new medication via quick add: ${newItem.name}`, 'inventory');
         }
         
         // Save new item
@@ -2809,8 +3635,10 @@ Box</textarea>
             bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
             form.reset();
             
+            // Show notification
+            showNotification('success', 'Medication added successfully!');
+            
             addActivity(`Added new medication: ${newItem.name}`, 'inventory');
-            alert('Medication added successfully!');
         }
         
         // Save new user
@@ -2840,8 +3668,10 @@ Box</textarea>
             bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
             form.reset();
             
+            // Show notification
+            showNotification('success', 'User added successfully!');
+            
             addActivity(`Added new user: ${newUser.name}`, 'settings');
-            alert('User added successfully!');
         }
         
         // Edit item
@@ -2898,8 +3728,10 @@ Box</textarea>
                 document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Save Medication';
                 document.querySelector('#addItemModal .btn-pharmacy').onclick = saveNewItem;
                 
+                // Show notification
+                showNotification('success', 'Medication updated successfully!');
+                
                 addActivity(`Updated medication: ${inventory[index].name}`, 'inventory');
-                alert('Medication updated successfully!');
             }
         }
         
@@ -2909,8 +3741,11 @@ Box</textarea>
                 const item = inventory.find(i => i.id === id);
                 inventory = inventory.filter(i => i.id !== id);
                 saveInventory();
+                
+                // Show notification
+                showNotification('success', 'Medication deleted successfully!');
+                
                 addActivity(`Deleted medication: ${item.name}`, 'inventory');
-                alert('Medication deleted successfully!');
             }
         }
         
@@ -2921,8 +3756,11 @@ Box</textarea>
                 users = users.filter(u => u.id !== id);
                 saveUsers();
                 renderUsersTable();
+                
+                // Show notification
+                showNotification('success', 'User deleted successfully!');
+                
                 addActivity(`Deleted user: ${user.name}`, 'settings');
-                alert('User deleted successfully!');
             }
         }
         
@@ -2944,7 +3782,7 @@ Box</textarea>
                 'LSK': 'Lushikishikini'
             };
             
-            document.getElementById('requisitionBranch').value = branchNames[currentBranch];
+            document.getElementById('requisitionBranch').value = branchNames[currentBranch] || currentBranch;
             document.getElementById('requisitionDate').value = new Date().toLocaleDateString();
             document.getElementById('requisitionTotalItems').textContent = '0';
             document.getElementById('requisitionTotalQty').textContent = '0';
@@ -2952,6 +3790,7 @@ Box</textarea>
             // Clear selected items
             document.getElementById('selectedItems').innerHTML = '';
             document.getElementById('availableMedications').innerHTML = '';
+            document.getElementById('requisitionSearchResults').innerHTML = '';
             
             // Load available medications from central pharmacy (Mankayane)
             loadAvailableMedicationsForRequisition();
@@ -3011,61 +3850,56 @@ Box</textarea>
             });
         }
         
-        // Search medication for requisition
-        function searchMedication() {
+        // Search requisition medications
+        function searchRequisitionMedications() {
             const searchTerm = document.getElementById('searchMedication').value.toLowerCase();
-            const tbody = document.getElementById('availableMedications');
-            tbody.innerHTML = '';
+            const resultsDiv = document.getElementById('requisitionSearchResults');
             
-            const filteredMedications = inventory.filter(item => {
-                if (!searchTerm) return (item.stockMNK || 0) > 0;
-                
-                return (
-                    item.name.toLowerCase().includes(searchTerm) ||
-                    (item.generic && item.generic.toLowerCase().includes(searchTerm)) ||
-                    item.category.toLowerCase().includes(searchTerm) ||
-                    (item.strength && item.strength.toLowerCase().includes(searchTerm))
-                ) && (item.stockMNK || 0) > 0;
-            });
-            
-            if (filteredMedications.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            <i class="fas fa-search me-1"></i>
-                            No medications found matching "${searchTerm}"
-                        </td>
-                    </tr>
-                `;
+            if (!searchTerm) {
+                resultsDiv.innerHTML = '';
+                resultsDiv.style.display = 'none';
                 return;
             }
             
-            filteredMedications.forEach(item => {
-                const availableStock = item.stockMNK || 0;
-                const isLowStock = availableStock < item.minStock;
-                
-                const row = `
-                    <tr>
-                        <td>
-                            <strong>${item.name}</strong>
-                            <div class="small text-muted">${item.generic || ''} • ${item.strength || ''}</div>
-                        </td>
-                        <td>${item.category}</td>
-                        <td>
-                            <span class="${isLowStock ? 'text-warning fw-bold' : ''}">
-                                ${availableStock}
-                            </span>
-                            ${isLowStock ? '<span class="badge badge-pending ms-1">Low</span>' : ''}
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="addToRequisition(${item.id})">
-                                <i class="fas fa-plus me-1"></i>Add
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
+            // Filter inventory
+            const filteredItems = inventory.filter(item => {
+                return item.name.toLowerCase().includes(searchTerm) ||
+                       (item.generic && item.generic.toLowerCase().includes(searchTerm)) ||
+                       item.category.toLowerCase().includes(searchTerm);
             });
+            
+            let resultsHtml = '';
+            
+            if (filteredItems.length > 0) {
+                filteredItems.forEach(item => {
+                    const availableStock = item.stockMNK || 0;
+                    const isLowStock = availableStock < item.minStock;
+                    
+                    resultsHtml += `
+                        <div class="search-result-item" onclick="addToRequisition(${item.id})">
+                            <strong>${item.name}</strong>
+                            <div class="small text-muted">
+                                ${item.generic || ''} • ${item.strength || ''} • ${item.category}
+                            </div>
+                            <div class="small">
+                                Available: <span class="${isLowStock ? 'text-warning fw-bold' : ''}">${availableStock}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Add option to create new item
+            resultsHtml += `
+                <div class="search-result-item add-new-item-option" onclick="showQuickAddItemModal('requisition')">
+                    <i class="fas fa-plus me-2"></i>
+                    <strong>Add new medication: "${searchTerm}"</strong>
+                    <div class="small text-muted">Click to create new medication</div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultsHtml;
+            resultsDiv.style.display = 'block';
         }
         
         // Add item to requisition
@@ -3096,6 +3930,11 @@ Box</textarea>
             }
             
             renderSelectedRequisitionItems();
+            
+            // Clear search results
+            document.getElementById('requisitionSearchResults').innerHTML = '';
+            document.getElementById('requisitionSearchResults').style.display = 'none';
+            document.getElementById('searchMedication').value = '';
         }
         
         // Render selected requisition items
@@ -3150,7 +3989,7 @@ Box</textarea>
                 selectedRequisitionItems[index].quantityRequested = 1;
             } else if (qty > availableStock) {
                 selectedRequisitionItems[index].quantityRequested = availableStock;
-                alert(`Maximum available stock is ${availableStock}`);
+                showNotification('warning', `Maximum available stock is ${availableStock}`);
             } else {
                 selectedRequisitionItems[index].quantityRequested = qty;
             }
@@ -3166,29 +4005,7 @@ Box</textarea>
         
         // Add custom item to requisition
         function addCustomItem() {
-            const itemName = prompt('Enter custom item description:');
-            if (!itemName) return;
-            
-            const unit = prompt('Enter unit (e.g., pcs, bottles, ml):', 'pcs');
-            if (!unit) return;
-            
-            const qty = parseInt(prompt('Enter quantity:', '1')) || 1;
-            
-            selectedRequisitionItems.push({
-                id: Date.now(), // Temporary ID for custom items
-                name: itemName,
-                generic: '',
-                category: 'Other',
-                strength: '',
-                form: 'Other',
-                unit: unit,
-                quantityRequested: qty,
-                availableStock: 999, // Unlimited for custom items
-                minStock: 0,
-                isCustom: true
-            });
-            
-            renderSelectedRequisitionItems();
+            showQuickAddItemModal('requisition');
         }
         
         // Initialize signature canvas
@@ -3201,10 +4018,10 @@ Box</textarea>
         function clearSignature(type) {
             if (type === 'requisition') {
                 signatureData.requisition = null;
-                alert('Signature cleared');
+                showNotification('info', 'Signature cleared');
             } else if (type === 'supplier') {
                 signatureData.supplier = null;
-                alert('Supplier signature cleared');
+                showNotification('info', 'Supplier signature cleared');
             }
         }
         
@@ -3212,17 +4029,17 @@ Box</textarea>
         function saveSignature(type) {
             if (type === 'requisition') {
                 signatureData.requisition = 'SIGNATURE_DATA_' + Date.now();
-                alert('Signature saved');
+                showNotification('success', 'Signature saved');
             } else if (type === 'supplier') {
                 signatureData.supplier = 'SIGNATURE_DATA_' + Date.now();
-                alert('Supplier signature saved');
+                showNotification('success', 'Supplier signature saved');
             }
         }
         
         // Submit requisition
         function submitRequisition() {
             if (selectedRequisitionItems.length === 0) {
-                alert('Please add at least one item to the requisition');
+                showNotification('error', 'Please add at least one item to the requisition');
                 return;
             }
             
@@ -3261,11 +4078,21 @@ Box</textarea>
             requisitions.push(newRequisition);
             saveRequisitions();
             
+            // Send notification to Mankayane (Central)
+            if (currentBranch !== 'MNK') {
+                sendSystemNotification('MNK', 'New Requisition Received', 
+                    `New requisition ${newRequisition.requisitionNumber} received from ${currentBranch} branch. ` +
+                    `Total items: ${newRequisition.totalItems}, Total quantity: ${newRequisition.totalQuantity}`);
+            }
+            
             // Reset form
             selectedRequisitionItems = [];
             
             // Show success message
-            alert(`✅ Requisition submitted successfully!\n\nRequisition ID: ${newRequisition.requisitionNumber}\nTotal Items: ${newRequisition.totalItems}\nTotal Quantity: ${newRequisition.totalQuantity}`);
+            showNotification('success', `Requisition submitted successfully!`, 
+                `Requisition ID: ${newRequisition.requisitionNumber}<br>` +
+                `Total Items: ${newRequisition.totalItems}<br>` +
+                `Total Quantity: ${newRequisition.totalQuantity}`);
             
             // Add activity
             addActivity(`Submitted requisition ${newRequisition.requisitionNumber}`, 'requisition');
@@ -3277,7 +4104,7 @@ Box</textarea>
         // Save requisition as draft
         function saveDraftRequisition() {
             if (selectedRequisitionItems.length === 0) {
-                alert('Please add at least one item to save as draft');
+                showNotification('error', 'Please add at least one item to save as draft');
                 return;
             }
             
@@ -3309,7 +4136,9 @@ Box</textarea>
             // Reset form
             selectedRequisitionItems = [];
             
-            alert('✅ Requisition saved as draft');
+            // Show notification
+            showNotification('success', 'Requisition saved as draft');
+            
             addActivity(`Saved requisition as draft`, 'requisition');
             showSection('requisitions');
         }
@@ -3394,7 +4223,7 @@ Box</textarea>
                 if (searchFilter) {
                     const searchStr = req.requisitionNumber.toLowerCase() + ' ' + 
                                      req.requestedBy.toLowerCase() + ' ' +
-                                     req.remarks?.toLowerCase();
+                                     (req.remarks || '').toLowerCase();
                     if (!searchStr.includes(searchFilter)) return false;
                 }
                 
@@ -3633,8 +4462,17 @@ Box</textarea>
                 saveRequisitions();
                 renderRequisitionsTable();
                 
+                // Send notification to requester
+                const requisition = requisitions[index];
+                if (requisition.branch !== currentBranch) {
+                    sendSystemNotification(requisition.branch, 'Requisition Approved', 
+                        `Your requisition ${requisition.requisitionNumber} has been approved by ${currentBranch}.`);
+                }
+                
+                // Show notification
+                showNotification('success', 'Requisition approved successfully!');
+                
                 addActivity(`Approved requisition ${requisitions[index].requisitionNumber}`, 'requisition');
-                alert('Requisition approved successfully!');
                 
                 if (currentRequisition && currentRequisition.id === id) {
                     viewRequisition(id);
@@ -3658,8 +4496,17 @@ Box</textarea>
                 saveRequisitions();
                 renderRequisitionsTable();
                 
+                // Send notification to requester
+                const requisition = requisitions[index];
+                if (requisition.branch !== currentBranch) {
+                    sendSystemNotification(requisition.branch, 'Requisition Rejected', 
+                        `Your requisition ${requisition.requisitionNumber} has been rejected. Reason: ${reason}`);
+                }
+                
+                // Show notification
+                showNotification('info', 'Requisition rejected!');
+                
                 addActivity(`Rejected requisition ${requisitions[index].requisitionNumber}`, 'requisition');
-                alert('Requisition rejected!');
                 
                 if (currentRequisition && currentRequisition.id === id) {
                     viewRequisition(id);
@@ -3699,6 +4546,10 @@ Box</textarea>
             if (allIssued) {
                 requisition.status = 'completed';
                 requisition.completedDate = new Date().toISOString();
+                
+                // Send completion notification
+                sendSystemNotification(requisition.branch, 'Requisition Completed', 
+                    `Your requisition ${requisition.requisitionNumber} has been completed and all items issued.`);
             } else {
                 requisition.status = 'approved'; // Keep as approved if not all items issued
             }
@@ -3709,8 +4560,10 @@ Box</textarea>
             saveInventory();
             saveRequisitions();
             
+            // Show notification
+            showNotification('success', 'Items issued successfully!');
+            
             addActivity(`Issued items for requisition ${requisition.requisitionNumber}`, 'requisition');
-            alert('Items issued successfully!');
             
             viewRequisition(id);
         }
@@ -3829,13 +4682,10 @@ Box</textarea>
             // Clear selected items
             document.getElementById('transferSelectedItems').innerHTML = '';
             document.getElementById('transferAvailableMedications').innerHTML = '';
+            document.getElementById('transferSearchResults').innerHTML = '';
             
             // Update branch displays
             updateTransferBranchDisplays();
-            
-            // Add change listeners
-            document.getElementById('transferFrom').addEventListener('change', updateTransferBranchDisplays);
-            document.getElementById('transferTo').addEventListener('change', updateTransferBranchDisplays);
             
             // Initialize signature canvas
             initializeSignatureCanvas('supplier');
@@ -3924,72 +4774,70 @@ Box</textarea>
             });
         }
         
-        // Search medication for transfer
-        function searchTransferMedication() {
+        // Search transfer medications
+        function searchTransferMedications() {
             const searchTerm = document.getElementById('transferSearchMedication').value.toLowerCase();
             const sourceBranch = document.getElementById('transferFrom').value;
             if (!sourceBranch) return;
             
             const stockField = 'stock' + sourceBranch;
-            const tbody = document.getElementById('transferAvailableMedications');
-            tbody.innerHTML = '';
+            const resultsDiv = document.getElementById('transferSearchResults');
             
-            const filteredMedications = inventory.filter(item => {
-                if (!searchTerm) return (item[stockField] || 0) > 0;
-                
-                return (
-                    item.name.toLowerCase().includes(searchTerm) ||
-                    (item.generic && item.generic.toLowerCase().includes(searchTerm)) ||
-                    item.category.toLowerCase().includes(searchTerm) ||
-                    (item.strength && item.strength.toLowerCase().includes(searchTerm))
-                ) && (item[stockField] || 0) > 0;
-            });
-            
-            if (filteredMedications.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            <i class="fas fa-search me-1"></i>
-                            No medications found matching "${searchTerm}"
-                        </td>
-                    </tr>
-                `;
+            if (!searchTerm) {
+                resultsDiv.innerHTML = '';
+                resultsDiv.style.display = 'none';
                 return;
             }
             
-            filteredMedications.forEach(item => {
+            // Filter inventory
+            const filteredItems = inventory.filter(item => {
                 const stock = item[stockField] || 0;
-                const isLowStock = stock < item.minStock;
-                
-                const row = `
-                    <tr>
-                        <td>
-                            <strong>${item.name}</strong>
-                            <div class="small text-muted">${item.generic || ''} • ${item.strength || ''}</div>
-                        </td>
-                        <td>
-                            <span class="${isLowStock ? 'text-warning fw-bold' : ''}">
-                                ${stock}
-                            </span>
-                            ${isLowStock ? '<span class="badge badge-pending ms-1">Low</span>' : ''}
-                        </td>
-                        <td>${item.minStock}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="addToTransfer(${item.id})">
-                                <i class="fas fa-plus me-1"></i>Add
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
+                return stock > 0 && (
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    (item.generic && item.generic.toLowerCase().includes(searchTerm)) ||
+                    item.category.toLowerCase().includes(searchTerm)
+                );
             });
+            
+            let resultsHtml = '';
+            
+            if (filteredItems.length > 0) {
+                filteredItems.forEach(item => {
+                    const stock = item[stockField] || 0;
+                    const isLowStock = stock < item.minStock;
+                    
+                    resultsHtml += `
+                        <div class="search-result-item" onclick="addToTransfer(${item.id})">
+                            <strong>${item.name}</strong>
+                            <div class="small text-muted">
+                                ${item.generic || ''} • ${item.strength || ''} • ${item.category}
+                            </div>
+                            <div class="small">
+                                Available in ${sourceBranch}: <span class="${isLowStock ? 'text-warning fw-bold' : ''}">${stock}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Add option to create new item
+            resultsHtml += `
+                <div class="search-result-item add-new-item-option" onclick="showQuickAddItemModal('transfer')">
+                    <i class="fas fa-plus me-2"></i>
+                    <strong>Add new medication: "${searchTerm}"</strong>
+                    <div class="small text-muted">Click to create new medication</div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultsHtml;
+            resultsDiv.style.display = 'block';
         }
         
         // Add item to transfer
         function addToTransfer(itemId) {
             const sourceBranch = document.getElementById('transferFrom').value;
             if (!sourceBranch) {
-                alert('Please select source branch first');
+                showNotification('error', 'Please select source branch first');
                 return;
             }
             
@@ -4024,6 +4872,11 @@ Box</textarea>
             }
             
             renderSelectedTransferItems();
+            
+            // Clear search results
+            document.getElementById('transferSearchResults').innerHTML = '';
+            document.getElementById('transferSearchResults').style.display = 'none';
+            document.getElementById('transferSearchMedication').value = '';
         }
         
         // Render selected transfer items
@@ -4096,7 +4949,7 @@ Box</textarea>
                 selectedTransferItems[index].quantityRequested = 1;
             } else if (qty > availableStock) {
                 selectedTransferItems[index].quantityRequested = availableStock;
-                alert(`Maximum available stock is ${availableStock}`);
+                showNotification('warning', `Maximum available stock is ${availableStock}`);
             } else {
                 selectedTransferItems[index].quantityRequested = qty;
             }
@@ -4124,33 +4977,7 @@ Box</textarea>
         
         // Add custom item to transfer
         function addTransferCustomItem() {
-            const itemName = prompt('Enter custom item description:');
-            if (!itemName) return;
-            
-            const units = prompt('Enter units (e.g., pcs, bottles, ml):', 'pcs');
-            if (!units) return;
-            
-            const sob = parseInt(prompt('Enter Stock on Hand:', '0')) || 0;
-            const qty = parseInt(prompt('Enter quantity:', '1')) || 1;
-            const cost = parseFloat(prompt('Enter order cost:', '0.00')) || 0;
-            
-            selectedTransferItems.push({
-                id: Date.now(), // Temporary ID for custom items
-                name: itemName,
-                generic: '',
-                category: 'Other',
-                strength: '',
-                form: 'Other',
-                units: units,
-                stockOnHand: sob,
-                quantityRequested: qty,
-                orderCost: cost,
-                remarks: '',
-                sourceBranch: document.getElementById('transferFrom').value,
-                isCustom: true
-            });
-            
-            renderSelectedTransferItems();
+            showQuickAddItemModal('transfer');
         }
         
         // Submit transfer
@@ -4159,12 +4986,12 @@ Box</textarea>
             const toBranch = document.getElementById('transferTo').value;
             
             if (!fromBranch || !toBranch || fromBranch === toBranch) {
-                alert('Please select different source and destination branches');
+                showNotification('error', 'Please select different source and destination branches');
                 return;
             }
             
             if (selectedTransferItems.length === 0) {
-                alert('Please add at least one item to the transfer');
+                showNotification('error', 'Please add at least one item to the transfer');
                 return;
             }
             
@@ -4179,30 +5006,28 @@ Box</textarea>
             const now = new Date();
             const year = now.getFullYear().toString().slice(-2);
             const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const seq = transferId.toString().padStart(3, '0');
-            const docNumber = `TRF${year}${month}${seq}`;
+            const transferNumber = `TRF-${year}${month}-${transferId.toString().padStart(3, '0')}`;
             
             // Create transfer object
             const newTransfer = {
                 id: transferId,
-                documentNumber: docNumber,
+                transferNumber: transferNumber,
                 date: now.toISOString(),
-                from: fromBranch,
-                to: toBranch,
+                fromBranch: fromBranch,
+                toBranch: toBranch,
                 suppliedBy: document.getElementById('transferSuppliedBy').value,
-                suppliedSignature: signatureData.supplier,
-                receivedBy: '',
-                receivedSignature: '',
+                type: document.getElementById('transferType').value,
                 items: selectedTransferItems.map(item => ({
                     ...item,
-                    quantitySupplied: 0,
-                    status: 'pending'
+                    status: 'pending',
+                    quantityReceived: 0,
+                    receivedDate: null
                 })),
                 totalItems: selectedTransferItems.length,
                 totalQuantity: selectedTransferItems.reduce((sum, item) => sum + item.quantityRequested, 0),
                 totalCost: parseFloat(document.getElementById('transferTotalCost').value) || 0,
-                transferType: document.getElementById('transferType').value,
                 remarks: document.getElementById('transferRemarks').value,
+                supplierSignature: signatureData.supplier,
                 status: 'pending',
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString()
@@ -4212,14 +5037,23 @@ Box</textarea>
             transfers.push(newTransfer);
             saveTransfers();
             
+            // Send notification to destination branch
+            sendSystemNotification(toBranch, 'New Transfer Request', 
+                `New transfer ${newTransfer.transferNumber} from ${fromBranch} branch. ` +
+                `Total items: ${newTransfer.totalItems}, Total quantity: ${newTransfer.totalQuantity}`);
+            
             // Reset form
             selectedTransferItems = [];
             
             // Show success message
-            alert(`✅ Transfer request submitted successfully!\n\nDocument Number: ${newTransfer.documentNumber}\nFrom: ${fromBranch} → To: ${toBranch}\nTotal Items: ${newTransfer.totalItems}`);
+            showNotification('success', `Transfer submitted successfully!`, 
+                `Transfer ID: ${newTransfer.transferNumber}<br>` +
+                `From: ${fromBranch} → To: ${toBranch}<br>` +
+                `Total Items: ${newTransfer.totalItems}<br>` +
+                `Total Quantity: ${newTransfer.totalQuantity}`);
             
             // Add activity
-            addActivity(`Submitted transfer ${newTransfer.documentNumber} from ${fromBranch} to ${toBranch}`, 'transfer');
+            addActivity(`Submitted transfer ${newTransfer.transferNumber} from ${fromBranch} to ${toBranch}`, 'transfer');
             
             // Go back to transfers section
             showSection('transfers');
@@ -4230,38 +5064,31 @@ Box</textarea>
             const fromBranch = document.getElementById('transferFrom').value;
             const toBranch = document.getElementById('transferTo').value;
             
-            if (!fromBranch || !toBranch) {
-                alert('Please select source and destination branches');
-                return;
-            }
-            
             if (selectedTransferItems.length === 0) {
-                alert('Please add at least one item to save as draft');
+                showNotification('error', 'Please add at least one item to save as draft');
                 return;
             }
             
-            // Generate document number for draft
+            // Generate document number
             const transferId = transfers.length > 0 ? Math.max(...transfers.map(t => t.id)) + 1 : 1;
             const now = new Date();
-            const docNumber = `DRAFT-TRF-${transferId.toString().padStart(3, '0')}`;
+            const transferNumber = `DRAFT-TRF-${transferId.toString().padStart(3, '0')}`;
             
-            // Create transfer object with draft status
+            // Create transfer object
             const draftTransfer = {
                 id: transferId,
-                documentNumber: docNumber,
+                transferNumber: transferNumber,
                 date: now.toISOString(),
-                from: fromBranch,
-                to: toBranch,
+                fromBranch: fromBranch,
+                toBranch: toBranch,
                 suppliedBy: document.getElementById('transferSuppliedBy').value,
-                suppliedSignature: signatureData.supplier,
-                receivedBy: '',
-                receivedSignature: '',
+                type: document.getElementById('transferType').value,
                 items: selectedTransferItems,
                 totalItems: selectedTransferItems.length,
                 totalQuantity: selectedTransferItems.reduce((sum, item) => sum + item.quantityRequested, 0),
                 totalCost: parseFloat(document.getElementById('transferTotalCost').value) || 0,
-                transferType: document.getElementById('transferType').value,
                 remarks: document.getElementById('transferRemarks').value,
+                supplierSignature: signatureData.supplier,
                 status: 'draft',
                 createdAt: now.toISOString(),
                 updatedAt: now.toISOString()
@@ -4274,7 +5101,9 @@ Box</textarea>
             // Reset form
             selectedTransferItems = [];
             
-            alert('✅ Transfer saved as draft');
+            // Show notification
+            showNotification('success', 'Transfer saved as draft');
+            
             addActivity(`Saved transfer as draft`, 'transfer');
             showSection('transfers');
         }
@@ -4287,7 +5116,7 @@ Box</textarea>
             if (transfers.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="6" class="text-center text-muted">
                             <i class="fas fa-truck-moving fa-2x mb-2"></i><br>
                             No transfers found
                         </td>
@@ -4295,12 +5124,6 @@ Box</textarea>
                 `;
                 return;
             }
-            
-            const branchNames = {
-                'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
-                'LSK': 'Lushikishikini'
-            };
             
             transfers.forEach(transfer => {
                 const statusClass = transfer.status === 'pending' ? 'badge-pending' :
@@ -4310,25 +5133,30 @@ Box</textarea>
                                   transfer.status === 'completed' ? 'badge-completed' :
                                   transfer.status === 'draft' ? 'badge-secondary' : 'badge-pending';
                 
-                const statusText = transfer.status.split('_').map(word => 
+                const statusText = transfer.status.replace('_', ' ').split(' ').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(' ');
                 
+                const branchNames = {
+                    'MNK': 'Mankayane',
+                    'NHO': 'Nhlangano', 
+                    'LSK': 'Lushikishikini'
+                };
+                
+                const fromTo = `${branchNames[transfer.fromBranch] || transfer.fromBranch} → ${branchNames[transfer.toBranch] || transfer.toBranch}`;
+                
                 const row = `
                     <tr>
-                        <td>${transfer.documentNumber}</td>
+                        <td>${transfer.transferNumber}</td>
                         <td>${new Date(transfer.date).toLocaleDateString()}</td>
-                        <td>
-                            <div class="small">${branchNames[transfer.from] || transfer.from}</div>
-                            <div class="small text-muted">→ ${branchNames[transfer.to] || transfer.to}</div>
-                        </td>
-                        <td>${transfer.totalItems}</td>
+                        <td>${fromTo}</td>
+                        <td>${transfer.totalItems} items (${transfer.totalQuantity} units)</td>
                         <td><span class="badge ${statusClass}">${statusText}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
                                 <i class="fas fa-eye"></i> View
                             </button>
-                            ${transfer.status === 'pending' && currentBranch === transfer.from ? `
+                            ${transfer.status === 'pending' && transfer.fromBranch === currentBranch ? `
                                 <button class="btn btn-sm btn-outline-success ms-1" onclick="approveTransfer(${transfer.id})">
                                     <i class="fas fa-check"></i>
                                 </button>
@@ -4336,13 +5164,8 @@ Box</textarea>
                                     <i class="fas fa-times"></i>
                                 </button>
                             ` : ''}
-                            ${transfer.status === 'approved' && currentBranch === transfer.from ? `
-                                <button class="btn btn-sm btn-outline-info ms-1" onclick="dispatchTransfer(${transfer.id})">
-                                    <i class="fas fa-truck"></i>
-                                </button>
-                            ` : ''}
-                            ${transfer.status === 'in_transit' && currentBranch === transfer.to ? `
-                                <button class="btn btn-sm btn-outline-success ms-1" onclick="receiveTransfer(${transfer.id})">
+                            ${transfer.status === 'approved' && transfer.toBranch === currentBranch ? `
+                                <button class="btn btn-sm btn-outline-info ms-1" onclick="receiveTransfer(${transfer.id})">
                                     <i class="fas fa-check-circle"></i>
                                 </button>
                             ` : ''}
@@ -4371,18 +5194,10 @@ Box</textarea>
                 
                 // Search filter
                 if (searchFilter) {
-                    const branchNames = {
-                        'MNK': 'Mankayane',
-                        'NHO': 'Nhlangano', 
-                        'LSK': 'Lushikishikini'
-                    };
-                    const fromBranch = branchNames[transfer.from] || transfer.from;
-                    const toBranch = branchNames[transfer.to] || transfer.to;
-                    
-                    const searchStr = transfer.documentNumber.toLowerCase() + ' ' + 
-                                     fromBranch.toLowerCase() + ' ' +
-                                     toBranch.toLowerCase() + ' ' +
-                                     transfer.suppliedBy?.toLowerCase();
+                    const searchStr = transfer.transferNumber.toLowerCase() + ' ' + 
+                                     transfer.fromBranch.toLowerCase() + ' ' +
+                                     transfer.toBranch.toLowerCase() + ' ' +
+                                     (transfer.remarks || '').toLowerCase();
                     if (!searchStr.includes(searchFilter)) return false;
                 }
                 
@@ -4393,24 +5208,6 @@ Box</textarea>
             const tbody = document.getElementById('transfersTableBody');
             tbody.innerHTML = '';
             
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">
-                            <i class="fas fa-search fa-2x mb-2"></i><br>
-                            No transfers found matching your criteria
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            const branchNames = {
-                'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
-                'LSK': 'Lushikishikini'
-            };
-            
             filtered.forEach(transfer => {
                 const statusClass = transfer.status === 'pending' ? 'badge-pending' :
                                   transfer.status === 'approved' ? 'badge-approved' :
@@ -4419,25 +5216,30 @@ Box</textarea>
                                   transfer.status === 'completed' ? 'badge-completed' :
                                   transfer.status === 'draft' ? 'badge-secondary' : 'badge-pending';
                 
-                const statusText = transfer.status.split('_').map(word => 
+                const statusText = transfer.status.replace('_', ' ').split(' ').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(' ');
                 
+                const branchNames = {
+                    'MNK': 'Mankayane',
+                    'NHO': 'Nhlangano', 
+                    'LSK': 'Lushikishikini'
+                };
+                
+                const fromTo = `${branchNames[transfer.fromBranch] || transfer.fromBranch} → ${branchNames[transfer.toBranch] || transfer.toBranch}`;
+                
                 const row = `
                     <tr>
-                        <td>${transfer.documentNumber}</td>
+                        <td>${transfer.transferNumber}</td>
                         <td>${new Date(transfer.date).toLocaleDateString()}</td>
-                        <td>
-                            <div class="small">${branchNames[transfer.from] || transfer.from}</div>
-                            <div class="small text-muted">→ ${branchNames[transfer.to] || transfer.to}</div>
-                        </td>
-                        <td>${transfer.totalItems}</td>
+                        <td>${fromTo}</td>
+                        <td>${transfer.totalItems} items (${transfer.totalQuantity} units)</td>
                         <td><span class="badge ${statusClass}">${statusText}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
                                 <i class="fas fa-eye"></i> View
                             </button>
-                            ${transfer.status === 'pending' && currentBranch === transfer.from ? `
+                            ${transfer.status === 'pending' && transfer.fromBranch === currentBranch ? `
                                 <button class="btn btn-sm btn-outline-success ms-1" onclick="approveTransfer(${transfer.id})">
                                     <i class="fas fa-check"></i>
                                 </button>
@@ -4445,13 +5247,8 @@ Box</textarea>
                                     <i class="fas fa-times"></i>
                                 </button>
                             ` : ''}
-                            ${transfer.status === 'approved' && currentBranch === transfer.from ? `
-                                <button class="btn btn-sm btn-outline-info ms-1" onclick="dispatchTransfer(${transfer.id})">
-                                    <i class="fas fa-truck"></i>
-                                </button>
-                            ` : ''}
-                            ${transfer.status === 'in_transit' && currentBranch === transfer.to ? `
-                                <button class="btn btn-sm btn-outline-success ms-1" onclick="receiveTransfer(${transfer.id})">
+                            ${transfer.status === 'approved' && transfer.toBranch === currentBranch ? `
+                                <button class="btn btn-sm btn-outline-info ms-1" onclick="receiveTransfer(${transfer.id})">
                                     <i class="fas fa-check-circle"></i>
                                 </button>
                             ` : ''}
@@ -4484,8 +5281,7 @@ Box</textarea>
                 'in_transit': 'info',
                 'received': 'primary',
                 'completed': 'success',
-                'draft': 'secondary',
-                'cancelled': 'danger'
+                'draft': 'secondary'
             };
             
             let itemsHtml = '';
@@ -4494,45 +5290,20 @@ Box</textarea>
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.units}</td>
-                        <td>${item.stockOnHand}</td>
                         <td>${item.quantityRequested}</td>
-                        <td>${item.quantitySupplied || 0}</td>
-                        <td>${item.orderCost ? 'SZL ' + item.orderCost.toFixed(2) : '0.00'}</td>
-                        <td><span class="badge badge-${item.status === 'supplied' ? 'success' : 'warning'}">${item.status || 'pending'}</span></td>
+                        <td>${item.quantityReceived || 0}</td>
+                        <td>${item.orderCost || 0}</td>
+                        <td><span class="badge badge-${item.status === 'received' ? 'success' : 'warning'}">${item.status || 'pending'}</span></td>
                     </tr>
                 `;
             });
-            
-            let actionButtons = '';
-            if (transfer.status === 'pending' && currentBranch === transfer.from) {
-                actionButtons = `
-                    <button class="btn btn-outline-success" onclick="approveTransfer(${transfer.id})">
-                        <i class="fas fa-check me-1"></i>Approve
-                    </button>
-                    <button class="btn btn-outline-danger ms-2" onclick="rejectTransfer(${transfer.id})">
-                        <i class="fas fa-times me-1"></i>Reject
-                    </button>
-                `;
-            } else if (transfer.status === 'approved' && currentBranch === transfer.from) {
-                actionButtons = `
-                    <button class="btn btn-outline-info" onclick="dispatchTransfer(${transfer.id})">
-                        <i class="fas fa-truck me-1"></i>Dispatch
-                    </button>
-                `;
-            } else if (transfer.status === 'in_transit' && currentBranch === transfer.to) {
-                actionButtons = `
-                    <button class="btn btn-outline-success" onclick="receiveTransfer(${transfer.id})">
-                        <i class="fas fa-check-circle me-1"></i>Receive
-                    </button>
-                `;
-            }
             
             const content = `
                 <div class="card pharmacy-card">
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-8">
-                                <h4>Transfer: ${transfer.documentNumber}</h4>
+                                <h4>Transfer: ${transfer.transferNumber}</h4>
                                 <div class="d-flex align-items-center mb-2">
                                     <span class="badge bg-${statusColors[transfer.status]} me-2">${transfer.status.toUpperCase()}</span>
                                     <span class="text-muted">${new Date(transfer.date).toLocaleDateString()}</span>
@@ -4543,7 +5314,19 @@ Box</textarea>
                                     <button class="btn btn-outline-secondary" onclick="printTransfer(${transfer.id})">
                                         <i class="fas fa-print me-1"></i>Print
                                     </button>
-                                    ${actionButtons}
+                                    ${transfer.status === 'pending' && transfer.fromBranch === currentBranch ? `
+                                        <button class="btn btn-outline-success ms-1" onclick="approveTransfer(${transfer.id})">
+                                            <i class="fas fa-check me-1"></i>Approve
+                                        </button>
+                                        <button class="btn btn-outline-danger ms-1" onclick="rejectTransfer(${transfer.id})">
+                                            <i class="fas fa-times me-1"></i>Reject
+                                        </button>
+                                    ` : ''}
+                                    ${transfer.status === 'approved' && transfer.toBranch === currentBranch ? `
+                                        <button class="btn btn-outline-info ms-1" onclick="receiveTransfer(${transfer.id})">
+                                            <i class="fas fa-check-circle me-1"></i>Receive
+                                        </button>
+                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -4555,24 +5338,20 @@ Box</textarea>
                                         <h6 class="card-title">Transfer Details</h6>
                                         <table class="table table-sm">
                                             <tr>
-                                                <th width="40%">Document #:</th>
-                                                <td>${transfer.documentNumber}</td>
+                                                <th width="40%">From Branch:</th>
+                                                <td>${branchNames[transfer.fromBranch] || transfer.fromBranch}</td>
                                             </tr>
                                             <tr>
-                                                <th>From:</th>
-                                                <td>${branchNames[transfer.from] || transfer.from}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>To:</th>
-                                                <td>${branchNames[transfer.to] || transfer.to}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Transfer Type:</th>
-                                                <td>${transfer.transferType}</td>
+                                                <th>To Branch:</th>
+                                                <td>${branchNames[transfer.toBranch] || transfer.toBranch}</td>
                                             </tr>
                                             <tr>
                                                 <th>Supplied By:</th>
                                                 <td>${transfer.suppliedBy}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Type:</th>
+                                                <td>${transfer.type}</td>
                                             </tr>
                                             <tr>
                                                 <th>Date:</th>
@@ -4597,11 +5376,11 @@ Box</textarea>
                                             </div>
                                             <div class="col-4">
                                                 <div class="display-6">${transfer.totalQuantity}</div>
-                                                <small class="text-muted">Total Qty</small>
+                                                <small class="text-muted">Total Quantity</small>
                                             </div>
                                             <div class="col-4">
-                                                <div class="display-6">SZL ${transfer.totalCost?.toFixed(2) || '0.00'}</div>
-                                                <small class="text-muted">Total Cost</small>
+                                                <div class="display-6">${transfer.totalCost.toFixed(2)}</div>
+                                                <small class="text-muted">Total Cost (SZL)</small>
                                             </div>
                                         </div>
                                     </div>
@@ -4616,10 +5395,9 @@ Box</textarea>
                                     <tr>
                                         <th>Item Description</th>
                                         <th>Units</th>
-                                        <th>SOB</th>
-                                        <th>REQ</th>
-                                        <th>Supplied</th>
-                                        <th>Order Cost</th>
+                                        <th>Qty Requested</th>
+                                        <th>Qty Received</th>
+                                        <th>Unit Cost</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -4629,38 +5407,7 @@ Box</textarea>
                             </table>
                         </div>
                         
-                        ${transfer.status === 'approved' ? `
-                            <div class="mt-4">
-                                <h5>Supply Items</h5>
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Update supplied quantities for each item before dispatching
-                                </div>
-                                <form id="supplyItemsForm">
-                                    ${transfer.items.map((item, index) => `
-                                        <div class="row mb-2">
-                                            <div class="col-md-5">
-                                                <label>${item.name}</label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <small class="text-muted">Requested: ${item.quantityRequested}</small>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input type="number" class="form-control" 
-                                                       value="${item.quantitySupplied || 0}" 
-                                                       min="0" max="${item.quantityRequested}"
-                                                       id="supplyQty_${index}">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <small class="text-muted">Available: ${item.stockOnHand}</small>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </form>
-                            </div>
-                        ` : ''}
-                        
-                        ${transfer.status === 'in_transit' ? `
+                        ${transfer.status === 'approved' && transfer.toBranch === currentBranch ? `
                             <div class="mt-4">
                                 <h5>Receive Items</h5>
                                 <div class="alert alert-info">
@@ -4670,20 +5417,25 @@ Box</textarea>
                                 <form id="receiveItemsForm">
                                     ${transfer.items.map((item, index) => `
                                         <div class="row mb-2">
-                                            <div class="col-md-5">
+                                            <div class="col-md-6">
                                                 <label>${item.name}</label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <small class="text-muted">Supplied: ${item.quantitySupplied || 0}</small>
                                             </div>
                                             <div class="col-md-3">
                                                 <input type="number" class="form-control" 
                                                        value="${item.quantityReceived || 0}" 
-                                                       min="0" max="${item.quantitySupplied || item.quantityRequested}"
+                                                       min="0" max="${item.quantityRequested}"
                                                        id="receiveQty_${index}">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small class="text-muted">Requested: ${item.quantityRequested}</small>
                                             </div>
                                         </div>
                                     `).join('')}
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-pharmacy" onclick="receiveTransferItems(${transfer.id})">
+                                            <i class="fas fa-check-circle me-2"></i>Receive Items
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         ` : ''}
@@ -4696,7 +5448,7 @@ Box</textarea>
         
         // Approve transfer
         function approveTransfer(id) {
-            if (!confirm('Approve this transfer request?')) return;
+            if (!confirm('Approve this transfer?')) return;
             
             const index = transfers.findIndex(t => t.id === id);
             if (index !== -1) {
@@ -4708,8 +5460,15 @@ Box</textarea>
                 saveTransfers();
                 renderTransfersTable();
                 
-                addActivity(`Approved transfer ${transfers[index].documentNumber}`, 'transfer');
-                alert('Transfer approved successfully!');
+                // Send notification to destination branch
+                const transfer = transfers[index];
+                sendSystemNotification(transfer.toBranch, 'Transfer Approved', 
+                    `Transfer ${transfer.transferNumber} from ${transfer.fromBranch} has been approved and is ready for dispatch.`);
+                
+                // Show notification
+                showNotification('success', 'Transfer approved successfully!');
+                
+                addActivity(`Approved transfer ${transfers[index].transferNumber}`, 'transfer');
                 
                 if (currentTransfer && currentTransfer.id === id) {
                     viewTransfer(id);
@@ -4724,17 +5483,24 @@ Box</textarea>
             
             const index = transfers.findIndex(t => t.id === id);
             if (index !== -1) {
-                transfers[index].status = 'cancelled';
-                transfers[index].cancellationReason = reason;
-                transfers[index].cancelledBy = currentUser;
-                transfers[index].cancelledDate = new Date().toISOString();
+                transfers[index].status = 'rejected';
+                transfers[index].rejectionReason = reason;
+                transfers[index].rejectedBy = currentUser;
+                transfers[index].rejectedDate = new Date().toISOString();
                 transfers[index].updatedAt = new Date().toISOString();
                 
                 saveTransfers();
                 renderTransfersTable();
                 
-                addActivity(`Rejected transfer ${transfers[index].documentNumber}`, 'transfer');
-                alert('Transfer rejected!');
+                // Send notification to source branch
+                const transfer = transfers[index];
+                sendSystemNotification(transfer.fromBranch, 'Transfer Rejected', 
+                    `Your transfer ${transfer.transferNumber} has been rejected. Reason: ${reason}`);
+                
+                // Show notification
+                showNotification('info', 'Transfer rejected!');
+                
+                addActivity(`Rejected transfer ${transfers[index].transferNumber}`, 'transfer');
                 
                 if (currentTransfer && currentTransfer.id === id) {
                     viewTransfer(id);
@@ -4742,93 +5508,91 @@ Box</textarea>
             }
         }
         
-        // Dispatch transfer
-        function dispatchTransfer(id) {
-            const index = transfers.findIndex(t => t.id === id);
-            if (index === -1) return;
-            
-            const transfer = transfers[index];
-            
-            // Update supplied quantities from form
-            transfer.items.forEach((item, itemIndex) => {
-                const supplyQtyInput = document.getElementById(`supplyQty_${itemIndex}`);
-                if (supplyQtyInput) {
-                    const supplyQty = parseInt(supplyQtyInput.value) || 0;
-                    item.quantitySupplied = supplyQty;
-                    item.status = supplyQty > 0 ? 'supplied' : 'pending';
-                    
-                    // Update inventory (deduct from source branch)
-                    if (!item.isCustom) {
-                        const inventoryItem = inventory.find(i => i.id === item.id);
-                        if (inventoryItem) {
-                            const stockField = 'stock' + transfer.from;
-                            inventoryItem[stockField] = Math.max(0, (inventoryItem[stockField] || 0) - supplyQty);
-                        }
-                    }
-                }
-            });
-            
-            // Update transfer status
-            transfer.status = 'in_transit';
-            transfer.dispatchedDate = new Date().toISOString();
-            transfer.dispatchedBy = currentUser;
-            transfer.updatedAt = new Date().toISOString();
-            
-            // Save changes
-            saveInventory();
-            saveTransfers();
-            
-            addActivity(`Dispatched transfer ${transfer.documentNumber}`, 'transfer');
-            alert('Transfer dispatched successfully!');
-            
-            viewTransfer(id);
-        }
-        
-        // Receive transfer
+        // Receive transfer (mark as in transit)
         function receiveTransfer(id) {
             const index = transfers.findIndex(t => t.id === id);
+            if (index !== -1) {
+                transfers[index].status = 'in_transit';
+                transfers[index].inTransitDate = new Date().toISOString();
+                transfers[index].updatedAt = new Date().toISOString();
+                
+                saveTransfers();
+                renderTransfersTable();
+                
+                // Send notification to destination branch
+                const transfer = transfers[index];
+                sendSystemNotification(transfer.toBranch, 'Transfer In Transit', 
+                    `Transfer ${transfer.transferNumber} is now in transit from ${transfer.fromBranch}.`);
+                
+                // Show notification
+                showNotification('success', 'Transfer marked as in transit!');
+                
+                addActivity(`Marked transfer ${transfers[index].transferNumber} as in transit`, 'transfer');
+                
+                if (currentTransfer && currentTransfer.id === id) {
+                    viewTransfer(id);
+                }
+            }
+        }
+        
+        // Receive transfer items
+        function receiveTransferItems(id) {
+            const index = transfers.findIndex(t => t.id === id);
             if (index === -1) return;
             
             const transfer = transfers[index];
-            const receiverName = prompt('Enter your name for receiving:');
-            if (!receiverName) return;
+            let allReceived = true;
             
-            // Update received quantities from form
+            // Update received quantities
             transfer.items.forEach((item, itemIndex) => {
                 const receiveQtyInput = document.getElementById(`receiveQty_${itemIndex}`);
                 if (receiveQtyInput) {
                     const receiveQty = parseInt(receiveQtyInput.value) || 0;
                     item.quantityReceived = receiveQty;
                     item.status = receiveQty > 0 ? 'received' : 'pending';
+                    item.receivedDate = new Date().toISOString();
+                    
+                    if (receiveQty < item.quantityRequested) {
+                        allReceived = false;
+                    }
                     
                     // Update inventory (add to destination branch)
-                    if (!item.isCustom && receiveQty > 0) {
-                        const inventoryItem = inventory.find(i => i.id === item.id);
-                        if (inventoryItem) {
-                            const stockField = 'stock' + transfer.to;
-                            inventoryItem[stockField] = (inventoryItem[stockField] || 0) + receiveQty;
+                    const inventoryItem = inventory.find(i => i.id === item.id);
+                    if (inventoryItem && !item.isCustom) {
+                        const stockField = 'stock' + transfer.toBranch;
+                        inventoryItem[stockField] = (inventoryItem[stockField] || 0) + receiveQty;
+                        
+                        // Deduct from source branch if not already done
+                        if (transfer.status !== 'completed') {
+                            const sourceStockField = 'stock' + transfer.fromBranch;
+                            inventoryItem[sourceStockField] = Math.max(0, (inventoryItem[sourceStockField] || 0) - receiveQty);
                         }
                     }
                 }
             });
             
-            // Check if all items received
-            const allReceived = transfer.items.every(item => 
-                (item.quantityReceived || 0) >= (item.quantitySupplied || item.quantityRequested)
-            );
-            
             // Update transfer status
-            transfer.status = allReceived ? 'completed' : 'received';
-            transfer.receivedBy = receiverName;
-            transfer.receivedDate = new Date().toISOString();
+            if (allReceived) {
+                transfer.status = 'completed';
+                transfer.completedDate = new Date().toISOString();
+                
+                // Send completion notification
+                sendSystemNotification(transfer.fromBranch, 'Transfer Completed', 
+                    `Transfer ${transfer.transferNumber} to ${transfer.toBranch} has been completed and all items received.`);
+            } else {
+                transfer.status = 'received'; // Partially received
+            }
+            
             transfer.updatedAt = new Date().toISOString();
             
             // Save changes
             saveInventory();
             saveTransfers();
             
-            addActivity(`Received transfer ${transfer.documentNumber}`, 'transfer');
-            alert('Transfer received successfully!');
+            // Show notification
+            showNotification('success', 'Items received successfully!');
+            
+            addActivity(`Received items for transfer ${transfer.transferNumber}`, 'transfer');
             
             viewTransfer(id);
         }
@@ -4838,17 +5602,11 @@ Box</textarea>
             const transfer = transfers.find(t => t.id === id);
             if (!transfer) return;
             
-            const branchNames = {
-                'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
-                'LSK': 'Lushikishikini'
-            };
-            
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <html>
                 <head>
-                    <title>Transfer ${transfer.documentNumber}</title>
+                    <title>Transfer ${transfer.transferNumber}</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         .header { text-align: center; margin-bottom: 30px; }
@@ -4858,47 +5616,40 @@ Box</textarea>
                         .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
                         .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; }
                         .items-table th { background-color: #f8f9fa; }
-                        .signature { margin-top: 50px; }
-                        .signature-row { display: flex; justify-content: space-between; }
-                        .signature-box { width: 45%; border-top: 1px solid #000; padding-top: 10px; }
+                        .signature { margin-top: 50px; border-top: 1px solid #000; width: 300px; padding-top: 10px; }
                         .footer { margin-top: 50px; font-size: 12px; color: #666; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
-                        <img src="Logo_Image-removebg-preview (1).png" alt="Yellow Pharmacy" style="height: 70px; margin-bottom: 10px;">
                         <h1>The Yellow Pharmacy</h1>
-                        <h2>TRANSFER / REQUEST FORM</h2>
+                        <h2>STOCK TRANSFER FORM</h2>
                     </div>
                     
                     <table class="info-table">
                         <tr>
-                            <th>Document Number:</th>
-                            <td>${transfer.documentNumber}</td>
+                            <th>Transfer Number:</th>
+                            <td>${transfer.transferNumber}</td>
                             <th>Date:</th>
                             <td>${new Date(transfer.date).toLocaleDateString()}</td>
                         </tr>
                         <tr>
-                            <th>From:</th>
-                            <td>${branchNames[transfer.from] || transfer.from}</td>
-                            <th>To:</th>
-                            <td>${branchNames[transfer.to] || transfer.to}</td>
-                        </tr>
-                        <tr>
-                            <th>Transfer Type:</th>
-                            <td>${transfer.transferType}</td>
-                            <th>Status:</th>
-                            <td>${transfer.status}</td>
+                            <th>From Branch:</th>
+                            <td>${transfer.fromBranch}</td>
+                            <th>To Branch:</th>
+                            <td>${transfer.toBranch}</td>
                         </tr>
                         <tr>
                             <th>Supplied By:</th>
                             <td>${transfer.suppliedBy}</td>
-                            <th>Received By:</th>
-                            <td>${transfer.receivedBy || 'Not received yet'}</td>
+                            <th>Type:</th>
+                            <td>${transfer.type}</td>
                         </tr>
                         <tr>
+                            <th>Status:</th>
+                            <td>${transfer.status}</td>
                             <th>Total Cost:</th>
-                            <td colspan="3">SZL ${transfer.totalCost?.toFixed(2) || '0.00'}</td>
+                            <td>${transfer.totalCost.toFixed(2)} SZL</td>
                         </tr>
                         <tr>
                             <th>Remarks:</th>
@@ -4912,10 +5663,10 @@ Box</textarea>
                             <tr>
                                 <th>Item Description</th>
                                 <th>Units</th>
-                                <th>SOB</th>
-                                <th>REQ</th>
-                                <th>Supplied</th>
-                                <th>Order Cost</th>
+                                <th>Quantity Requested</th>
+                                <th>Quantity Received</th>
+                                <th>Unit Cost</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -4923,26 +5674,18 @@ Box</textarea>
                                 <tr>
                                     <td>${item.name}</td>
                                     <td>${item.units}</td>
-                                    <td>${item.stockOnHand}</td>
                                     <td>${item.quantityRequested}</td>
-                                    <td>${item.quantitySupplied || 0}</td>
-                                    <td>${item.orderCost ? 'SZL ' + item.orderCost.toFixed(2) : '0.00'}</td>
+                                    <td>${item.quantityReceived || 0}</td>
+                                    <td>${item.orderCost || 0}</td>
+                                    <td>${item.status || 'pending'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                     
                     <div class="signature">
-                        <div class="signature-row">
-                            <div class="signature-box">
-                                <strong>Supplied by:</strong><br>
-                                ${transfer.suppliedBy}
-                            </div>
-                            <div class="signature-box">
-                                <strong>Received by:</strong><br>
-                                ${transfer.receivedBy || '___________________'}
-                            </div>
-                        </div>
+                        <strong>Supplier Signature:</strong><br>
+                        ${transfer.suppliedBy}
                     </div>
                     
                     <div class="footer">
@@ -4956,158 +5699,347 @@ Box</textarea>
             printWindow.print();
         }
         
-        // Update dashboard statistics
-        function updateDashboardStats() {
-            // Inventory stats
-            document.getElementById('totalItems').textContent = inventory.length;
-            
-            // Low stock count
-            const lowStockCount = inventory.filter(item => 
-                (item.stockMNK || 0) < item.minStock ||
-                (item.stockNHO || 0) < item.minStock ||
-                (item.stockLSK || 0) < item.minStock
-            ).length;
-            document.getElementById('lowStockItems').textContent = lowStockCount;
-            
-            // Pending requisitions
-            const pendingReqs = requisitions.filter(req => req.status === 'pending').length;
-            document.getElementById('pendingRequisitions').textContent = pendingReqs;
-            
-            // Pending transfers
-            const pendingTrans = transfers.filter(trans => trans.status === 'pending').length;
-            document.getElementById('pendingTransfers').textContent = pendingTrans;
+        // MESSAGES FUNCTIONS
+        
+        // Compose message
+        function composeMessage() {
+            const modal = new bootstrap.Modal(document.getElementById('messageComposeModal'));
+            modal.show();
         }
         
-        // Add activity to recent activities
-        function addActivity(description, type) {
-            const activityList = document.getElementById('recentActivity');
-            const icons = {
-                'login': 'fas fa-sign-in-alt',
-                'inventory': 'fas fa-pills',
-                'requisition': 'fas fa-clipboard-list',
-                'transfer': 'fas fa-truck',
-                'report': 'fas fa-chart-bar',
-                'settings': 'fas fa-cog',
-                'emergency': 'fas fa-exclamation-triangle'
-            };
+        // Show message tab
+        function showMessageTab(tabName) {
+            // Hide all tabs
+            document.getElementById('inboxTab').classList.add('d-none');
+            document.getElementById('sentTab').classList.add('d-none');
+            document.getElementById('systemTab').classList.add('d-none');
             
-            const icon = icons[type] || 'fas fa-info-circle';
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const dateString = now.toLocaleDateString();
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = 'list-group-item';
-            activityItem.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
-                    <small class="text-muted">${dateString} ${timeString}</small>
-                </div>
-                <p class="mb-1">${description}</p>
-            `;
-            
-            // Add to top
-            activityList.insertBefore(activityItem, activityList.firstChild);
-            
-            // Keep only last 5 activities
-            if (activityList.children.length > 5) {
-                activityList.removeChild(activityList.lastChild);
-            }
-        }
-        
-        // Show different sections
-        function showSection(sectionId) {
-            hideAllSections();
-            document.getElementById(sectionId + 'Section').classList.remove('d-none');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            // Remove active class from all tab buttons
+            document.querySelectorAll('#messageTabs .nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             
-            const sections = ['dashboard', 'inventory', 'requisitions', 'transfers', 'reports', 'settings'];
-            const activeIndex = sections.indexOf(sectionId) + 1;
-            if (activeIndex > 0) {
-                document.querySelector(`.sidebar-menu a:nth-child(${activeIndex})`).classList.add('active');
-            }
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.remove('d-none');
             
-            // If showing settings, load users table
-            if (sectionId === 'settings') {
-                renderUsersTable();
-                showSettingsTab('general');
-            }
+            // Add active class to clicked button
+            event.target.classList.add('active');
             
-            // Refresh data for certain sections
-            if (sectionId === 'requisitions') {
-                renderRequisitionsTable();
-            } else if (sectionId === 'transfers') {
-                renderTransfersTable();
-            } else if (sectionId === 'inventory') {
-                renderInventoryTable();
+            currentMessageTab = tabName;
+            
+            // Load appropriate data
+            if (tabName === 'inbox') {
+                loadMessageList();
+            } else if (tabName === 'sent') {
+                loadSentMessages();
+            } else if (tabName === 'system') {
+                loadSystemMessages();
             }
         }
         
-        // Hide all sections
-        function hideAllSections() {
-            const sections = [
-                'dashboardSection',
-                'inventorySection',
-                'requisitionsSection',
-                'transfersSection',
-                'reportsSection',
-                'settingsSection',
-                'createRequisitionSection',
-                'viewRequisitionSection',
-                'createTransferSection',
-                'viewTransferSection'
-            ];
+        // Load message list for inbox
+        function loadMessageList() {
+            const container = document.getElementById('messageList');
+            container.innerHTML = '';
             
-            sections.forEach(section => {
-                document.getElementById(section).classList.add('d-none');
+            // Filter messages for current branch
+            const branchMessages = messages.filter(msg => 
+                msg.to === currentBranch || msg.to === 'all' || msg.type === 'system'
+            ).sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (branchMessages.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-3">No messages</div>';
+                return;
+            }
+            
+            branchMessages.forEach(msg => {
+                const isUnread = msg.status === 'unread';
+                const priorityClass = msg.priority === 'high' ? 'message-priority-high' : 
+                                   msg.priority === 'medium' ? 'message-priority-medium' : '';
+                const isSystem = msg.type === 'system';
+                
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = `list-group-item list-group-item-action ${isUnread ? 'unread' : ''} ${priorityClass}`;
+                item.onclick = (e) => {
+                    e.preventDefault();
+                    viewMessage(msg.id);
+                };
+                
+                const icon = isSystem ? 'fas fa-bell' : 'fas fa-envelope';
+                const badge = isSystem ? '<span class="badge bg-warning ms-1">System</span>' : '';
+                
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <div>
+                            <i class="${icon} me-2"></i>
+                            <span class="message-sender">${msg.from}</span>
+                            ${badge}
+                        </div>
+                        <small class="message-time">${formatTime(msg.date)}</small>
+                    </div>
+                    <div class="mb-1">${msg.subject}</div>
+                    <div class="message-preview">${msg.body.substring(0, 60)}${msg.body.length > 60 ? '...' : ''}</div>
+                `;
+                container.appendChild(item);
             });
         }
         
+        // Load sent messages
+        function loadSentMessages() {
+            const tbody = document.getElementById('sentMessagesTable');
+            tbody.innerHTML = '';
+            
+            // Filter sent messages (in a real app, these would be stored separately)
+            const sentMessages = messages.filter(msg => msg.from === currentUser);
+            
+            if (sentMessages.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">No sent messages</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            sentMessages.forEach(msg => {
+                const row = `
+                    <tr>
+                        <td>${msg.to}</td>
+                        <td>${msg.subject}</td>
+                        <td>${new Date(msg.date).toLocaleString()}</td>
+                        <td><span class="badge ${msg.status === 'read' ? 'badge-approved' : 'badge-pending'}">${msg.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewMessage(${msg.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        // Load system messages
+        function loadSystemMessages() {
+            const tbody = document.getElementById('systemMessagesTable');
+            tbody.innerHTML = '';
+            
+            // Filter system messages
+            const systemMessages = messages.filter(msg => msg.type === 'system');
+            
+            if (systemMessages.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">No system notifications</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            systemMessages.forEach(msg => {
+                const row = `
+                    <tr>
+                        <td><span class="badge bg-warning">System</span></td>
+                        <td>${msg.subject}</td>
+                        <td>${new Date(msg.date).toLocaleString()}</td>
+                        <td><span class="badge ${msg.status === 'read' ? 'badge-approved' : 'badge-pending'}">${msg.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewMessage(${msg.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        // View message
+        function viewMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (!msg) return;
+            
+            currentMessageId = id;
+            
+            // Mark as read
+            if (msg.status === 'unread') {
+                msg.status = 'read';
+                saveMessages();
+                
+                // Update UI
+                const messageItems = document.querySelectorAll('#messageList .list-group-item');
+                messageItems.forEach(item => {
+                    if (item.querySelector('.message-sender')?.textContent.includes(msg.from)) {
+                        item.classList.remove('unread');
+                    }
+                });
+            }
+            
+            const container = document.getElementById('messageView');
+            const priorityBadge = msg.priority === 'high' ? '<span class="badge bg-danger ms-2">High Priority</span>' :
+                                msg.priority === 'medium' ? '<span class="badge bg-warning ms-2">Medium Priority</span>' : '';
+            const systemBadge = msg.type === 'system' ? '<span class="badge bg-warning ms-2">System Notification</span>' : '';
+            
+            container.innerHTML = `
+                <div class="message-header">
+                    <h4>${msg.subject} ${priorityBadge} ${systemBadge}</h4>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>From:</strong> ${msg.from}<br>
+                            <strong>To:</strong> ${msg.to}<br>
+                            <strong>Date:</strong> ${new Date(msg.date).toLocaleString()}
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="replyToMessage(${id})">
+                                <i class="fas fa-reply me-1"></i>Reply
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteMessage(${id})">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-body">
+                    ${msg.body.replace(/\n/g, '<br>')}
+                </div>
+                
+                ${msg.attachments && msg.attachments.length > 0 ? `
+                    <div class="message-attachments">
+                        <h6><i class="fas fa-paperclip me-2"></i>Attachments</h6>
+                        <ul>
+                            ${msg.attachments.map(att => `<li><a href="#">${att.name}</a> (${att.size})</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+            `;
+        }
+        
+        // Reply to message
+        function replyToMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (!msg) return;
+            
+            // Pre-fill compose form
+            document.getElementById('messageTo').value = msg.from === 'System' ? 'MNK' : msg.from;
+            document.getElementById('messageSubject').value = `Re: ${msg.subject}`;
+            document.getElementById('messageBody').value = `\n\n--- Original Message ---\nFrom: ${msg.from}\nDate: ${new Date(msg.date).toLocaleString()}\n\n${msg.body}`;
+            
+            // Show compose modal
+            const modal = new bootstrap.Modal(document.getElementById('messageComposeModal'));
+            modal.show();
+        }
+        
+        // Delete message
+        function deleteMessage(id) {
+            if (confirm('Are you sure you want to delete this message?')) {
+                messages = messages.filter(m => m.id !== id);
+                saveMessages();
+                
+                // Update UI
+                if (currentMessageTab === 'inbox') {
+                    loadMessageList();
+                } else if (currentMessageTab === 'sent') {
+                    loadSentMessages();
+                } else if (currentMessageTab === 'system') {
+                    loadSystemMessages();
+                }
+                
+                // Clear message view
+                document.getElementById('messageView').innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                        <h4>Select a message to read</h4>
+                        <p>Click on a message from the list to view its contents</p>
+                    </div>
+                `;
+                
+                showNotification('success', 'Message deleted successfully!');
+            }
+        }
+        
+        // Send message
+        function sendMessage() {
+            const form = document.getElementById('messageComposeForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const to = document.getElementById('messageTo').value;
+            const subject = document.getElementById('messageSubject').value;
+            const body = document.getElementById('messageBody').value;
+            const priority = document.getElementById('messagePriority').value;
+            
+            const newMessage = {
+                id: messages.length > 0 ? Math.max(...messages.map(m => m.id)) + 1 : 1,
+                from: currentUser,
+                to: to,
+                subject: subject,
+                body: body,
+                date: new Date().toISOString(),
+                type: 'user',
+                priority: priority,
+                status: 'unread',
+                attachments: []
+            };
+            
+            messages.push(newMessage);
+            saveMessages();
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('messageComposeModal')).hide();
+            form.reset();
+            
+            // Show success message
+            showNotification('success', 'Message sent successfully!');
+            
+            // If we're on messages page, refresh
+            if (document.getElementById('messagesSection').classList.contains('d-none') === false) {
+                loadMessageList();
+            }
+        }
+        
+        // Search messages
+        function searchMessages() {
+            const searchTerm = document.getElementById('searchMessages').value.toLowerCase();
+            const container = document.getElementById('messageList');
+            const items = container.querySelectorAll('.list-group-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // SETTINGS FUNCTIONS
+        
         // Show settings tab
-        function showSettingsTab(tabId) {
+        function showSettingsTab(tabName) {
             // Hide all tabs
             document.querySelectorAll('.settings-tab-content').forEach(tab => {
                 tab.classList.add('d-none');
             });
             
             // Remove active class from all tab buttons
-            document.querySelectorAll('.settings-tabs .nav-link').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('#settingsTabs .nav-link').forEach(link => {
+                link.classList.remove('active');
             });
             
             // Show selected tab
-            document.getElementById(tabId + 'Settings').classList.remove('d-none');
+            document.getElementById(tabName + 'Settings').classList.remove('d-none');
             
             // Add active class to clicked button
             event.target.classList.add('active');
-        }
-        
-        // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('pharmacy_logged_in');
-                hideAllSections();
-                document.getElementById('loginScreen').classList.remove('d-none');
-                document.getElementById('sidebar').classList.remove('show');
-                document.getElementById('mainContent').style.marginLeft = '0';
-                document.getElementById('password').value = '';
-                document.getElementById('currentBranch').textContent = 'Not logged in';
-                document.getElementById('logoutNavItem').classList.add('d-none');
-                
-                // Change header text back to "The Yellow Pharmacy" (login page style)
-                document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-                
-                // Add login page class
-                document.body.classList.add('login-page');
-                
-                currentUser = null;
-                currentBranch = null;
-                
-                addActivity('Logged out of the system', 'login');
+            
+            // Load data for specific tabs
+            if (tabName === 'users') {
+                renderUsersTable();
             }
         }
         
@@ -5120,8 +6052,8 @@ Box</textarea>
             
             saveSettings();
             applySettings();
-            addActivity('Updated general settings', 'settings');
-            alert('General settings saved successfully!');
+            
+            showNotification('success', 'General settings saved successfully!');
         }
         
         // Save security settings
@@ -5132,23 +6064,23 @@ Box</textarea>
             settings.security.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
             
             saveSettings();
-            addActivity('Updated security settings', 'settings');
-            alert('Security settings saved successfully!');
+            
+            showNotification('success', 'Security settings saved successfully!');
         }
         
         // Save inventory settings
         function saveInventorySettings() {
             settings.inventory.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
             settings.inventory.expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value);
-            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').filter(c => c.trim() !== '');
-            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').filter(u => u.trim() !== '');
+            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').map(c => c.trim()).filter(c => c);
+            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').map(u => u.trim()).filter(u => u);
             settings.inventory.trackBatchNumbers = document.getElementById('trackBatchNumbers').checked;
             settings.inventory.trackExpiryDates = document.getElementById('trackExpiryDates').checked;
             settings.inventory.trackSuppliers = document.getElementById('trackSuppliers').checked;
             
             saveSettings();
-            addActivity('Updated inventory settings', 'settings');
-            alert('Inventory settings saved successfully!');
+            
+            showNotification('success', 'Inventory settings saved successfully!');
         }
         
         // Save branch settings
@@ -5157,8 +6089,8 @@ Box</textarea>
             settings.branches.centralWarehouse = document.getElementById('centralWarehouse').value;
             
             saveSettings();
-            addActivity('Updated branch settings', 'settings');
-            alert('Branch settings saved successfully!');
+            
+            showNotification('success', 'Branch settings saved successfully!');
         }
         
         // Save notification settings
@@ -5174,71 +6106,15 @@ Box</textarea>
             settings.notifications.soundAlerts = document.getElementById('soundAlerts').checked;
             
             saveSettings();
-            addActivity('Updated notification settings', 'settings');
-            alert('Notification settings saved successfully!');
-        }
-        
-        // Toggle sidebar
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-            if (window.innerWidth <= 768) {
-                document.getElementById('mainContent').style.marginLeft = '0';
-            } else {
-                if (document.getElementById('sidebar').classList.contains('show')) {
-                    document.getElementById('mainContent').style.marginLeft = '250px';
-                } else {
-                    document.getElementById('mainContent').style.marginLeft = '0';
-                }
-            }
-        });
-        
-        // Check login status on page load
-        function checkLoginStatus() {
-            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
-                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
-                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
-                login();
-            } else {
-                // Load settings for login page
-                const savedSettings = localStorage.getItem('pharmacy_settings');
-                if (savedSettings) {
-                    settings = JSON.parse(savedSettings);
-                }
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
             
-            // Make login work with Enter key
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            
-            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-                    e.preventDefault();
-                    document.getElementById('sidebarToggle').click();
-                }
-            });
-        });
-        
-        // Quick action functions (aliases for UI buttons)
-        function viewInventory() {
-            showSection('inventory');
+            showNotification('success', 'Notification settings saved successfully!');
         }
         
-        function generateReport(type) {
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
-            addActivity(`Generated ${type} report`, 'report');
-        }
-        
-        // Export/Import functions
+        // Export inventory
         function exportInventory() {
             const dataStr = JSON.stringify(inventory, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
             const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
             
             const linkElement = document.createElement('a');
@@ -5246,37 +6122,190 @@ Box</textarea>
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
             
-            addActivity('Exported inventory data', 'report');
+            showNotification('success', 'Inventory exported successfully!');
         }
         
-        function downloadCSVTemplate() {
-            const csvContent = "Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock,Notes\nParacetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,150,80,60,50,Pain relief\nAmoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,100,40,30,30,Broad spectrum antibiotic";
-            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'inventory-template.csv');
-            linkElement.click();
-            return false;
+        // Export to Excel
+        function exportToExcel() {
+            // In a real app, this would use a library like SheetJS
+            showNotification('info', 'Excel export feature would be implemented with a library like SheetJS');
         }
         
-        function importCSV() {
-            alert('CSV import feature will be implemented in the next update.\n\nFor now, use the JSON export/import feature.');
+        // Export to PDF
+        function exportToPDF() {
+            // In a real app, this would use a library like jsPDF
+            showNotification('info', 'PDF export feature would be implemented with a library like jsPDF');
+        }
+        
+        // Print report
+        function printReport() {
+            window.print();
+        }
+        
+        // Generate report
+        function generateReport(type) {
+            let reportContent = '';
+            let reportTitle = '';
+            
+            switch(type) {
+                case 'stock':
+                    reportTitle = 'Stock Level Report';
+                    reportContent = `
+                        <h3>Stock Level Report</h3>
+                        <p>Generated: ${new Date().toLocaleString()}</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Medication</th>
+                                    <th>Mankayane</th>
+                                    <th>Nhlangano</th>
+                                    <th>Lushikishikini</th>
+                                    <th>Min Stock</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${inventory.map(item => {
+                                    const isLowMNK = (item.stockMNK || 0) < item.minStock;
+                                    const isLowNHO = (item.stockNHO || 0) < item.minStock;
+                                    const isLowLSK = (item.stockLSK || 0) < item.minStock;
+                                    const status = (isLowMNK || isLowNHO || isLowLSK) ? 'Low Stock' : 'In Stock';
+                                    return `
+                                        <tr>
+                                            <td>${item.name}</td>
+                                            <td>${item.stockMNK || 0}</td>
+                                            <td>${item.stockNHO || 0}</td>
+                                            <td>${item.stockLSK || 0}</td>
+                                            <td>${item.minStock}</td>
+                                            <td>${status}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    break;
+                    
+                case 'expiry':
+                    reportTitle = 'Expiry Report';
+                    reportContent = `
+                        <h3>Expiry Report</h3>
+                        <p>Generated: ${new Date().toLocaleString()}</p>
+                        <p>Note: This is a placeholder. In a real system, expiry dates would be tracked.</p>
+                    `;
+                    break;
+                    
+                case 'requisitions':
+                    reportTitle = 'Requisition History Report';
+                    reportContent = `
+                        <h3>Requisition History Report</h3>
+                        <p>Generated: ${new Date().toLocaleString()}</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Req ID</th>
+                                    <th>Date</th>
+                                    <th>Branch</th>
+                                    <th>Items</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${requisitions.map(req => `
+                                    <tr>
+                                        <td>${req.requisitionNumber}</td>
+                                        <td>${new Date(req.date).toLocaleDateString()}</td>
+                                        <td>${req.branch}</td>
+                                        <td>${req.totalItems}</td>
+                                        <td>${req.totalQuantity}</td>
+                                        <td>${req.status}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    break;
+                    
+                case 'transfers':
+                    reportTitle = 'Transfer Logs Report';
+                    reportContent = `
+                        <h3>Transfer Logs Report</h3>
+                        <p>Generated: ${new Date().toLocaleString()}</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Transfer ID</th>
+                                    <th>Date</th>
+                                    <th>From → To</th>
+                                    <th>Items</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transfers.map(transfer => {
+                                    const fromTo = `${transfer.fromBranch} → ${transfer.toBranch}`;
+                                    return `
+                                        <tr>
+                                            <td>${transfer.transferNumber}</td>
+                                            <td>${new Date(transfer.date).toLocaleDateString()}</td>
+                                            <td>${fromTo}</td>
+                                            <td>${transfer.totalItems}</td>
+                                            <td>${transfer.status}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    break;
+            }
+            
+            // Open report in new window for printing
+            const reportWindow = window.open('', '_blank');
+            reportWindow.document.write(`
+                <html>
+                <head>
+                    <title>${reportTitle} - The Yellow Pharmacy</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        body { padding: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h1 { color: #0056A6; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>The Yellow Pharmacy</h1>
+                        <h2>${reportTitle}</h2>
+                    </div>
+                    ${reportContent}
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="window.print()">Print Report</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            reportWindow.document.close();
+            
+            showNotification('success', `${reportTitle} generated successfully!`);
         }
         
         // Backup data
         function backupData() {
-            const backup = {
+            const backupData = {
                 inventory: inventory,
                 requisitions: requisitions,
                 transfers: transfers,
                 users: users,
+                messages: messages,
                 settings: settings,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
+                timestamp: new Date().toISOString()
             };
             
-            const dataStr = JSON.stringify(backup, null, 2);
+            const dataStr = JSON.stringify(backupData, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
             const exportFileDefaultName = `yellow-pharmacy-backup-${new Date().toISOString().split('T')[0]}.json`;
             
             const linkElement = document.createElement('a');
@@ -5284,80 +6313,229 @@ Box</textarea>
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
             
-            addActivity('Created system backup', 'settings');
-            alert('Backup downloaded successfully!');
+            showNotification('success', 'Data backed up successfully!');
         }
         
+        // Restore data
         function restoreData() {
             const fileInput = document.getElementById('restoreFile');
-            if (!fileInput.files.length) {
-                alert('Please select a backup file first.');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showNotification('error', 'Please select a backup file');
                 return;
             }
             
-            const file = fileInput.files[0];
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 try {
-                    const backup = JSON.parse(e.target.result);
+                    const backupData = JSON.parse(e.target.result);
                     
-                    if (confirm('This will replace ALL current data. Are you sure?')) {
-                        // Restore data
-                        if (backup.inventory) inventory = backup.inventory;
-                        if (backup.requisitions) requisitions = backup.requisitions;
-                        if (backup.transfers) transfers = backup.transfers;
-                        if (backup.users) users = backup.users;
-                        if (backup.settings) settings = backup.settings;
+                    if (confirm('Are you sure you want to restore from this backup? This will overwrite all current data.')) {
+                        inventory = backupData.inventory || [];
+                        requisitions = backupData.requisitions || [];
+                        transfers = backupData.transfers || [];
+                        users = backupData.users || [];
+                        messages = backupData.messages || [];
+                        settings = backupData.settings || settings;
                         
                         // Save all data
                         saveInventory();
                         saveRequisitions();
                         saveTransfers();
                         saveUsers();
+                        saveMessages();
                         saveSettings();
                         
                         // Reload UI
                         renderInventoryTable();
                         renderRequisitionsTable();
                         renderTransfersTable();
-                        renderUsersTable();
                         applySettings();
                         
-                        addActivity('Restored system from backup', 'settings');
-                        alert('Data restored successfully!');
+                        showNotification('success', 'Data restored successfully!');
                     }
                 } catch (error) {
-                    alert('Error reading backup file: ' + error.message);
+                    showNotification('error', 'Error reading backup file: ' + error.message);
                 }
             };
-            
             reader.readAsText(file);
-        }
-        
-        // Report functions
-        function exportToExcel() {
-            alert('Excel export will be available in the next update.\nFor now, use JSON export.');
-        }
-        
-        function exportToPDF() {
-            alert('PDF export will be available in the next update.\nFor now, use Print Report.');
-        }
-        
-        function printReport() {
-            window.print();
-            addActivity('Printed report', 'report');
         }
         
         // Confirm reset data
         function confirmResetData() {
-            if (confirm('⚠️ WARNING: This will delete ALL data including:\n• All medications\n• All requisitions\n• All transfers\n• All users\n• All settings\n\nThis action cannot be undone!\n\nAre you absolutely sure?')) {
-                if (confirm('Type "RESET" to confirm deletion:')) {
-                    localStorage.clear();
-                    location.reload();
+            if (confirm('⚠️ WARNING: This will delete ALL data including inventory, requisitions, transfers, users, and messages. This action cannot be undone.\n\nAre you absolutely sure?')) {
+                if (prompt('Type "DELETE ALL" to confirm:') === 'DELETE ALL') {
+                    // Clear all data
+                    inventory = [];
+                    requisitions = [];
+                    transfers = [];
+                    users = [];
+                    messages = [];
+                    
+                    // Clear localStorage
+                    localStorage.removeItem('pharmacy_inventory');
+                    localStorage.removeItem('pharmacy_requisitions');
+                    localStorage.removeItem('pharmacy_transfers');
+                    localStorage.removeItem('pharmacy_users');
+                    localStorage.removeItem('pharmacy_messages');
+                    
+                    // Reload UI
+                    renderInventoryTable();
+                    renderRequisitionsTable();
+                    renderTransfersTable();
+                    
+                    showNotification('warning', 'All data has been reset!');
                 }
             }
         }
+        
+        // Download CSV template
+        function downloadCSVTemplate() {
+            const template = 'Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock\n' +
+                           'Paracetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,100,50,30,20\n' +
+                           'Amoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,80,40,25,15';
+            
+            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(template);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', 'inventory-template.csv');
+            linkElement.click();
+        }
+        
+        // Import CSV
+        function importCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            const replaceExisting = document.getElementById('replaceExisting').checked;
+            
+            if (!file) {
+                showNotification('error', 'Please select a CSV file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvContent = e.target.result;
+                    const lines = csvContent.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    
+                    // Validate headers
+                    const expectedHeaders = ['Name', 'Generic', 'Category', 'Strength', 'Form', 'Mankayane', 'Nhlangano', 'Lushikishikini', 'MinStock'];
+                    const isValid = expectedHeaders.every(h => headers.includes(h));
+                    
+                    if (!isValid) {
+                        showNotification('error', 'Invalid CSV format. Please use the provided template.');
+                        return;
+                    }
+                    
+                    // Parse data
+                    const newInventory = [];
+                    let idCounter = replaceExisting ? 1 : (inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1);
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim() === '') continue;
+                        
+                        const values = lines[i].split(',').map(v => v.trim());
+                        if (values.length < headers.length) continue;
+                        
+                        const item = {
+                            id: idCounter++,
+                            name: values[headers.indexOf('Name')],
+                            generic: values[headers.indexOf('Generic')],
+                            category: values[headers.indexOf('Category')],
+                            strength: values[headers.indexOf('Strength')],
+                            form: values[headers.indexOf('Form')],
+                            stockMNK: parseInt(values[headers.indexOf('Mankayane')]) || 0,
+                            stockNHO: parseInt(values[headers.indexOf('Nhlangano')]) || 0,
+                            stockLSK: parseInt(values[headers.indexOf('Lushikishikini')]) || 0,
+                            minStock: parseInt(values[headers.indexOf('MinStock')]) || 10,
+                            notes: 'Imported from CSV'
+                        };
+                        
+                        newInventory.push(item);
+                    }
+                    
+                    // Update inventory
+                    if (replaceExisting) {
+                        inventory = newInventory;
+                    } else {
+                        inventory = [...inventory, ...newInventory];
+                    }
+                    
+                    saveInventory();
+                    
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    fileInput.value = '';
+                    
+                    showNotification('success', `Successfully imported ${newInventory.length} items from CSV!`);
+                    
+                } catch (error) {
+                    showNotification('error', 'Error reading CSV file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Initialize the application
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize sidebar toggle
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('show');
+                
+                if (window.innerWidth > 768) {
+                    document.getElementById('mainContent').style.marginLeft = 
+                        sidebar.classList.contains('show') ? '250px' : '0';
+                }
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.getElementById('sidebarToggle');
+                
+                if (window.innerWidth <= 768 && 
+                    sidebar.classList.contains('show') &&
+                    !sidebar.contains(event.target) && 
+                    !toggleBtn.contains(event.target)) {
+                    sidebar.classList.remove('show');
+                    document.getElementById('mainContent').style.marginLeft = '0';
+                }
+            });
+            
+            // Message recipient selection
+            document.getElementById('messageTo').addEventListener('change', function() {
+                const specificUserContainer = document.getElementById('specificUserContainer');
+                if (this.value === 'specific') {
+                    specificUserContainer.style.display = 'block';
+                } else {
+                    specificUserContainer.style.display = 'none';
+                }
+            });
+            
+            // Auto-logout timer
+            let inactivityTimer;
+            function resetInactivityTimer() {
+                clearTimeout(inactivityTimer);
+                if (currentUser) {
+                    const timeout = settings.general.autoLogout * 60 * 1000; // Convert minutes to milliseconds
+                    if (timeout > 0) {
+                        inactivityTimer = setTimeout(logout, timeout);
+                    }
+                }
+            }
+            
+            // Reset timer on user activity
+            document.addEventListener('mousemove', resetInactivityTimer);
+            document.addEventListener('keypress', resetInactivityTimer);
+            document.addEventListener('click', resetInactivityTimer);
+            
+            // Initialize timer
+            resetInactivityTimer();
+        });
     </script>
 </body>
 </html>
