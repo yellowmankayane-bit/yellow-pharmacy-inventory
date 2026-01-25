@@ -129,6 +129,12 @@
             background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
         }
         
+        /* Workflow Status Colors */
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-in-progress { color: #0dcaf0; font-weight: bold; }
+        .status-completed { color: #198754; font-weight: bold; }
+        .status-overdue { color: #dc3545; font-weight: bold; }
+        
         .stat-card {
             text-align: center;
             padding: 20px;
@@ -295,6 +301,73 @@
             color: #000;
         }
         
+        /* Transfer form specific */
+        .transfer-form-table th {
+            background: var(--pharmacy-light-blue);
+            position: sticky;
+            top: 0;
+        }
+        
+        .sob-cell {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .req-cell {
+            background: #fff3cd;
+            font-weight: 600;
+        }
+        
+        /* Workflow timeline */
+        .workflow-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 30px 0;
+        }
+        
+        .workflow-timeline::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .workflow-step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .workflow-step .step-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+        
+        .workflow-step.active .step-icon {
+            border-color: var(--pharmacy-yellow);
+            background: var(--pharmacy-yellow);
+        }
+        
+        .workflow-step.completed .step-icon {
+            border-color: #198754;
+            background: #198754;
+            color: white;
+        }
+        
         /* Mobile adjustments */
         @media (max-width: 768px) {
             .logo-container {
@@ -338,6 +411,15 @@
             
             .stat-number {
                 font-size: 1.5rem;
+            }
+            
+            .workflow-timeline {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .workflow-timeline::before {
+                display: none;
             }
         }
         
@@ -416,6 +498,13 @@
         .settings-tabs .nav-link:hover {
             border-bottom: 3px solid var(--pharmacy-yellow);
         }
+        
+        /* Signature canvas */
+        .signature-canvas {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
     </style>
 </head>
 <body class="login-page">
@@ -467,8 +556,12 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="#" onclick="showSection('inventory')"><i class="fas fa-pills"></i> Inventory</a></li>
-            <li><a href="#" onclick="showSection('requisitions')"><i class="fas fa-clipboard-list"></i> Requisitions</a></li>
-            <li><a href="#" onclick="showSection('transfers')"><i class="fas fa-truck-moving"></i> Transfers</a></li>
+            <!-- NEW: Weekly Requisitions Menu -->
+            <li><a href="#" onclick="showSection('weeklyRequisitions')"><i class="fas fa-calendar-week"></i> Weekly Requisitions</a></li>
+            <!-- NEW: Transfers Menu -->
+            <li><a href="#" onclick="showSection('transfers')"><i class="fas fa-exchange-alt"></i> Transfers</a></li>
+            <!-- NEW: Workflow Calendar -->
+            <li><a href="#" onclick="showSection('workflow')"><i class="fas fa-project-diagram"></i> Workflow</a></li>
             <li><a href="#" onclick="showSection('reports')"><i class="fas fa-chart-bar"></i> Reports</a></li>
             <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
             <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -553,11 +646,13 @@
                     <div class="col">
                         <h2 class="fw-bold">Welcome, <span id="userName">Admin</span>!</h2>
                         <p class="text-muted">You are logged into <span id="branchName" class="branch-badge"></span> branch</p>
+                        <div id="dayNotification" class="alert alert-info d-none"></div>
                     </div>
                     <div class="col-auto">
                         <div class="btn-group">
-                            <button class="btn btn-pharmacy me-2" onclick="createRequisition()">
-                                <i class="fas fa-plus-circle me-2"></i>New Requisition
+                            <!-- Dynamic button based on day and branch -->
+                            <button class="btn btn-pharmacy me-2" id="dynamicActionBtn">
+                                <i class="fas fa-plus-circle me-2"></i><span id="btnText">Quick Action</span>
                             </button>
                             <button class="btn btn-outline-pharmacy" onclick="showSection('inventory')">
                                 <i class="fas fa-pills me-2"></i>Manage Inventory
@@ -565,6 +660,45 @@
                             <button class="btn btn-outline-secondary ms-2" onclick="logout()">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weekly Workflow Status -->
+                <div class="row mb-4">
+                    <div class="col">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="fas fa-calendar-alt me-2"></i>Weekly Workflow Status
+                                </h5>
+                                <div class="workflow-timeline">
+                                    <div class="workflow-step" id="fridayStep">
+                                        <div class="step-icon">F</div>
+                                        <div class="step-title">Friday</div>
+                                        <div class="step-desc">Requisition Submission</div>
+                                        <div class="step-status" id="fridayStatus">Pending</div>
+                                    </div>
+                                    <div class="workflow-step" id="mondayStep">
+                                        <div class="step-icon">M</div>
+                                        <div class="step-title">Monday</div>
+                                        <div class="step-desc">Supplier Ordering</div>
+                                        <div class="step-status" id="mondayStatus">Waiting</div>
+                                    </div>
+                                    <div class="workflow-step" id="tuesdayStep">
+                                        <div class="step-icon">T</div>
+                                        <div class="step-title">Tuesday</div>
+                                        <div class="step-desc">Stock Distribution</div>
+                                        <div class="step-status" id="tuesdayStatus">Waiting</div>
+                                    </div>
+                                    <div class="workflow-step" id="wednesdayStep">
+                                        <div class="step-icon">W</div>
+                                        <div class="step-title">Wednesday</div>
+                                        <div class="step-desc">Receipt Confirmation</div>
+                                        <div class="step-status" id="wednesdayStatus">Waiting</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -616,8 +750,8 @@
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
-                                        <button class="btn btn-outline-success w-100 py-2" onclick="createRequisition()">
-                                            <i class="fas fa-file-medical me-2"></i>New Requisition
+                                        <button class="btn btn-outline-success w-100 py-2" onclick="showSection('weeklyRequisitions')">
+                                            <i class="fas fa-calendar-plus me-2"></i>Weekly Requisition
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-sm-6">
@@ -819,19 +953,23 @@
             </div>
         </div>
         
-        <!-- Requisitions Section -->
-        <div id="requisitionsSection" class="d-none fade-in">
+        <!-- NEW: Weekly Requisitions Section -->
+        <div id="weeklyRequisitionsSection" class="d-none fade-in">
             <div class="container-fluid">
                 <div class="row mb-4">
                     <div class="col">
                         <h2 class="fw-bold">
-                            <i class="fas fa-clipboard-list me-2"></i>Requisitions Management
+                            <i class="fas fa-calendar-week me-2"></i>Weekly Requisitions
                         </h2>
-                        <p class="text-muted">Create and manage branch requisitions</p>
+                        <p class="text-muted">Submit and manage weekly requisitions from branches</p>
+                        <div id="requisitionNotification" class="alert alert-warning d-none">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span id="notificationText"></span>
+                        </div>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="createNewRequisition()">
-                            <i class="fas fa-plus me-2"></i>New Requisition
+                        <button class="btn btn-pharmacy" onclick="createNewRequisition()" id="newRequisitionBtn">
+                            <i class="fas fa-plus me-2"></i>New Weekly Requisition
                         </button>
                         <button class="btn btn-outline-secondary ms-2" onclick="logout()">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -839,43 +977,74 @@
                     </div>
                 </div>
                 
-                <!-- Requisition Table -->
-                <div class="card pharmacy-card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="requisitionsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Req ID</th>
-                                        <th>Branch</th>
-                                        <th>Date</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="requisitionsTableBody">
-                                    <!-- Requisitions will be loaded here -->
-                                </tbody>
-                            </table>
+                <!-- Weekly Summary -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">This Week's Requisitions</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Req #</th>
+                                                <th>Branch</th>
+                                                <th>Date</th>
+                                                <th>Items</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="weeklyRequisitionsTableBody">
+                                            <!-- Weekly requisitions will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Weekly Summary</h5>
+                                <div class="mb-3">
+                                    <small class="text-muted">Current Week:</small>
+                                    <h4 id="currentWeekLabel">Week 0, 2024</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Your Submissions:</small>
+                                    <h4 id="userSubmissionsCount">0</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Total Items Requested:</small>
+                                    <h4 id="totalItemsRequested">0</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Next Submission:</small>
+                                    <h5 id="nextSubmissionDate">Friday</h5>
+                                </div>
+                                <button class="btn btn-outline-secondary w-100" onclick="viewRequisitionHistory()">
+                                    <i class="fas fa-history me-2"></i>View History
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Transfers Section -->
+        <!-- NEW: Transfers Section -->
         <div id="transfersSection" class="d-none fade-in">
             <div class="container-fluid">
                 <div class="row mb-4">
                     <div class="col">
                         <h2 class="fw-bold">
-                            <i class="fas fa-truck-moving me-2"></i>Transfers Management
+                            <i class="fas fa-exchange-alt me-2"></i>Transfers Management
                         </h2>
                         <p class="text-muted">Manage stock transfers between branches</p>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-pharmacy" onclick="createNewTransfer()">
+                        <button class="btn btn-pharmacy" onclick="createNewTransfer()" id="newTransferBtn">
                             <i class="fas fa-plus me-2"></i>New Transfer
                         </button>
                         <button class="btn btn-outline-secondary ms-2" onclick="logout()">
@@ -884,26 +1053,174 @@
                     </div>
                 </div>
                 
-                <!-- Transfers Table -->
-                <div class="card pharmacy-card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="transfersTable">
-                                <thead>
-                                    <tr>
-                                        <th>Transfer ID</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Date</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transfersTableBody">
-                                    <!-- Transfers will be loaded here -->
-                                </tbody>
-                            </table>
+                <!-- Transfer Forms -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Recent Transfers</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Transfer #</th>
+                                                <th>From → To</th>
+                                                <th>Date</th>
+                                                <th>Items</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transfersTableBody">
+                                            <!-- Transfers will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Transfer Statistics</h5>
+                                <div class="mb-3">
+                                    <small class="text-muted">This Month:</small>
+                                    <h4 id="monthlyTransfers">0 transfers</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Pending Receipt:</small>
+                                    <h4 id="pendingReceipts">0 transfers</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Items Moved:</small>
+                                    <h4 id="itemsMoved">0 items</h4>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Last Transfer:</small>
+                                    <h5 id="lastTransferDate">Never</h5>
+                                </div>
+                                <button class="btn btn-outline-secondary w-100" onclick="generateTransferReport()">
+                                    <i class="fas fa-file-pdf me-2"></i>Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NEW: Workflow Section -->
+        <div id="workflowSection" class="d-none fade-in">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-project-diagram me-2"></i>Weekly Workflow
+                        </h2>
+                        <p class="text-muted">Track and manage the weekly pharmacy workflow</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-outline-secondary" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Workflow Calendar -->
+                <div class="row mb-4">
+                    <div class="col">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Weekly Schedule</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr class="text-center">
+                                                <th>Day</th>
+                                                <th>Nhlangano</th>
+                                                <th>Lushikishikini</th>
+                                                <th>Mankayane</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold">Friday</td>
+                                                <td>Submit weekly requisition</td>
+                                                <td>Submit weekly requisition</td>
+                                                <td>Receive requisitions</td>
+                                                <td id="fridayWorkflowStatus" class="text-center"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Monday</td>
+                                                <td>Await confirmation</td>
+                                                <td>Await confirmation</td>
+                                                <td>Review & order from suppliers</td>
+                                                <td id="mondayWorkflowStatus" class="text-center"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Tuesday</td>
+                                                <td>Await delivery</td>
+                                                <td>Await delivery</td>
+                                                <td>Receive stock & create transfers</td>
+                                                <td id="tuesdayWorkflowStatus" class="text-center"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Wednesday</td>
+                                                <td>Confirm receipt</td>
+                                                <td>Confirm receipt</td>
+                                                <td>Track deliveries</td>
+                                                <td id="wednesdayWorkflowStatus" class="text-center"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Thursday</td>
+                                                <td>Normal operations</td>
+                                                <td>Normal operations</td>
+                                                <td>Prepare for next week</td>
+                                                <td id="thursdayWorkflowStatus" class="text-center"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Current Week Progress -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">This Week's Progress</h5>
+                                <div class="progress mb-3" style="height: 25px;">
+                                    <div class="progress-bar bg-success" id="weekProgressBar" style="width: 0%"></div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col">
+                                        <small class="text-muted">Requisitions</small>
+                                        <h4 id="weekRequisitions">0</h4>
+                                    </div>
+                                    <div class="col">
+                                        <small class="text-muted">Transfers</small>
+                                        <h4 id="weekTransfers">0</h4>
+                                    </div>
+                                    <div class="col">
+                                        <small class="text-muted">Completed</small>
+                                        <h4 id="weekCompleted">0%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Upcoming Tasks</h5>
+                                <div class="list-group list-group-flush" id="upcomingTasks">
+                                    <!-- Tasks will be loaded here -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -927,14 +1244,14 @@
                                     <button class="list-group-item list-group-item-action" onclick="generateReport('stock')">
                                         <i class="fas fa-box me-2"></i>Stock Level Report
                                     </button>
-                                    <button class="list-group-item list-group-item-action" onclick="generateReport('expiry')">
-                                        <i class="fas fa-calendar-times me-2"></i>Expiry Report
-                                    </button>
                                     <button class="list-group-item list-group-item-action" onclick="generateReport('requisitions')">
                                         <i class="fas fa-clipboard-list me-2"></i>Requisition History
                                     </button>
                                     <button class="list-group-item list-group-item-action" onclick="generateReport('transfers')">
                                         <i class="fas fa-truck me-2"></i>Transfer Logs
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="generateReport('weekly')">
+                                        <i class="fas fa-calendar-week me-2"></i>Weekly Summary
                                     </button>
                                 </div>
                             </div>
@@ -953,6 +1270,9 @@
                                     </button>
                                     <button class="list-group-item list-group-item-action" onclick="printReport()">
                                         <i class="fas fa-print me-2"></i>Print Report
+                                    </button>
+                                    <button class="list-group-item list-group-item-action" onclick="exportWeeklyWorkflow()">
+                                        <i class="fas fa-file-export me-2"></i>Export Workflow
                                     </button>
                                 </div>
                             </div>
@@ -991,6 +1311,9 @@
                         <button class="nav-link active" onclick="showSettingsTab('general')">General</button>
                     </li>
                     <li class="nav-item">
+                        <button class="nav-link" onclick="showSettingsTab('workflow')">Workflow</button>
+                    </li>
+                    <li class="nav-item">
                         <button class="nav-link" onclick="showSettingsTab('users')">Users</button>
                     </li>
                     <li class="nav-item">
@@ -1000,50 +1323,57 @@
                         <button class="nav-link" onclick="showSettingsTab('inventory')">Inventory</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" onclick="showSettingsTab('notifications')">Notifications</button>
-                    </li>
-                    <li class="nav-item">
                         <button class="nav-link" onclick="showSettingsTab('data')">Data</button>
                     </li>
                 </ul>
                 
                 <!-- General Settings -->
                 <div id="generalSettings" class="settings-tab-content">
+                    <!-- Your existing general settings content -->
+                </div>
+                
+                <!-- NEW: Workflow Settings -->
+                <div id="workflowSettings" class="settings-tab-content d-none">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-3">System Preferences</h5>
+                                    <h5 class="card-title mb-3">Weekly Schedule</h5>
                                     <div class="mb-3">
-                                        <label class="form-label">System Name</label>
-                                        <input type="text" class="form-control" id="systemName" value="The Yellow Pharmacy Inventory">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Date Format</label>
-                                        <select class="form-select" id="dateFormat">
-                                            <option value="DD/MM/YYYY">DD/MM/YYYY (13/01/2024)</option>
-                                            <option value="MM/DD/YYYY">MM/DD/YYYY (01/13/2024)</option>
-                                            <option value="YYYY-MM-DD">YYYY-MM-DD (2024-01-13)</option>
+                                        <label class="form-label">Requisition Day</label>
+                                        <select class="form-select" id="requisitionDay">
+                                            <option value="5" selected>Friday</option>
+                                            <option value="4">Thursday</option>
+                                            <option value="6">Saturday</option>
                                         </select>
+                                        <div class="form-text">Day when branches submit weekly requisitions</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Auto-logout Time</label>
-                                        <select class="form-select" id="autoLogout">
-                                            <option value="15">15 minutes</option>
-                                            <option value="30" selected>30 minutes</option>
-                                            <option value="60">60 minutes</option>
-                                            <option value="0">Never (not recommended)</option>
+                                        <label class="form-label">Order Day</label>
+                                        <select class="form-select" id="orderDay">
+                                            <option value="1" selected>Monday</option>
+                                            <option value="2">Tuesday</option>
                                         </select>
-                                        <div class="form-text">Automatically log out after inactivity</div>
+                                        <div class="form-text">Day when Mankayane places supplier orders</div>
                                     </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="darkMode">
-                                        <label class="form-check-label" for="darkMode">
-                                            Enable Dark Mode
-                                        </label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Distribution Day</label>
+                                        <select class="form-select" id="distributionDay">
+                                            <option value="2" selected>Tuesday</option>
+                                            <option value="3">Wednesday</option>
+                                        </select>
+                                        <div class="form-text">Day when stock is distributed to branches</div>
                                     </div>
-                                    <button class="btn btn-pharmacy" onclick="saveGeneralSettings()">
-                                        <i class="fas fa-save me-2"></i>Save General Settings
+                                    <div class="mb-3">
+                                        <label class="form-label">Receipt Day</label>
+                                        <select class="form-select" id="receiptDay">
+                                            <option value="3" selected>Wednesday</option>
+                                            <option value="4">Thursday</option>
+                                        </select>
+                                        <div class="form-text">Day when branches confirm receipt</div>
+                                    </div>
+                                    <button class="btn btn-pharmacy" onclick="saveWorkflowSettings()">
+                                        <i class="fas fa-save me-2"></i>Save Workflow Settings
                                     </button>
                                 </div>
                             </div>
@@ -1052,30 +1382,36 @@
                         <div class="col-md-6">
                             <div class="card pharmacy-card">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-3">Security Settings</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Minimum Password Length</label>
-                                        <input type="number" class="form-control" id="minPasswordLength" value="8" min="6" max="20">
-                                    </div>
+                                    <h5 class="card-title mb-3">Notifications</h5>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="requireSpecialChar">
-                                        <label class="form-check-label" for="requireSpecialChar">
-                                            Require special character in passwords
+                                        <input class="form-check-input" type="checkbox" id="notifyRequisitionDay">
+                                        <label class="form-check-label" for="notifyRequisitionDay">
+                                            Remind branches on requisition day
                                         </label>
                                     </div>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="requireNumbers">
-                                        <label class="form-check-label" for="requireNumbers">
-                                            Require numbers in passwords
+                                        <input class="form-check-input" type="checkbox" id="notifyOrderDay">
+                                        <label class="form-check-label" for="notifyOrderDay">
+                                            Remind Mankayane on order day
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifyDistributionDay">
+                                        <label class="form-check-label" for="notifyDistributionDay">
+                                            Remind Mankayane on distribution day
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifyReceiptDay">
+                                        <label class="form-check-label" for="notifyReceiptDay">
+                                            Remind branches on receipt day
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Session Timeout (minutes)</label>
-                                        <input type="number" class="form-control" id="sessionTimeout" value="30" min="5" max="240">
+                                        <label class="form-label">Reminder Time</label>
+                                        <input type="time" class="form-control" id="reminderTime" value="08:00">
+                                        <div class="form-text">Time to send daily reminders</div>
                                     </div>
-                                    <button class="btn btn-pharmacy" onclick="saveSecuritySettings()">
-                                        <i class="fas fa-shield-alt me-2"></i>Save Security Settings
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1084,327 +1420,10 @@
                 
                 <!-- Users Settings -->
                 <div id="usersSettings" class="settings-tab-content d-none">
-                    <div class="card pharmacy-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h5 class="card-title mb-0">User Management</h5>
-                                <button class="btn btn-pharmacy" onclick="showAddUserModal()">
-                                    <i class="fas fa-user-plus me-2"></i>Add New User
-                                </button>
-                            </div>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Branch</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Last Login</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody">
-                                        <!-- Users will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Your existing users content -->
                 </div>
                 
-                <!-- Branches Settings -->
-                <div id="branchesSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Branch Configuration</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Branch</label>
-                                        <select class="form-select" id="defaultBranchSetting">
-                                            <option value="MNK">Mankayane (Central)</option>
-                                            <option value="NHO">Nhlangano</option>
-                                            <option value="LSK">Lushikishikini</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Central Warehouse</label>
-                                        <select class="form-select" id="centralWarehouse">
-                                            <option value="MNK" selected>Mankayane</option>
-                                        </select>
-                                        <div class="form-text">This branch manages all incoming stock</div>
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveBranchSettings()">
-                                        <i class="fas fa-save me-2"></i>Save Branch Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Branch Details</h5>
-                                    <div class="list-group">
-                                        <div class="list-group-item">
-                                            <strong>Mankayane (MNK) - Central</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Sithabile Mavuso</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26876460256" class="phone-link">7646 0256</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                        <div class="list-group-item">
-                                            <strong>Nhlangano (NHO)</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Philangenkosi Simelane</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26878270547" class="phone-link">7827 0547</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                        <div class="list-group-item">
-                                            <strong>Lushikishikini (LSK)</strong><br>
-                                            <small><i class="fas fa-user me-1"></i>Nelisiwe Simelane</small><br>
-                                            <small><i class="fas fa-phone me-1"></i>
-                                                <a href="tel:+26878715244" class="phone-link">7871 5244</a>
-                                            </small><br>
-                                            <small>Status: <span class="text-success">Active</span></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Inventory Settings -->
-                <div id="inventorySettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Stock Management</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Low Stock Threshold</label>
-                                        <input type="number" class="form-control" id="lowStockThreshold" value="10">
-                                        <div class="form-text">Alert when stock falls below this number</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Expiry Warning Days</label>
-                                        <input type="number" class="form-control" id="expiryWarningDays" value="30">
-                                        <div class="form-text">Warn this many days before expiry</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Categories</label>
-                                        <textarea class="form-control" id="defaultCategories" rows="4">Analgesics
-Antibiotics
-Antihypertensives
-Diabetes Medications
-Medical Supplies
-Other</textarea>
-                                        <div class="form-text">One category per line</div>
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveInventorySettings()">
-                                        <i class="fas fa-save me-2"></i>Save Inventory Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Units & Measurements</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Default Units</label>
-                                        <textarea class="form-control" id="defaultUnits" rows="4">Tablets
-Capsules
-Syrup (ml)
-Injection (vial)
-Cream/Ointment (tube)
-Bottle
-Box</textarea>
-                                        <div class="form-text">One unit per line</div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackBatchNumbers">
-                                        <label class="form-check-label" for="trackBatchNumbers">
-                                            Track batch numbers
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackExpiryDates">
-                                        <label class="form-check-label" for="trackExpiryDates">
-                                            Track expiry dates (required)
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="trackSuppliers">
-                                        <label class="form-check-label" for="trackSuppliers">
-                                            Track supplier information
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Notifications Settings -->
-                <div id="notificationsSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Email Notifications</h5>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailLowStock">
-                                        <label class="form-check-label" for="emailLowStock">
-                                            Low stock alerts
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailExpiry">
-                                        <label class="form-check-label" for="emailExpiry">
-                                            Expiry warnings
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailRequisitions">
-                                        <label class="form-check-label" for="emailRequisitions">
-                                            New requisitions
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="emailTransfers">
-                                        <label class="form-check-label" for="emailTransfers">
-                                            Transfer updates
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Notification Email</label>
-                                        <input type="email" class="form-control" id="notificationEmail" value="pharmacy@yellowpharmacy.com">
-                                    </div>
-                                    <button class="btn btn-pharmacy" onclick="saveNotificationSettings()">
-                                        <i class="fas fa-bell me-2"></i>Save Notification Settings
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Alert Settings</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Alert Frequency</label>
-                                        <select class="form-select" id="alertFrequency">
-                                            <option value="immediate">Immediately</option>
-                                            <option value="daily" selected>Daily Summary</option>
-                                            <option value="weekly">Weekly Summary</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Daily Summary Time</label>
-                                        <input type="time" class="form-control" id="dailySummaryTime" value="17:00">
-                                        <div class="form-text">Time to send daily summary email</div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="inAppNotifications">
-                                        <label class="form-check-label" for="inAppNotifications">
-                                            Show in-app notifications
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="soundAlerts">
-                                        <label class="form-check-label" for="soundAlerts">
-                                            Play sound for alerts
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Data Settings -->
-                <div id="dataSettings" class="settings-tab-content d-none">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Backup & Restore</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Automatic Backup</label>
-                                        <select class="form-select" id="autoBackup">
-                                            <option value="daily">Daily</option>
-                                            <option value="weekly" selected>Weekly</option>
-                                            <option value="monthly">Monthly</option>
-                                            <option value="never">Never</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="backupData()">
-                                            <i class="fas fa-download me-2"></i>Download Backup Now
-                                        </button>
-                                        <div class="form-text">Download all data as JSON file</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Restore from Backup</label>
-                                        <input type="file" class="form-control" id="restoreFile" accept=".json">
-                                        <button class="btn btn-outline-secondary w-100 mt-2" onclick="restoreData()">
-                                            <i class="fas fa-upload me-2"></i>Upload Backup File
-                                        </button>
-                                        <div class="form-text">Restore data from previous backup</div>
-                                    </div>
-                                    <div class="alert alert-warning">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>
-                                        <small>Backup your data regularly to prevent loss</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="card pharmacy-card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Data Management</h5>
-                                    <div class="mb-3">
-                                        <label class="form-label">Data Retention</label>
-                                        <select class="form-select" id="dataRetention">
-                                            <option value="3">3 months</option>
-                                            <option value="6">6 months</option>
-                                            <option value="12" selected>12 months</option>
-                                            <option value="forever">Forever</option>
-                                        </select>
-                                        <div class="form-text">How long to keep historical data</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="exportToExcel()">
-                                            <i class="fas fa-file-excel me-2 text-success"></i>Export to Excel
-                                        </button>
-                                        <div class="form-text">Export current inventory to Excel</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="exportToPDF()">
-                                            <i class="fas fa-file-pdf me-2 text-danger"></i>Export to PDF
-                                        </button>
-                                        <div class="form-text">Generate PDF report</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <button class="btn btn-outline-danger w-100" onclick="confirmResetData()">
-                                            <i class="fas fa-trash me-2"></i>Reset All Data
-                                        </button>
-                                        <div class="form-text">⚠️ This will delete ALL data</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Other settings tabs... -->
             </div>
         </div>
     </div>
@@ -1491,91 +1510,270 @@ Box</textarea>
         </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- NEW: Create Requisition Modal -->
+    <div class="modal fade" id="createRequisitionModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New User</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-plus me-2"></i>Weekly Requisition
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="mb-3">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" id="userFullName" required>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Requesting Branch</label>
+                                <div class="form-control bg-light" id="reqBranchDisplay"></div>
+                                <div class="form-text">Week: <span id="currentWeekDisplay"></span></div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email Address *</label>
-                            <input type="email" class="form-control" id="userEmail" required>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Due Date</label>
+                                <div class="form-control bg-light">Every Friday</div>
+                                <div class="form-text">Submitted requisitions go to Mankayane</div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Branch *</label>
-                            <select class="form-select" id="userBranch" required>
-                                <option value="">Select Branch</option>
-                                <option value="MNK">Mankayane (Central)</option>
-                                <option value="NHO">Nhlangano</option>
-                                <option value="LSK">Lushikishikini</option>
-                            </select>
+                    </div>
+                    
+                    <!-- Items Selection -->
+                    <div class="card pharmacy-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-pills me-2"></i>Select Items from Inventory
+                            </h6>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role *</label>
-                            <select class="form-select" id="userRole" required>
-                                <option value="">Select Role</option>
-                                <option value="admin">Admin (Full Access)</option>
-                                <option value="manager">Manager (Branch Management)</option>
-                                <option value="user">User (Limited Access)</option>
-                            </select>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="40"><input type="checkbox" id="selectAllItems" onclick="toggleSelectAllItems()"></th>
+                                            <th>Medication</th>
+                                            <th>Category</th>
+                                            <th>Available at Mankayane</th>
+                                            <th>Your Current Stock</th>
+                                            <th>Request Quantity</th>
+                                            <th>Priority</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="requisitionItemsTable">
+                                        <!-- Items will be populated from inventory -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Initial Password *</label>
-                            <input type="password" class="form-control" id="userPassword" required>
-                            <div class="form-text">User will be prompted to change on first login</div>
+                    </div>
+                    
+                    <!-- Summary -->
+                    <div class="card pharmacy-card">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">Requisition Summary</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td>Total Items Selected:</td>
+                                                <td class="text-end fw-bold" id="totalSelectedItems">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Quantity Requested:</td>
+                                                <td class="text-end fw-bold" id="totalRequestedQty">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td>Estimated Delivery:</td>
+                                                <td class="text-end fw-bold">Next Wednesday</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Requisition ID:</td>
+                                                <td class="text-end fw-bold">#<span id="nextReqId">001</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-pharmacy" onclick="saveNewUser()">Add User</button>
+                    <button type="button" class="btn btn-pharmacy" onclick="submitWeeklyRequisition()">
+                        <i class="fas fa-paper-plane me-2"></i>Submit to Mankayane
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Import Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- NEW: Create Transfer Modal -->
+    <div class="modal fade" id="createTransferModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Import Medications</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-exchange-alt me-2"></i>Create Transfer Form
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Import Instructions:</strong><br>
-                        1. Prepare a CSV file with columns: Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock<br>
-                        2. Download template: <a href="#" onclick="downloadCSVTemplate()">template.csv</a><br>
-                        3. Upload your CSV file below
+                    <!-- Transfer Form Header -->
+                    <div class="text-center mb-4">
+                        <h4>TRANSFER / REQUEST FORM</h4>
+                        <p class="text-muted">Yellow Pharmacy Inventory System</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Select CSV File</label>
-                        <input type="file" class="form-control" id="csvFile" accept=".csv">
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="transferDate" value="<?= date('Y-m-d') ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">Transfer #</label>
+                                <input type="text" class="form-control" id="transferNumber" value="TRF-001" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">From</label>
+                                <select class="form-select" id="transferFrom">
+                                    <option value="MNK" selected>Mankayane (Central)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">To</label>
+                                <select class="form-select" id="transferTo">
+                                    <option value="">Select Branch</option>
+                                    <option value="NHO">Nhlangano</option>
+                                    <option value="LSK">Lushikishikini</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="replaceExisting">
-                        <label class="form-check-label" for="replaceExisting">
-                            Replace existing inventory (will delete all current items)
-                        </label>
+                    
+                    <!-- Transfer Items Table -->
+                    <div class="card pharmacy-card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Items for Transfer</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered transfer-form-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Description</th>
+                                            <th>Units</th>
+                                            <th>SOB</th>
+                                            <th>REQ</th>
+                                            <th>Supplied</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transferItemsTable">
+                                        <!-- Items will be populated from requisitions -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button class="btn btn-outline-primary btn-sm" onclick="addTransferItem()">
+                                    <i class="fas fa-plus me-1"></i>Add Item
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Signatures -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card pharmacy-card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Supplied by</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="suppliedByName" placeholder="Enter name">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Signature</label>
+                                        <canvas class="signature-canvas w-100" id="suppliedSignatureCanvas" height="100"></canvas>
+                                        <div class="mt-2">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="clearSignature('supplied')">Clear</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="saveSignature('supplied')">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card pharmacy-card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Received by</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="receivedByName" placeholder="Will be filled upon receipt">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Signature</label>
+                                        <canvas class="signature-canvas w-100" id="receivedSignatureCanvas" height="100"></canvas>
+                                        <div class="mt-2">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="clearSignature('received')">Clear</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="saveSignature('received')">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Totals -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card pharmacy-card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Transfer Summary</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td>Total Items:</td>
+                                                <td class="text-end fw-bold" id="transferTotalItems">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Quantity:</td>
+                                                <td class="text-end fw-bold" id="transferTotalQuantity">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-pharmacy" onclick="importCSV()">Import Medications</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="printTransferForm()">
+                        <i class="fas fa-print me-2"></i>Print Form
+                    </button>
+                    <button type="button" class="btn btn-pharmacy" onclick="saveTransfer()">
+                        <i class="fas fa-save me-2"></i>Save Transfer
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Your existing modals... -->
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1585,7 +1783,11 @@ Box</textarea>
     
     <!-- Main Application JavaScript -->
     <script>
-        // Application State
+        // ======================
+        // APPLICATION STATE
+        // ======================
+        
+        // Existing state
         let currentUser = null;
         let currentBranch = null;
         let inventory = [];
@@ -1617,1052 +1819,3 @@ Box</textarea>
             branches: {
                 defaultBranch: "MNK",
                 centralWarehouse: "MNK"
-            },
-            notifications: {
-                emailLowStock: true,
-                emailExpiry: true,
-                emailRequisitions: true,
-                emailTransfers: true,
-                notificationEmail: "pharmacy@yellowpharmacy.com",
-                alertFrequency: "daily",
-                dailySummaryTime: "17:00",
-                inAppNotifications: true,
-                soundAlerts: true
-            },
-            data: {
-                autoBackup: "weekly",
-                dataRetention: 12
-            }
-        };
-        
-        // Initialize DataTables
-        $(document).ready(function() {
-            $('#inventoryTable').DataTable({
-                pageLength: 10,
-                responsive: true
-            });
-            
-            $('#requisitionsTable').DataTable({
-                pageLength: 10
-            });
-            
-            $('#transfersTable').DataTable({
-                pageLength: 10
-            });
-        });
-        
-        // Load all data from localStorage
-        function loadAllData() {
-            // Load settings
-            const savedSettings = localStorage.getItem('pharmacy_settings');
-            if (savedSettings) {
-                settings = JSON.parse(savedSettings);
-                applySettings();
-            }
-            
-            // Load inventory
-            const savedInventory = localStorage.getItem('pharmacy_inventory');
-            if (savedInventory) {
-                inventory = JSON.parse(savedInventory);
-            } else {
-                // Sample data for demo
-                inventory = [
-                    {
-                        id: 1,
-                        name: 'Paracetamol 500mg',
-                        generic: 'Paracetamol',
-                        category: 'Analgesics',
-                        strength: '500mg',
-                        form: 'Tablets',
-                        stockMNK: 150,
-                        stockNHO: 80,
-                        stockLSK: 60,
-                        minStock: 50,
-                        notes: 'Pain relief'
-                    },
-                    {
-                        id: 2,
-                        name: 'Amoxicillin 250mg',
-                        generic: 'Amoxicillin',
-                        category: 'Antibiotics',
-                        strength: '250mg',
-                        form: 'Capsules',
-                        stockMNK: 100,
-                        stockNHO: 40,
-                        stockLSK: 30,
-                        minStock: 30,
-                        notes: 'Broad spectrum antibiotic'
-                    },
-                    {
-                        id: 3,
-                        name: 'Omeprazole 40mg',
-                        generic: 'Omeprazole',
-                        category: 'Antihypertensives',
-                        strength: '40mg',
-                        form: 'Capsules',
-                        stockMNK: 75,
-                        stockNHO: 35,
-                        stockLSK: 25,
-                        minStock: 20,
-                        notes: 'Acid reducer'
-                    },
-                    {
-                        id: 4,
-                        name: 'Flustat 250mg',
-                        generic: 'Fluconazole',
-                        category: 'Antifungal',
-                        strength: '250mg',
-                        form: 'Tablets',
-                        stockMNK: 60,
-                        stockNHO: 25,
-                        stockLSK: 40,
-                        minStock: 15,
-                        notes: 'Antifungal'
-                    }
-                ];
-                saveInventory();
-            }
-            renderInventoryTable();
-            
-            // Load requisitions
-            const savedRequisitions = localStorage.getItem('pharmacy_requisitions');
-            requisitions = savedRequisitions ? JSON.parse(savedRequisitions) : [];
-            renderRequisitionsTable();
-            
-            // Load transfers
-            const savedTransfers = localStorage.getItem('pharmacy_transfers');
-            transfers = savedTransfers ? JSON.parse(savedTransfers) : [];
-            renderTransfersTable();
-            
-            // Load users
-            const savedUsers = localStorage.getItem('pharmacy_users');
-            if (savedUsers) {
-                users = JSON.parse(savedUsers);
-            } else {
-                // Default users
-                users = [
-                    {
-                        id: 1,
-                        name: 'Sithabile Mavuso',
-                        email: 'sithabile@yellowpharmacy.com',
-                        branch: 'MNK',
-                        role: 'admin',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: 2,
-                        name: 'Philangenkosi Simelane',
-                        email: 'philangenkosi@yellowpharmacy.com',
-                        branch: 'NHO',
-                        role: 'user',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: 3,
-                        name: 'Nelisiwe Simelane',
-                        email: 'nelisiwe@yellowpharmacy.com',
-                        branch: 'LSK',
-                        role: 'user',
-                        status: 'active',
-                        lastLogin: null,
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-                saveUsers();
-            }
-            
-            updateDashboardStats();
-        }
-        
-        // Apply settings to UI
-        function applySettings() {
-            // Apply general settings
-            document.getElementById('systemName').value = settings.general.systemName;
-            document.getElementById('dateFormat').value = settings.general.dateFormat;
-            document.getElementById('autoLogout').value = settings.general.autoLogout;
-            document.getElementById('darkMode').checked = settings.general.darkMode;
-            
-            // Apply security settings
-            document.getElementById('minPasswordLength').value = settings.security.minPasswordLength;
-            document.getElementById('requireSpecialChar').checked = settings.security.requireSpecialChar;
-            document.getElementById('requireNumbers').checked = settings.security.requireNumbers;
-            document.getElementById('sessionTimeout').value = settings.security.sessionTimeout;
-            
-            // Apply inventory settings
-            document.getElementById('lowStockThreshold').value = settings.inventory.lowStockThreshold;
-            document.getElementById('expiryWarningDays').value = settings.inventory.expiryWarningDays;
-            document.getElementById('defaultCategories').value = settings.inventory.defaultCategories.join('\n');
-            document.getElementById('defaultUnits').value = settings.inventory.defaultUnits.join('\n');
-            document.getElementById('trackBatchNumbers').checked = settings.inventory.trackBatchNumbers;
-            document.getElementById('trackExpiryDates').checked = settings.inventory.trackExpiryDates;
-            document.getElementById('trackSuppliers').checked = settings.inventory.trackSuppliers;
-            
-            // Apply branch settings
-            document.getElementById('defaultBranchSetting').value = settings.branches.defaultBranch;
-            document.getElementById('centralWarehouse').value = settings.branches.centralWarehouse;
-            
-            // Apply notification settings
-            document.getElementById('emailLowStock').checked = settings.notifications.emailLowStock;
-            document.getElementById('emailExpiry').checked = settings.notifications.emailExpiry;
-            document.getElementById('emailRequisitions').checked = settings.notifications.emailRequisitions;
-            document.getElementById('emailTransfers').checked = settings.notifications.emailTransfers;
-            document.getElementById('notificationEmail').value = settings.notifications.notificationEmail;
-            document.getElementById('alertFrequency').value = settings.notifications.alertFrequency;
-            document.getElementById('dailySummaryTime').value = settings.notifications.dailySummaryTime;
-            document.getElementById('inAppNotifications').checked = settings.notifications.inAppNotifications;
-            document.getElementById('soundAlerts').checked = settings.notifications.soundAlerts;
-            
-            // Apply data settings
-            document.getElementById('autoBackup').value = settings.data.autoBackup;
-            document.getElementById('dataRetention').value = settings.data.dataRetention;
-            
-            // Apply dark mode if enabled
-            if (settings.general.darkMode) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-        }
-        
-        // Save settings to localStorage
-        function saveSettings() {
-            localStorage.setItem('pharmacy_settings', JSON.stringify(settings));
-        }
-        
-        // SECURE LOGIN FUNCTION - NO PASSWORD HINTS
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const branch = document.getElementById('branch').value;
-            
-            const branchNames = {
-                'MNK': 'Mankayane',
-                'NHO': 'Nhlangano', 
-                'LSK': 'Lushikishikini'
-            };
-            
-            const branchFullNames = {
-                'MNK': 'Mankayane (Central)',
-                'NHO': 'Nhlangano',
-                'LSK': 'Lushikishikini'
-            };
-            
-            // Branch-specific pharmacy-themed passwords (SECURE - NOT DISPLAYED)
-            const branchPasswords = {
-                'MNK': 'Panado500mg!',        // Mankayane - Paracetamol
-                'NHO': 'Omeprazole40mg!',     // Nhlangano - Omeprazole 40mg
-                'LSK': 'Flustat250mg!'        // Lushikishikini - Flustat 250mg
-            };
-            
-            // Validate
-            if (!email || !password) {
-                alert('Please enter both email and password');
-                return;
-            }
-            
-            // Check password for selected branch (SECURE - NO HINTS)
-            if (password !== branchPasswords[branch]) {
-                // SECURE ERROR MESSAGE - No password hints!
-                alert('❌ Incorrect password for selected branch.\n\nPassword format: MedicationName + Strength + !\nExample: Panado500mg!\n\nNote: Password is case-sensitive.');
-                return;
-            }
-            
-            // Check email format
-            if (!email.includes('@') || !email.includes('.')) {
-                alert('Please enter a valid email address (e.g., user@yellowpharmacy.com)');
-                return;
-            }
-            
-            // Set current user
-            currentUser = email;
-            currentBranch = branch;
-            
-            // Update UI
-            document.getElementById('loginScreen').classList.add('d-none');
-            document.getElementById('dashboardSection').classList.remove('d-none');
-            
-            // Change header text to "The Yellow Pharmacy"
-            document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-            
-            const userName = email.split('@')[0].replace('.', ' ');
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('branchName').textContent = branchFullNames[branch];
-            document.getElementById('branchDisplay').textContent = branchNames[branch];
-            
-            // Update sidebar
-            document.getElementById('sidebarUser').textContent = userName;
-            document.getElementById('sidebarBranch').textContent = branchNames[branch];
-            
-            // Show logout button in navbar
-            document.getElementById('logoutNavItem').classList.remove('d-none');
-            
-            // Show sidebar for desktop
-            if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.add('show');
-                document.getElementById('mainContent').style.marginLeft = '250px';
-            }
-            
-            // Remove login page class
-            document.body.classList.remove('login-page');
-            
-            // Save to localStorage
-            localStorage.setItem('pharmacy_user', email);
-            localStorage.setItem('pharmacy_user_name', userName);
-            localStorage.setItem('pharmacy_branch', branch);
-            localStorage.setItem('pharmacy_branch_name', branchNames[branch]);
-            localStorage.setItem('pharmacy_logged_in', 'true');
-            
-            // Load all data
-            loadAllData();
-            
-            // Add activity
-            addActivity(`Logged into ${branchNames[branch]} branch`, 'login');
-            
-            // Show welcome message without password information
-            alert(`✅ Welcome to ${branchNames[branch]} branch!\n\nYou have successfully logged in.`);
-        }
-        
-        // Emergency call function
-        function callEmergency() {
-            if (confirm('Call Sithabile Mavuso at Mankayane for emergency medical supplies?\n\nPhone: 7646 0256')) {
-                // Create a phone link for mobile devices
-                const phoneLink = document.createElement('a');
-                phoneLink.href = 'tel:+26876460256';
-                phoneLink.style.display = 'none';
-                document.body.appendChild(phoneLink);
-                phoneLink.click();
-                document.body.removeChild(phoneLink);
-                
-                // Add activity log
-                addActivity('Initiated emergency call to Mankayane', 'emergency');
-                
-                // Show confirmation
-                alert('📞 Emergency call initiated. Please describe your urgent medical supply needs to Sithabile.');
-            }
-        }
-        
-        // Save inventory to localStorage
-        function saveInventory() {
-            localStorage.setItem('pharmacy_inventory', JSON.stringify(inventory));
-            updateDashboardStats();
-        }
-        
-        // Save users to localStorage
-        function saveUsers() {
-            localStorage.setItem('pharmacy_users', JSON.stringify(users));
-        }
-        
-        // Render inventory table
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = '';
-            
-            let totalItems = 0;
-            let totalMNK = 0;
-            let totalNHO = 0;
-            let totalLSK = 0;
-            let lowStockCount = 0;
-            
-            inventory.forEach(item => {
-                totalItems++;
-                totalMNK += item.stockMNK || 0;
-                totalNHO += item.stockNHO || 0;
-                totalLSK += item.stockLSK || 0;
-                
-                // Check low stock
-                const isLowMNK = (item.stockMNK || 0) < item.minStock;
-                const isLowNHO = (item.stockNHO || 0) < item.minStock;
-                const isLowLSK = (item.stockLSK || 0) < item.minStock;
-                if (isLowMNK || isLowNHO || isLowLSK) lowStockCount++;
-                
-                const status = (isLowMNK || isLowNHO || isLowLSK) ? 
-                    '<span class="badge badge-pending">Low Stock</span>' : 
-                    '<span class="badge badge-approved">In Stock</span>';
-                
-                const row = `
-                    <tr>
-                        <td>${item.id}</td>
-                        <td><strong>${item.name}</strong><br><small class="text-muted">${item.generic || ''}</small></td>
-                        <td>${item.category}</td>
-                        <td>${item.strength || '-'}</td>
-                        <td>${item.form}</td>
-                        <td><span class="${isLowMNK ? 'text-danger fw-bold' : ''}">${item.stockMNK || 0}</span></td>
-                        <td><span class="${isLowNHO ? 'text-danger fw-bold' : ''}">${item.stockNHO || 0}</span></td>
-                        <td><span class="${isLowLSK ? 'text-danger fw-bold' : ''}">${item.stockLSK || 0}</span></td>
-                        <td>${item.minStock}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem(${item.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-            
-            // Update stats
-            document.getElementById('inventoryTotal').textContent = totalItems;
-            document.getElementById('inventoryMNK').textContent = totalMNK;
-            document.getElementById('inventoryNHO').textContent = totalNHO;
-            document.getElementById('inventoryLSK').textContent = totalLSK;
-            document.getElementById('inventoryLow').textContent = lowStockCount;
-        }
-        
-        // Render users table
-        function renderUsersTable() {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            users.forEach(user => {
-                const statusBadge = user.status === 'active' ? 
-                    '<span class="badge badge-approved">Active</span>' : 
-                    '<span class="badge badge-rejected">Inactive</span>';
-                
-                const lastLogin = user.lastLogin ? 
-                    new Date(user.lastLogin).toLocaleDateString() : 'Never';
-                
-                const row = `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.branch === 'MNK' ? 'Mankayane' : user.branch === 'NHO' ? 'Nhlangano' : 'Lushikishikini'}</td>
-                        <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
-                        <td>${statusBadge}</td>
-                        <td>${lastLogin}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-        
-        // Show add item modal
-        function showAddItemModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
-            modal.show();
-        }
-        
-        // Show import modal
-        function showImportModal() {
-            const modal = new bootstrap.Modal(document.getElementById('importModal'));
-            modal.show();
-        }
-        
-        // Show add user modal
-        function showAddUserModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
-            modal.show();
-        }
-        
-        // Save new item
-        function saveNewItem() {
-            const form = document.getElementById('addItemForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            
-            const newItem = {
-                id: inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1,
-                name: document.getElementById('itemName').value,
-                generic: document.getElementById('itemGeneric').value,
-                category: document.getElementById('itemCategory').value,
-                strength: document.getElementById('itemStrength').value,
-                form: document.getElementById('itemForm').value,
-                stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
-                stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
-                stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
-                minStock: parseInt(document.getElementById('minStock').value) || 10,
-                notes: document.getElementById('itemNotes').value
-            };
-            
-            inventory.push(newItem);
-            saveInventory();
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
-            form.reset();
-            
-            addActivity(`Added new medication: ${newItem.name}`, 'inventory');
-            alert('Medication added successfully!');
-        }
-        
-        // Save new user
-        function saveNewUser() {
-            const form = document.getElementById('addUserForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-            
-            const newUser = {
-                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-                name: document.getElementById('userFullName').value,
-                email: document.getElementById('userEmail').value,
-                branch: document.getElementById('userBranch').value,
-                role: document.getElementById('userRole').value,
-                status: 'active',
-                lastLogin: null,
-                createdAt: new Date().toISOString()
-            };
-            
-            users.push(newUser);
-            saveUsers();
-            renderUsersTable();
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
-            form.reset();
-            
-            addActivity(`Added new user: ${newUser.name}`, 'settings');
-            alert('User added successfully!');
-        }
-        
-        // Edit item
-        function editItem(id) {
-            const item = inventory.find(i => i.id === id);
-            if (item) {
-                // Pre-fill modal with item data
-                document.getElementById('itemName').value = item.name;
-                document.getElementById('itemGeneric').value = item.generic || '';
-                document.getElementById('itemCategory').value = item.category;
-                document.getElementById('itemStrength').value = item.strength || '';
-                document.getElementById('itemForm').value = item.form;
-                document.getElementById('stockMNK').value = item.stockMNK || 0;
-                document.getElementById('stockNHO').value = item.stockNHO || 0;
-                document.getElementById('stockLSK').value = item.stockLSK || 0;
-                document.getElementById('minStock').value = item.minStock || 10;
-                document.getElementById('itemNotes').value = item.notes || '';
-                
-                // Change modal title and button
-                document.querySelector('#addItemModal .modal-title').textContent = 'Edit Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Update Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').onclick = function() { updateItem(id); };
-                
-                // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
-                modal.show();
-            }
-        }
-        
-        // Update item
-        function updateItem(id) {
-            const index = inventory.findIndex(i => i.id === id);
-            if (index !== -1) {
-                inventory[index] = {
-                    ...inventory[index],
-                    name: document.getElementById('itemName').value,
-                    generic: document.getElementById('itemGeneric').value,
-                    category: document.getElementById('itemCategory').value,
-                    strength: document.getElementById('itemStrength').value,
-                    form: document.getElementById('itemForm').value,
-                    stockMNK: parseInt(document.getElementById('stockMNK').value) || 0,
-                    stockNHO: parseInt(document.getElementById('stockNHO').value) || 0,
-                    stockLSK: parseInt(document.getElementById('stockLSK').value) || 0,
-                    minStock: parseInt(document.getElementById('minStock').value) || 10,
-                    notes: document.getElementById('itemNotes').value
-                };
-                
-                saveInventory();
-                bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
-                document.getElementById('addItemForm').reset();
-                
-                // Reset modal
-                document.querySelector('#addItemModal .modal-title').textContent = 'Add New Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').textContent = 'Save Medication';
-                document.querySelector('#addItemModal .btn-pharmacy').onclick = saveNewItem;
-                
-                addActivity(`Updated medication: ${inventory[index].name}`, 'inventory');
-                alert('Medication updated successfully!');
-            }
-        }
-        
-        // Delete item
-        function deleteItem(id) {
-            if (confirm('Are you sure you want to delete this medication?')) {
-                const item = inventory.find(i => i.id === id);
-                inventory = inventory.filter(i => i.id !== id);
-                saveInventory();
-                addActivity(`Deleted medication: ${item.name}`, 'inventory');
-                alert('Medication deleted successfully!');
-            }
-        }
-        
-        // Delete user
-        function deleteUser(id) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                const user = users.find(u => u.id === id);
-                users = users.filter(u => u.id !== id);
-                saveUsers();
-                renderUsersTable();
-                addActivity(`Deleted user: ${user.name}`, 'settings');
-                alert('User deleted successfully!');
-            }
-        }
-        
-        // Render requisitions table
-        function renderRequisitionsTable() {
-            const tbody = document.getElementById('requisitionsTableBody');
-            tbody.innerHTML = '';
-            
-            requisitions.forEach(req => {
-                const statusBadge = req.status === 'approved' ? 'badge-approved' :
-                                  req.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
-                
-                const row = `
-                    <tr>
-                        <td>REQ-${req.id.toString().padStart(3, '0')}</td>
-                        <td>${req.branch}</td>
-                        <td>${new Date(req.date).toLocaleDateString()}</td>
-                        <td>${req.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${req.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewRequisition(${req.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-        
-        // Create new requisition
-        function createNewRequisition() {
-            alert('Requisition form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new requisition', 'requisition');
-        }
-        
-        // Render transfers table
-        function renderTransfersTable() {
-            const tbody = document.getElementById('transfersTableBody');
-            tbody.innerHTML = '';
-            
-            transfers.forEach(transfer => {
-                const statusBadge = transfer.status === 'delivered' ? 'badge-delivered' : 'badge-pending';
-                
-                const row = `
-                    <tr>
-                        <td>TRF-${transfer.id.toString().padStart(3, '0')}</td>
-                        <td>${transfer.from}</td>
-                        <td>${transfer.to}</td>
-                        <td>${new Date(transfer.date).toLocaleDateString()}</td>
-                        <td>${transfer.items.length} items</td>
-                        <td><span class="badge ${statusBadge}">${transfer.status}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransfer(${transfer.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-        
-        // Create new transfer
-        function createNewTransfer() {
-            alert('Transfer form will open here.\n\nFor now, we have the inventory management ready.');
-            addActivity('Started new transfer', 'transfer');
-        }
-        
-        // Update dashboard statistics
-        function updateDashboardStats() {
-            // Inventory stats
-            document.getElementById('totalItems').textContent = inventory.length;
-            
-            // Low stock count
-            const lowStockCount = inventory.filter(item => 
-                (item.stockMNK || 0) < item.minStock ||
-                (item.stockNHO || 0) < item.minStock ||
-                (item.stockLSK || 0) < item.minStock
-            ).length;
-            document.getElementById('lowStockItems').textContent = lowStockCount;
-            
-            // Pending requisitions
-            const pendingReqs = requisitions.filter(req => req.status === 'pending').length;
-            document.getElementById('pendingRequisitions').textContent = pendingReqs;
-            
-            // Pending transfers
-            const pendingTrans = transfers.filter(trans => trans.status === 'pending').length;
-            document.getElementById('pendingTransfers').textContent = pendingTrans;
-        }
-        
-        // Add activity to recent activities
-        function addActivity(description, type) {
-            const activityList = document.getElementById('recentActivity');
-            const icons = {
-                'login': 'fas fa-sign-in-alt',
-                'inventory': 'fas fa-pills',
-                'requisition': 'fas fa-clipboard-list',
-                'transfer': 'fas fa-truck',
-                'report': 'fas fa-chart-bar',
-                'settings': 'fas fa-cog',
-                'emergency': 'fas fa-exclamation-triangle'
-            };
-            
-            const icon = icons[type] || 'fas fa-info-circle';
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const dateString = now.toLocaleDateString();
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = 'list-group-item';
-            activityItem.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <small class="text-muted"><i class="${icon} me-1"></i>${type.charAt(0).toUpperCase() + type.slice(1)}</small>
-                    <small class="text-muted">${dateString} ${timeString}</small>
-                </div>
-                <p class="mb-1">${description}</p>
-            `;
-            
-            // Add to top
-            activityList.insertBefore(activityItem, activityList.firstChild);
-            
-            // Keep only last 5 activities
-            if (activityList.children.length > 5) {
-                activityList.removeChild(activityList.lastChild);
-            }
-        }
-        
-        // Show different sections
-        function showSection(sectionId) {
-            const sections = ['dashboard', 'inventory', 'requisitions', 'transfers', 'reports', 'settings'];
-            sections.forEach(id => {
-                document.getElementById(id + 'Section').classList.add('d-none');
-            });
-            
-            document.getElementById(sectionId + 'Section').classList.remove('d-none');
-            
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            const activeIndex = sections.indexOf(sectionId) + 1;
-            if (activeIndex > 0) {
-                document.querySelector(`.sidebar-menu a:nth-child(${activeIndex})`).classList.add('active');
-            }
-            
-            // If showing settings, load users table
-            if (sectionId === 'settings') {
-                renderUsersTable();
-                showSettingsTab('general');
-            }
-        }
-        
-        // Show settings tab
-        function showSettingsTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.settings-tab-content').forEach(tab => {
-                tab.classList.add('d-none');
-            });
-            
-            // Remove active class from all tab buttons
-            document.querySelectorAll('.settings-tabs .nav-link').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabId + 'Settings').classList.remove('d-none');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-        }
-        
-        // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('pharmacy_logged_in');
-                document.getElementById('dashboardSection').classList.add('d-none');
-                document.getElementById('loginScreen').classList.remove('d-none');
-                document.getElementById('sidebar').classList.remove('show');
-                document.getElementById('mainContent').style.marginLeft = '0';
-                document.getElementById('password').value = '';
-                document.getElementById('currentBranch').textContent = 'Not logged in';
-                document.getElementById('logoutNavItem').classList.add('d-none');
-                
-                // Change header text back to "The Yellow Pharmacy" (login page style)
-                document.querySelector('.logo-text .main').textContent = 'The Yellow Pharmacy';
-                
-                // Add login page class
-                document.body.classList.add('login-page');
-                
-                currentUser = null;
-                currentBranch = null;
-                
-                addActivity('Logged out of the system', 'login');
-            }
-        }
-        
-        // Save general settings
-        function saveGeneralSettings() {
-            settings.general.systemName = document.getElementById('systemName').value;
-            settings.general.dateFormat = document.getElementById('dateFormat').value;
-            settings.general.autoLogout = parseInt(document.getElementById('autoLogout').value);
-            settings.general.darkMode = document.getElementById('darkMode').checked;
-            
-            saveSettings();
-            applySettings();
-            addActivity('Updated general settings', 'settings');
-            alert('General settings saved successfully!');
-        }
-        
-        // Save security settings
-        function saveSecuritySettings() {
-            settings.security.minPasswordLength = parseInt(document.getElementById('minPasswordLength').value);
-            settings.security.requireSpecialChar = document.getElementById('requireSpecialChar').checked;
-            settings.security.requireNumbers = document.getElementById('requireNumbers').checked;
-            settings.security.sessionTimeout = parseInt(document.getElementById('sessionTimeout').value);
-            
-            saveSettings();
-            addActivity('Updated security settings', 'settings');
-            alert('Security settings saved successfully!');
-        }
-        
-        // Save inventory settings
-        function saveInventorySettings() {
-            settings.inventory.lowStockThreshold = parseInt(document.getElementById('lowStockThreshold').value);
-            settings.inventory.expiryWarningDays = parseInt(document.getElementById('expiryWarningDays').value);
-            settings.inventory.defaultCategories = document.getElementById('defaultCategories').value.split('\n').filter(c => c.trim() !== '');
-            settings.inventory.defaultUnits = document.getElementById('defaultUnits').value.split('\n').filter(u => u.trim() !== '');
-            settings.inventory.trackBatchNumbers = document.getElementById('trackBatchNumbers').checked;
-            settings.inventory.trackExpiryDates = document.getElementById('trackExpiryDates').checked;
-            settings.inventory.trackSuppliers = document.getElementById('trackSuppliers').checked;
-            
-            saveSettings();
-            addActivity('Updated inventory settings', 'settings');
-            alert('Inventory settings saved successfully!');
-        }
-        
-        // Save branch settings
-        function saveBranchSettings() {
-            settings.branches.defaultBranch = document.getElementById('defaultBranchSetting').value;
-            settings.branches.centralWarehouse = document.getElementById('centralWarehouse').value;
-            
-            saveSettings();
-            addActivity('Updated branch settings', 'settings');
-            alert('Branch settings saved successfully!');
-        }
-        
-        // Save notification settings
-        function saveNotificationSettings() {
-            settings.notifications.emailLowStock = document.getElementById('emailLowStock').checked;
-            settings.notifications.emailExpiry = document.getElementById('emailExpiry').checked;
-            settings.notifications.emailRequisitions = document.getElementById('emailRequisitions').checked;
-            settings.notifications.emailTransfers = document.getElementById('emailTransfers').checked;
-            settings.notifications.notificationEmail = document.getElementById('notificationEmail').value;
-            settings.notifications.alertFrequency = document.getElementById('alertFrequency').value;
-            settings.notifications.dailySummaryTime = document.getElementById('dailySummaryTime').value;
-            settings.notifications.inAppNotifications = document.getElementById('inAppNotifications').checked;
-            settings.notifications.soundAlerts = document.getElementById('soundAlerts').checked;
-            
-            saveSettings();
-            addActivity('Updated notification settings', 'settings');
-            alert('Notification settings saved successfully!');
-        }
-        
-        // Toggle sidebar
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-            if (window.innerWidth <= 768) {
-                document.getElementById('mainContent').style.marginLeft = '0';
-            } else {
-                if (document.getElementById('sidebar').classList.contains('show')) {
-                    document.getElementById('mainContent').style.marginLeft = '250px';
-                } else {
-                    document.getElementById('mainContent').style.marginLeft = '0';
-                }
-            }
-        });
-        
-        // Check login status on page load
-        function checkLoginStatus() {
-            if (localStorage.getItem('pharmacy_logged_in') === 'true') {
-                document.getElementById('email').value = localStorage.getItem('pharmacy_user') || 'admin@yellowpharmacy.com';
-                document.getElementById('branch').value = localStorage.getItem('pharmacy_branch') || 'MNK';
-                login();
-            } else {
-                // Load settings for login page
-                const savedSettings = localStorage.getItem('pharmacy_settings');
-                if (savedSettings) {
-                    settings = JSON.parse(savedSettings);
-                }
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
-            
-            // Make login work with Enter key
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') login();
-            });
-            
-            // Add keyboard shortcut for sidebar (Ctrl+B or Cmd+B)
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-                    e.preventDefault();
-                    document.getElementById('sidebarToggle').click();
-                }
-            });
-        });
-        
-        // Quick action functions (aliases for UI buttons)
-        function createRequisition() {
-            createNewRequisition();
-        }
-        
-        function viewInventory() {
-            showSection('inventory');
-        }
-        
-        function createTransfer() {
-            createNewTransfer();
-        }
-        
-        function generateReport(type) {
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report will be generated here.`);
-            addActivity(`Generated ${type} report`, 'report');
-        }
-        
-        // Export/Import functions
-        function exportInventory() {
-            const dataStr = JSON.stringify(inventory, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `yellow-pharmacy-inventory-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            addActivity('Exported inventory data', 'report');
-        }
-        
-        function downloadCSVTemplate() {
-            const csvContent = "Name,Generic,Category,Strength,Form,Mankayane,Nhlangano,Lushikishikini,MinStock,Notes\nParacetamol 500mg,Paracetamol,Analgesics,500mg,Tablets,150,80,60,50,Pain relief\nAmoxicillin 250mg,Amoxicillin,Antibiotics,250mg,Capsules,100,40,30,30,Broad spectrum antibiotic";
-            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'inventory-template.csv');
-            linkElement.click();
-            return false;
-        }
-        
-        function importCSV() {
-            alert('CSV import feature will be implemented in the next update.\n\nFor now, use the JSON export/import feature.');
-        }
-        
-        // Backup data
-        function backupData() {
-            const backup = {
-                inventory: inventory,
-                requisitions: requisitions,
-                transfers: transfers,
-                users: users,
-                settings: settings,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const dataStr = JSON.stringify(backup, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `yellow-pharmacy-backup-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            addActivity('Created system backup', 'settings');
-            alert('Backup downloaded successfully!');
-        }
-        
-        function restoreData() {
-            const fileInput = document.getElementById('restoreFile');
-            if (!fileInput.files.length) {
-                alert('Please select a backup file first.');
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const backup = JSON.parse(e.target.result);
-                    
-                    if (confirm('This will replace ALL current data. Are you sure?')) {
-                        // Restore data
-                        if (backup.inventory) inventory = backup.inventory;
-                        if (backup.requisitions) requisitions = backup.requisitions;
-                        if (backup.transfers) transfers = backup.transfers;
-                        if (backup.users) users = backup.users;
-                        if (backup.settings) settings = backup.settings;
-                        
-                        // Save all data
-                        saveInventory();
-                        saveUsers();
-                        saveSettings();
-                        
-                        // Reload UI
-                        renderInventoryTable();
-                        renderRequisitionsTable();
-                        renderTransfersTable();
-                        renderUsersTable();
-                        applySettings();
-                        
-                        addActivity('Restored system from backup', 'settings');
-                        alert('Data restored successfully!');
-                    }
-                } catch (error) {
-                    alert('Error reading backup file: ' + error.message);
-                }
-            };
-            
-            reader.readAsText(file);
-        }
-        
-        // Report functions
-        function exportToExcel() {
-            alert('Excel export will be available in the next update.\nFor now, use JSON export.');
-        }
-        
-        function exportToPDF() {
-            alert('PDF export will be available in the next update.\nFor now, use Print Report.');
-        }
-        
-        function printReport() {
-            window.print();
-            addActivity('Printed report', 'report');
-        }
-        
-        // Confirm reset data
-        function confirmResetData() {
-            if (confirm('⚠️ WARNING: This will delete ALL data including:\n• All medications\n• All requisitions\n• All transfers\n• All users\n• All settings\n\nThis action cannot be undone!\n\nAre you absolutely sure?')) {
-                if (confirm('Type "RESET" to confirm deletion:')) {
-                    localStorage.clear();
-                    location.reload();
-                }
-            }
-        }
-    </script>
-</body>
-</html>
