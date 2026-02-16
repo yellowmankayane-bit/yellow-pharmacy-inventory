@@ -821,6 +821,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-left: 15px;
+            display: inline-block;
         }
         
         .sync-status:hover {
@@ -834,6 +835,15 @@
         
         .sync-status.error {
             background: #dc3545;
+        }
+        
+        /* Force sync button to show on all devices */
+        @media (max-width: 768px) {
+            .sync-status {
+                font-size: 12px !important;
+                padding: 3px 8px !important;
+                margin-left: 5px !important;
+            }
         }
     </style>
 </head>
@@ -2909,7 +2919,101 @@ Box</textarea>
             { id: 4, name: 'Omeprazole 40mg', generic: 'Omeprazole', category: 'Antihypertensives', strength: '40mg', form: 'Capsules', unit: 'capsule', stockMNK: 75, stockNHO: 35, stockLSK: 25, minStock: 20, notes: 'Acid reducer' }
         ];
         
+        // ========== FIX COLUMN MAPPING ==========
+        // Map your code's fields to database columns
+        function prepareInventoryForSupabase(item) {
+            return {
+                id: item.id,
+                name: item.name,
+                generic: item.generic || '',
+                category: item.category || 'Other',
+                strength: item.strength || '',
+                form: item.form || 'Tablets',
+                unit: item.unit || 'pcs',
+                stocknum: item.stockMNK || 0,  // Map stockMNK to stocknum
+                stocknho: item.stockNHO || 0,
+                stocklsk: item.stockLSK || 0,
+                minstock: item.minStock || 10,
+                notes: item.notes || ''
+            };
+        }
+
+        // Map database columns back to your code's fields
+        function prepareInventoryFromSupabase(item) {
+            return {
+                id: item.id,
+                name: item.name,
+                generic: item.generic || '',
+                category: item.category || 'Other',
+                strength: item.strength || '',
+                form: item.form || 'Tablets',
+                unit: item.unit || 'pcs',
+                stockMNK: item.stocknum || 0,  // Map stocknum back to stockMNK
+                stockNHO: item.stocknho || 0,
+                stockLSK: item.stocklsk || 0,
+                minStock: item.minstock || 10,
+                notes: item.notes || ''
+            };
+        }
+
         // ========== SUPABASE SYNC FUNCTIONS ==========
+        async function saveInventoryToSupabase() {
+            try {
+                const preparedData = inventory.map(item => prepareInventoryForSupabase(item));
+                const { error } = await supabaseClient
+                    .from('inventory')
+                    .upsert(preparedData);
+                if (error) throw error;
+                console.log('✅ Inventory saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving inventory:', error);
+                return false;
+            }
+        }
+
+        async function saveRequisitionsToSupabase() {
+            try {
+                const { error } = await supabaseClient
+                    .from('requisitions')
+                    .upsert(requisitions);
+                if (error) throw error;
+                console.log('✅ Requisitions saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving requisitions:', error);
+                return false;
+            }
+        }
+
+        async function saveTransfersToSupabase() {
+            try {
+                const { error } = await supabaseClient
+                    .from('transfers')
+                    .upsert(transfers);
+                if (error) throw error;
+                console.log('✅ Transfers saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving transfers:', error);
+                return false;
+            }
+        }
+
+        async function saveMessagesToSupabase() {
+            try {
+                const { error } = await supabaseClient
+                    .from('messages')
+                    .upsert(messages);
+                if (error) throw error;
+                console.log('✅ Messages saved to Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error saving messages:', error);
+                return false;
+            }
+        }
+
         async function loadFromSupabase() {
             try {
                 setSyncStatus('syncing', 'Syncing...');
@@ -2922,7 +3026,7 @@ Box</textarea>
                 ]);
 
                 if (inventoryRes.data && inventoryRes.data.length > 0) {
-                    inventory = inventoryRes.data;
+                    inventory = inventoryRes.data.map(item => prepareInventoryFromSupabase(item));
                 } else {
                     inventory = [...defaultInventory];
                     await saveInventoryToSupabase();
@@ -2954,50 +3058,6 @@ Box</textarea>
                 setSyncStatus('error', 'Sync Error');
                 loadFromLocalBackup();
                 return false;
-            }
-        }
-
-        async function saveInventoryToSupabase() {
-            try {
-                const { error } = await supabaseClient
-                    .from('inventory')
-                    .upsert(inventory);
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error saving inventory:', error);
-            }
-        }
-
-        async function saveRequisitionsToSupabase() {
-            try {
-                const { error } = await supabaseClient
-                    .from('requisitions')
-                    .upsert(requisitions);
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error saving requisitions:', error);
-            }
-        }
-
-        async function saveTransfersToSupabase() {
-            try {
-                const { error } = await supabaseClient
-                    .from('transfers')
-                    .upsert(transfers);
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error saving transfers:', error);
-            }
-        }
-
-        async function saveMessagesToSupabase() {
-            try {
-                const { error } = await supabaseClient
-                    .from('messages')
-                    .upsert(messages);
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error saving messages:', error);
             }
         }
 
